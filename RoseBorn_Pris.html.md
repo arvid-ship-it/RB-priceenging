@@ -1,0 +1,1036 @@
+<!DOCTYPE html>  
+  
+<html lang="sv">  
+<head>  
+<meta charset="UTF-8">  
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">  
+<meta name="apple-mobile-web-app-capable" content="yes">  
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">  
+<meta name="apple-mobile-web-app-title" content="R&amp;B Pris">  
+<meta name="theme-color" content="#FFFFFF">  
+<title>Rose &amp; Born · MTM Prismotor</title>  
+<style>  
+/*  
+ * ────────────────────────────────────────────────────────────────────────  
+ *  TYPOGRAPHY · OFFLINE-FIRST  
+ *   
+ *  Primary fonts use iOS-native typefaces (Hoefler Text + SF Pro)  
+ *  for a calm, heritage feel — 100% offline, zero network requests.  
+ *  
+ *  TO EMBED CUSTOM FONTS LATER (Cormorant Garamond, DM Sans, etc.):  
+ *    1. Download woff2 files (e.g. from gwfh.mranftl.com or fontsource.org)  
+ *    2. Convert each to base64 (in terminal):  
+ *         base64 -i cormorant-regular.woff2  
+ *    3. Add @font-face blocks here, e.g.:  
+ *         @font-face {  
+ *           font-family: 'Cormorant Garamond';  
+ *           font-weight: 400;  
+ *           src: url(data:font/woff2;base64,PASTE_BASE64_HERE) format('woff2');  
+ *           font-display: swap;  
+ *         }  
+ *    4. Update the font stacks below to put your custom font first.  
+ *    
+ *  Or — if hosting on a server (Cloudflare Pages etc.) — link a CSS file  
+ *  instead of inline base64 for a leaner HTML.  
+ * ────────────────────────────────────────────────────────────────────────  
+ */  
+  
+:root {  
+–bg: #FFFFFF;  
+–bg-warm: #FAFAFA;  
+–surface: #FFFFFF;  
+–ink: #000000;  
+–ink-soft: #1A1A1A;  
+–muted: #666666;  
+–muted-soft: #999999;  
+–line: #E5E5E5;  
+–line-soft: #F0F0F0;  
+–accent: #000000;  
+–accent-soft: #4A4A4A;  
+–error: #8A2A1A;  
+}  
+  
+- { box-sizing: border-box; margin: 0; padding: 0; }  
+  html, body { background: var(–bg); color: var(–ink); }  
+  body {  
+  font-family: -apple-system, BlinkMacSystemFont, “SF Pro Text”, system-ui, “Helvetica Neue”, “Helvetica”, “Segoe UI”, Arial, sans-serif;  
+  font-weight: 400;  
+  font-size: 15px;  
+  line-height: 1.5;  
+  -webkit-font-smoothing: antialiased;  
+  -moz-osx-font-smoothing: grayscale;  
+  min-height: 100vh;  
+  }  
+  .app {  
+  max-width: 540px;  
+  margin: 0 auto;  
+  padding: 32px 22px 56px;  
+  padding-top: max(32px, env(safe-area-inset-top));  
+  padding-bottom: max(56px, env(safe-area-inset-bottom));  
+  }  
+  
+/* ===== Brand header ===== */  
+.brand {  
+text-align: center;  
+padding: 8px 0 32px;  
+}  
+.brand .logo {  
+display: block;  
+height: 64px;  
+width: auto;  
+margin: 0 auto 18px;  
+max-width: 80%;  
+}  
+  
+.brand .sub {  
+font-family: -apple-system, BlinkMacSystemFont, “SF Pro Text”, system-ui, “Helvetica Neue”, “Helvetica”, “Segoe UI”, Arial, sans-serif;  
+font-size: 9.5px;  
+font-weight: 500;  
+letter-spacing: 0.36em;  
+text-transform: uppercase;  
+color: var(–muted);  
+}  
+  
+/* ===== Currency toggle: minimal text-only ===== */  
+.currency {  
+display: flex;  
+justify-content: center;  
+gap: 26px;  
+padding: 14px 0 28px;  
+border-top: 1px solid var(–line);  
+border-bottom: 1px solid var(–line);  
+margin-bottom: 32px;  
+}  
+.currency button {  
+background: transparent;  
+border: 0;  
+padding: 6px 0;  
+font-family: -apple-system, BlinkMacSystemFont, “SF Pro Text”, system-ui, “Helvetica Neue”, “Helvetica”, “Segoe UI”, Arial, sans-serif;  
+font-size: 11px;  
+font-weight: 500;  
+letter-spacing: 0.24em;  
+text-transform: uppercase;  
+color: var(–muted);  
+cursor: pointer;  
+position: relative;  
+transition: color 150ms ease;  
+}  
+.currency button.active {  
+color: var(–ink);  
+font-weight: 600;  
+}  
+.currency button.active::after {  
+content: ‘’;  
+position: absolute;  
+bottom: -1px;  
+left: 50%;  
+transform: translateX(-50%);  
+width: 100%;  
+height: 1px;  
+background: var(–ink);  
+}  
+  
+/* ===== Field labels (all-caps small) ===== */  
+.section-label {  
+font-family: -apple-system, BlinkMacSystemFont, “SF Pro Text”, system-ui, “Helvetica Neue”, “Helvetica”, “Segoe UI”, Arial, sans-serif;  
+font-size: 10px;  
+font-weight: 500;  
+letter-spacing: 0.28em;  
+text-transform: uppercase;  
+color: var(–muted);  
+margin-bottom: 10px;  
+}  
+  
+/* ===== Product selector (premium dropdown style) ===== */  
+.product-select-wrap {  
+position: relative;  
+margin-bottom: 32px;  
+}  
+.product-select-wrap select {  
+width: 100%;  
+font-family: “Hoefler Text”, “Cormorant Garamond”, “Cormorant”, “Iowan Old Style”, “Big Caslon”, Garamond, Georgia, serif;  
+font-size: 24px;  
+font-weight: 400;  
+color: var(–ink);  
+background: transparent;  
+border: 0;  
+border-bottom: 1px solid var(–line);  
+padding: 4px 32px 12px 0;  
+-webkit-appearance: none;  
+appearance: none;  
+background-image: url(“data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2210%22%20height%3D%226%22%20viewBox%3D%220%200%2010%206%22%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%23000000%22%20stroke-width%3D%221.2%22%20d%3D%22M1%201l4%204%204-4%22%2F%3E%3C%2Fsvg%3E”);  
+background-repeat: no-repeat;  
+background-position: right 4px center;  
+cursor: pointer;  
+}  
+.product-select-wrap select:focus { outline: none; border-bottom-color: var(–ink); }  
+  
+/* ===== Form fields ===== */  
+.form {  
+display: flex;  
+flex-direction: column;  
+gap: 22px;  
+margin-bottom: 36px;  
+}  
+.field {  
+display: flex;  
+flex-direction: column;  
+gap: 8px;  
+}  
+.field label {  
+font-family: -apple-system, BlinkMacSystemFont, “SF Pro Text”, system-ui, “Helvetica Neue”, “Helvetica”, “Segoe UI”, Arial, sans-serif;  
+font-size: 10px;  
+font-weight: 500;  
+letter-spacing: 0.26em;  
+text-transform: uppercase;  
+color: var(–muted);  
+}  
+.field select, .field input[type=“number”], .field input[type=“text”] {  
+font-family: -apple-system, BlinkMacSystemFont, “SF Pro Text”, system-ui, “Helvetica Neue”, “Helvetica”, “Segoe UI”, Arial, sans-serif;  
+font-size: 15px;  
+font-weight: 400;  
+color: var(–ink);  
+background: transparent;  
+border: 0;  
+border-bottom: 1px solid var(–line);  
+padding: 8px 28px 10px 0;  
+-webkit-appearance: none;  
+appearance: none;  
+background-image: url(“data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2210%22%20height%3D%226%22%20viewBox%3D%220%200%2010%206%22%3E%3Cpath%20fill%3D%22none%22%20stroke%3D%22%238A8074%22%20stroke-width%3D%221.2%22%20d%3D%22M1%201l4%204%204-4%22%2F%3E%3C%2Fsvg%3E”);  
+background-repeat: no-repeat;  
+background-position: right 2px center;  
+cursor: pointer;  
+transition: border 150ms ease;  
+}  
+.field input[type=“number”], .field input[type=“text”] {  
+background-image: none;  
+padding-right: 0;  
+cursor: text;  
+}  
+.field select:focus, .field input:focus { outline: none; border-bottom-color: var(–ink); }  
+  
+/* ===== Subsection (kombo header) ===== */  
+.subsection {  
+font-family: “Hoefler Text”, “Cormorant Garamond”, “Cormorant”, “Iowan Old Style”, “Big Caslon”, Garamond, Georgia, serif;  
+font-style: italic;  
+font-weight: 500;  
+font-size: 18px;  
+color: var(–accent);  
+letter-spacing: 0.02em;  
+padding-top: 12px;  
+margin-bottom: 2px;  
+}  
+  
+/* ===== Options grid (knit) ===== */  
+.options-grid {  
+display: grid;  
+grid-template-columns: 1fr 1fr;  
+gap: 1px;  
+background: var(–line);  
+border-top: 1px solid var(–line);  
+border-bottom: 1px solid var(–line);  
+margin-top: 2px;  
+}  
+.option-toggle {  
+display: flex;  
+align-items: center;  
+gap: 12px;  
+padding: 14px 12px;  
+background: var(–bg);  
+cursor: pointer;  
+transition: background 150ms ease;  
+font-family: -apple-system, BlinkMacSystemFont, “SF Pro Text”, system-ui, “Helvetica Neue”, “Helvetica”, “Segoe UI”, Arial, sans-serif;  
+font-size: 13px;  
+color: var(–ink-soft);  
+user-select: none;  
+-webkit-tap-highlight-color: transparent;  
+}  
+.option-toggle.on { background: var(–ink); color: var(–bg); }  
+.option-toggle .check {  
+width: 13px; height: 13px;  
+border: 1px solid var(–muted-soft);  
+border-radius: 0;  
+flex-shrink: 0;  
+display: flex;  
+align-items: center;  
+justify-content: center;  
+transition: all 150ms ease;  
+}  
+.option-toggle.on .check { background: var(–bg); border-color: var(–bg); }  
+.option-toggle.on .check::after {  
+content: ‘’;  
+width: 6px; height: 3px;  
+border-left: 1.5px solid var(–ink);  
+border-bottom: 1.5px solid var(–ink);  
+transform: rotate(-45deg) translate(1px, -1px);  
+}  
+.note {  
+font-family: “Hoefler Text”, “Cormorant Garamond”, “Cormorant”, “Iowan Old Style”, “Big Caslon”, Garamond, Georgia, serif;  
+font-style: italic;  
+font-size: 13px;  
+color: var(–muted);  
+padding: 4px 0;  
+line-height: 1.4;  
+}  
+  
+/* ===== Price card — like a couture label tag ===== */  
+.price-wrap {  
+margin: 24px 0 18px;  
+}  
+.price-card {  
+background: var(–ink);  
+color: var(–bg);  
+padding: 40px 28px 36px;  
+text-align: center;  
+position: relative;  
+border-radius: 2px;  
+}  
+.price-card::before, .price-card::after {  
+content: ‘’;  
+position: absolute;  
+left: 50%;  
+transform: translateX(-50%);  
+width: 18px;  
+height: 1px;  
+background: var(–muted-soft);  
+opacity: 0.4;  
+}  
+.price-card::before { top: 16px; }  
+.price-card::after { bottom: 16px; }  
+  
+.price-card .label {  
+font-family: -apple-system, BlinkMacSystemFont, “SF Pro Text”, system-ui, “Helvetica Neue”, “Helvetica”, “Segoe UI”, Arial, sans-serif;  
+font-size: 9.5px;  
+font-weight: 500;  
+letter-spacing: 0.36em;  
+text-transform: uppercase;  
+color: var(–muted-soft);  
+margin-bottom: 18px;  
+}  
+.price-card .value {  
+font-family: “Hoefler Text”, “Cormorant Garamond”, “Cormorant”, “Iowan Old Style”, “Big Caslon”, Garamond, Georgia, serif;  
+font-weight: 300;  
+font-size: 56px;  
+letter-spacing: -0.01em;  
+line-height: 1.02;  
+font-variant-numeric: tabular-nums;  
+}  
+.price-card .value .currency-sym {  
+font-size: 26px;  
+font-weight: 300;  
+vertical-align: 14px;  
+margin-right: 6px;  
+color: var(–muted-soft);  
+}  
+.price-card .value .currency-suffix {  
+font-size: 22px;  
+font-weight: 400;  
+font-style: italic;  
+margin-left: 8px;  
+color: var(–muted-soft);  
+}  
+.price-card .meta {  
+margin-top: 16px;  
+font-family: “Hoefler Text”, “Cormorant Garamond”, “Cormorant”, “Iowan Old Style”, “Big Caslon”, Garamond, Georgia, serif;  
+font-style: italic;  
+font-size: 13px;  
+color: var(–muted-soft);  
+letter-spacing: 0.02em;  
+}  
+.price-card.empty { background: transparent; color: var(–muted); border: 1px solid var(–line); }  
+.price-card.empty::before, .price-card.empty::after { background: var(–line); opacity: 1; }  
+.price-card.empty .label { color: var(–muted); }  
+.price-card.empty .value {  
+font-style: italic;  
+font-size: 24px;  
+color: var(–muted);  
+}  
+.price-card.empty .meta { color: var(–muted); }  
+.price-card.error { background: var(–surface); color: var(–error); border: 1px solid var(–error); }  
+.price-card.error::before, .price-card.error::after { background: var(–error); opacity: 0.3; }  
+.price-card.error .label { color: var(–error); letter-spacing: 0.32em; }  
+.price-card.error .value {  
+font-family: “Hoefler Text”, “Cormorant Garamond”, “Cormorant”, “Iowan Old Style”, “Big Caslon”, Garamond, Georgia, serif;  
+font-style: italic;  
+font-weight: 400;  
+font-size: 17px;  
+letter-spacing: 0;  
+line-height: 1.4;  
+padding: 0 4px;  
+}  
+  
+/* ===== Details accordion ===== */  
+.details {  
+margin-top: 8px;  
+}  
+.details summary {  
+cursor: pointer;  
+font-family: -apple-system, BlinkMacSystemFont, “SF Pro Text”, system-ui, “Helvetica Neue”, “Helvetica”, “Segoe UI”, Arial, sans-serif;  
+font-size: 10px;  
+font-weight: 500;  
+letter-spacing: 0.26em;  
+text-transform: uppercase;  
+color: var(–muted);  
+padding: 14px 0;  
+list-style: none;  
+display: flex;  
+align-items: center;  
+justify-content: space-between;  
+border-top: 1px solid var(–line-soft);  
+border-bottom: 1px solid var(–line-soft);  
+}  
+.details summary::-webkit-details-marker { display: none; }  
+.details summary::after {  
+content: ‘+’;  
+font-family: “Hoefler Text”, “Cormorant Garamond”, “Cormorant”, “Iowan Old Style”, “Big Caslon”, Garamond, Georgia, serif;  
+font-size: 16px;  
+font-weight: 400;  
+transition: transform 200ms ease;  
+}  
+.details[open] summary::after { content: ‘−’; }  
+.breakdown {  
+margin-top: 18px;  
+padding-bottom: 18px;  
+font-size: 13px;  
+display: grid;  
+grid-template-columns: auto 1fr;  
+gap: 8px 16px;  
+font-variant-numeric: tabular-nums;  
+}  
+.breakdown .bk-label {  
+font-family: -apple-system, BlinkMacSystemFont, “SF Pro Text”, system-ui, “Helvetica Neue”, “Helvetica”, “Segoe UI”, Arial, sans-serif;  
+color: var(–muted);  
+font-size: 12px;  
+}  
+.breakdown .bk-value {  
+font-family: -apple-system, BlinkMacSystemFont, “SF Pro Text”, system-ui, “Helvetica Neue”, “Helvetica”, “Segoe UI”, Arial, sans-serif;  
+text-align: right;  
+font-weight: 500;  
+color: var(–ink-soft);  
+}  
+.breakdown .bk-divider {  
+grid-column: 1 / -1;  
+border-top: 1px solid var(–line-soft);  
+margin: 6px 0;  
+}  
+.breakdown .bk-final { font-weight: 600; color: var(–ink); font-size: 13px; }  
+.breakdown .bk-final.bk-value { font-family: “Hoefler Text”, “Cormorant Garamond”, “Cormorant”, “Iowan Old Style”, “Big Caslon”, Garamond, Georgia, serif; font-size: 18px; font-weight: 500; }  
+  
+/* ===== Footer ===== */  
+.footer {  
+margin-top: 56px;  
+text-align: center;  
+}  
+.footer .ornament {  
+font-family: “Hoefler Text”, “Cormorant Garamond”, “Cormorant”, “Iowan Old Style”, “Big Caslon”, Garamond, Georgia, serif;  
+color: var(–muted-soft);  
+font-size: 14px;  
+margin-bottom: 8px;  
+}  
+.footer .cities {  
+font-family: -apple-system, BlinkMacSystemFont, “SF Pro Text”, system-ui, “Helvetica Neue”, “Helvetica”, “Segoe UI”, Arial, sans-serif;  
+font-size: 9.5px;  
+font-weight: 500;  
+letter-spacing: 0.32em;  
+text-transform: uppercase;  
+color: var(–muted);  
+}  
+.footer .since {  
+font-family: “Hoefler Text”, “Cormorant Garamond”, “Cormorant”, “Iowan Old Style”, “Big Caslon”, Garamond, Georgia, serif;  
+font-style: italic;  
+font-size: 12px;  
+color: var(–muted-soft);  
+margin-top: 6px;  
+}  
+  
+@keyframes fadeUp {  
+from { opacity: 0; transform: translateY(8px); }  
+to { opacity: 1; transform: translateY(0); }  
+}  
+.price-card { animation: fadeUp 280ms cubic-bezier(0.16, 1, 0.3, 1); }  
+  
+@media (max-width: 420px) {  
+.app { padding: 24px 18px 48px; }  
+.price-card .value { font-size: 44px; }  
+.price-card .value .currency-sym { font-size: 21px; vertical-align: 10px; }  
+.price-card .value .currency-suffix { font-size: 17px; }  
+.options-grid { grid-template-columns: 1fr; }  
+.product-select-wrap select { font-size: 21px; }  
+}  
+</style>  
+  
+</head>  
+<body>  
+<div class="app">  <header class="brand">  
+    <img class="logo" src="data:image/png;base64,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" alt="Rose & Born">  
+    <div class="sub">MTM Prismotor · Intern</div>  
+  </header>  
+  
+  <div class="currency" id="currency">  
+    <button data-cur="USD" class="active">USD · NYC</button>  
+    <button data-cur="SEK">SEK · Stockholm</button>  
+  </div>  
+  
+  <div class="section-label">Produkt</div>  
+  <div class="product-select-wrap">  
+    <select id="product-select"></select>  
+  </div>  
+  
+  <main class="form" id="form"></main>  
+  
+  <section class="price-wrap" id="price-section"></section>  
+  
+  <details class="details" id="details">  
+    <summary>Beräkningsdetalj</summary>  
+    <div class="breakdown" id="breakdown"></div>  
+  </details>  
+  
+  <footer class="footer">  
+    <div class="ornament">·</div>  
+    <div class="cities">New York · Stockholm · Zürich</div>  
+    <div class="since">Effortless elegance, uncompromising quality.</div>  
+  </footer>  
+</div>  
+  
+<script>  
+  
+const DATA = {"prices":{"USD":{"HC":{"PL PC01":{"3p":397.0,"3p+x":507.0,"2p":312.0,"2p+x":423.0,"jacket":219.0,"trousers":113.0,"waistcoat":92.0,"quilted_vest":145.0,"vest":145.0,"jkt_bermuda":319.0,"bermuda":105.0},"PL PC02":{"3p":451.0,"3p+x":579.0,"2p":352.0,"2p+x":481.0,"jacket":250.0,"trousers":132.0,"waistcoat":103.0,"quilted_vest":168.0,"vest":168.0,"jkt_bermuda":368.0,"bermuda":121.0},"PL PC03":{"3p":498.0,"3p+x":642.0,"2p":390.0,"2p+x":531.0,"jacket":278.0,"trousers":146.0,"waistcoat":114.0,"quilted_vest":185.0,"vest":185.0,"jkt_bermuda":407.0,"bermuda":133.0},"PL PC04":{"3p":510.0,"3p+x":651.0,"2p":404.0,"2p+x":544.0,"jacket":284.0,"trousers":146.0,"waistcoat":118.0,"quilted_vest":190.0,"vest":190.0,"jkt_bermuda":412.0,"bermuda":135.0},"PL PC05":{"3p":530.0,"3p+x":676.0,"2p":421.0,"2p+x":563.0,"jacket":290.0,"trousers":152.0,"waistcoat":120.0,"quilted_vest":194.0,"vest":194.0,"jkt_bermuda":428.0,"bermuda":138.0},"PL PC06":{"3p":564.0,"3p+x":721.0,"2p":444.0,"2p+x":599.0,"jacket":314.0,"trousers":159.0,"waistcoat":125.0,"quilted_vest":210.0,"vest":210.0,"jkt_bermuda":459.0,"bermuda":147.0},"PL PC07":{"3p":597.0,"3p+x":761.0,"2p":466.0,"2p+x":636.0,"jacket":330.0,"trousers":171.0,"waistcoat":133.0,"quilted_vest":220.0,"vest":220.0,"jkt_bermuda":482.0,"bermuda":157.0},"PL PC08":{"3p":649.0,"3p+x":823.0,"2p":511.0,"2p+x":688.0,"jacket":365.0,"trousers":178.0,"waistcoat":142.0,"quilted_vest":227.0,"vest":227.0,"jkt_bermuda":527.0,"bermuda":167.0},"PL PC09":{"3p":661.0,"3p+x":841.0,"2p":518.0,"2p+x":700.0,"jacket":371.0,"trousers":183.0,"waistcoat":146.0,"quilted_vest":234.0,"vest":234.0,"jkt_bermuda":541.0,"bermuda":171.0},"PL PC10":{"3p":696.0,"3p+x":872.0,"2p":536.0,"2p+x":727.0,"jacket":376.0,"trousers":190.0,"waistcoat":163.0,"quilted_vest":250.0,"vest":250.0,"jkt_bermuda":550.0,"bermuda":180.0},"PL PC11":{"3p":715.0,"3p+x":913.0,"2p":552.0,"2p+x":748.0,"jacket":385.0,"trousers":200.0,"waistcoat":172.0,"quilted_vest":256.0,"vest":256.0,"jkt_bermuda":569.0,"bermuda":188.0},"PL PC12":{"3p":747.0,"3p+x":949.0,"2p":589.0,"2p+x":782.0,"jacket":395.0,"trousers":207.0,"waistcoat":175.0,"quilted_vest":263.0,"vest":263.0,"jkt_bermuda":590.0,"bermuda":198.0},"PL PC13":{"3p":764.0,"3p+x":979.0,"2p":601.0,"2p+x":801.0,"jacket":416.0,"trousers":219.0,"waistcoat":178.0,"quilted_vest":265.0,"vest":265.0,"jkt_bermuda":614.0,"bermuda":205.0},"PL PC14":{"3p":792.0,"3p+x":1007.0,"2p":610.0,"2p+x":828.0,"jacket":427.0,"trousers":220.0,"waistcoat":183.0,"quilted_vest":285.0,"vest":285.0,"jkt_bermuda":632.0,"bermuda":206.0},"PL PC15":{"3p":822.0,"3p+x":1044.0,"2p":655.0,"2p+x":859.0,"jacket":437.0,"trousers":227.0,"waistcoat":190.0,"quilted_vest":291.0,"vest":291.0,"jkt_bermuda":653.0,"bermuda":218.0},"PL PC16":{"3p":839.0,"3p+x":1061.0,"2p":660.0,"2p+x":874.0,"jacket":456.0,"trousers":231.0,"waistcoat":201.0,"quilted_vest":304.0,"vest":304.0,"jkt_bermuda":663.0,"bermuda":221.0},"PL PC17":{"3p":869.0,"3p+x":1106.0,"2p":672.0,"2p+x":909.0,"jacket":469.0,"trousers":242.0,"waistcoat":201.0,"quilted_vest":314.0,"vest":314.0,"jkt_bermuda":693.0,"bermuda":228.0},"PL PC18":{"3p":908.0,"3p+x":1147.0,"2p":697.0,"2p+x":945.0,"jacket":517.0,"trousers":249.0,"waistcoat":210.0,"quilted_vest":344.0,"vest":344.0,"jkt_bermuda":718.0,"bermuda":241.0},"PL PC19":{"3p":944.0,"3p+x":1195.0,"2p":726.0,"2p+x":986.0,"jacket":522.0,"trousers":260.0,"waistcoat":219.0,"quilted_vest":350.0,"vest":350.0,"jkt_bermuda":748.0,"bermuda":249.0},"PL PC20":{"3p":989.0,"3p+x":1247.0,"2p":760.0,"2p+x":1031.0,"jacket":546.0,"trousers":272.0,"waistcoat":230.0,"quilted_vest":363.0,"vest":363.0,"jkt_bermuda":780.0,"bermuda":262.0},"PL PC21":{"3p":1023.0,"3p+x":1293.0,"2p":784.0,"2p+x":1067.0,"jacket":565.0,"trousers":282.0,"waistcoat":237.0,"quilted_vest":377.0,"vest":377.0,"jkt_bermuda":810.0,"bermuda":271.0},"PL PC22":{"3p":1095.0,"3p+x":1385.0,"2p":840.0,"2p+x":1142.0,"jacket":606.0,"trousers":302.0,"waistcoat":255.0,"quilted_vest":405.0,"vest":405.0,"jkt_bermuda":867.0,"bermuda":290.0},"PL PC23":{"3p":1176.0,"3p+x":1485.0,"2p":903.0,"2p+x":1228.0,"jacket":650.0,"trousers":324.0,"waistcoat":275.0,"quilted_vest":433.0,"vest":433.0,"jkt_bermuda":929.0,"bermuda":312.0},"PL PC24":{"3p":1220.0,"3p+x":1540.0,"2p":936.0,"2p+x":1273.0,"jacket":675.0,"trousers":336.0,"waistcoat":285.0,"quilted_vest":450.0,"vest":450.0,"jkt_bermuda":964.0,"bermuda":323.0},"PL PC25":{"3p":1275.0,"3p+x":1609.0,"2p":978.0,"2p+x":1329.0,"jacket":704.0,"trousers":352.0,"waistcoat":297.0,"quilted_vest":469.0,"vest":469.0,"jkt_bermuda":1007.0,"bermuda":337.0},"PL PC26":{"3p":1329.0,"3p+x":1677.0,"2p":1020.0,"2p+x":1385.0,"jacket":734.0,"trousers":367.0,"waistcoat":310.0,"quilted_vest":489.0,"vest":489.0,"jkt_bermuda":1050.0,"bermuda":352.0},"PL PC27":{"3p":1393.0,"3p+x":1759.0,"2p":1070.0,"2p+x":1452.0,"jacket":770.0,"trousers":385.0,"waistcoat":325.0,"quilted_vest":512.0,"vest":512.0,"jkt_bermuda":1101.0,"bermuda":369.0},"PL PC28":{"3p":1458.0,"3p+x":1841.0,"2p":1120.0,"2p+x":1520.0,"jacket":805.0,"trousers":404.0,"waistcoat":340.0,"quilted_vest":536.0,"vest":536.0,"jkt_bermuda":1152.0,"bermuda":386.0},"PL PC29":{"3p":1533.0,"3p+x":1936.0,"2p":1178.0,"2p+x":1599.0,"jacket":847.0,"trousers":424.0,"waistcoat":358.0,"quilted_vest":563.0,"vest":563.0,"jkt_bermuda":1211.0,"bermuda":407.0},"PL PC30":{"3p":1609.0,"3p+x":2031.0,"2p":1237.0,"2p+x":1677.0,"jacket":889.0,"trousers":445.0,"waistcoat":375.0,"quilted_vest":591.0,"vest":591.0,"jkt_bermuda":1270.0,"bermuda":427.0}},"FC":{"PL PC01":{"3p":469.0,"3p+x":579.0,"2p":370.0,"2p+x":481.0,"jacket":277.0,"trousers":113.0,"waistcoat":106.0,"quilted_vest":145.0,"vest":145.0,"jkt_bermuda":377.0,"bermuda":105.0},"PL PC02":{"3p":523.0,"3p+x":651.0,"2p":410.0,"2p+x":539.0,"jacket":308.0,"trousers":132.0,"waistcoat":117.0,"quilted_vest":168.0,"vest":168.0,"jkt_bermuda":426.0,"bermuda":121.0},"PL PC03":{"3p":570.0,"3p+x":714.0,"2p":448.0,"2p+x":589.0,"jacket":336.0,"trousers":146.0,"waistcoat":128.0,"quilted_vest":185.0,"vest":185.0,"jkt_bermuda":465.0,"bermuda":133.0},"PL PC04":{"3p":582.0,"3p+x":723.0,"2p":462.0,"2p+x":602.0,"jacket":342.0,"trousers":146.0,"waistcoat":132.0,"quilted_vest":190.0,"vest":190.0,"jkt_bermuda":470.0,"bermuda":135.0},"PL PC05":{"3p":602.0,"3p+x":748.0,"2p":479.0,"2p+x":621.0,"jacket":348.0,"trousers":152.0,"waistcoat":134.0,"quilted_vest":194.0,"vest":194.0,"jkt_bermuda":486.0,"bermuda":138.0},"PL PC06":{"3p":636.0,"3p+x":793.0,"2p":502.0,"2p+x":657.0,"jacket":372.0,"trousers":159.0,"waistcoat":139.0,"quilted_vest":210.0,"vest":210.0,"jkt_bermuda":517.0,"bermuda":147.0},"PL PC07":{"3p":669.0,"3p+x":833.0,"2p":524.0,"2p+x":694.0,"jacket":388.0,"trousers":171.0,"waistcoat":147.0,"quilted_vest":220.0,"vest":220.0,"jkt_bermuda":540.0,"bermuda":157.0},"PL PC08":{"3p":721.0,"3p+x":895.0,"2p":569.0,"2p+x":746.0,"jacket":423.0,"trousers":178.0,"waistcoat":156.0,"quilted_vest":227.0,"vest":227.0,"jkt_bermuda":585.0,"bermuda":167.0},"PL PC09":{"3p":733.0,"3p+x":913.0,"2p":576.0,"2p+x":758.0,"jacket":429.0,"trousers":183.0,"waistcoat":160.0,"quilted_vest":234.0,"vest":234.0,"jkt_bermuda":599.0,"bermuda":171.0},"PL PC10":{"3p":768.0,"3p+x":944.0,"2p":594.0,"2p+x":785.0,"jacket":434.0,"trousers":190.0,"waistcoat":177.0,"quilted_vest":250.0,"vest":250.0,"jkt_bermuda":608.0,"bermuda":180.0},"PL PC11":{"3p":787.0,"3p+x":985.0,"2p":610.0,"2p+x":806.0,"jacket":443.0,"trousers":200.0,"waistcoat":186.0,"quilted_vest":256.0,"vest":256.0,"jkt_bermuda":627.0,"bermuda":188.0},"PL PC12":{"3p":819.0,"3p+x":1021.0,"2p":647.0,"2p+x":840.0,"jacket":453.0,"trousers":207.0,"waistcoat":189.0,"quilted_vest":263.0,"vest":263.0,"jkt_bermuda":648.0,"bermuda":198.0},"PL PC13":{"3p":836.0,"3p+x":1051.0,"2p":659.0,"2p+x":859.0,"jacket":474.0,"trousers":219.0,"waistcoat":192.0,"quilted_vest":265.0,"vest":265.0,"jkt_bermuda":672.0,"bermuda":205.0},"PL PC14":{"3p":864.0,"3p+x":1079.0,"2p":668.0,"2p+x":886.0,"jacket":485.0,"trousers":220.0,"waistcoat":197.0,"quilted_vest":285.0,"vest":285.0,"jkt_bermuda":690.0,"bermuda":206.0},"PL PC15":{"3p":894.0,"3p+x":1116.0,"2p":713.0,"2p+x":917.0,"jacket":495.0,"trousers":227.0,"waistcoat":204.0,"quilted_vest":291.0,"vest":291.0,"jkt_bermuda":711.0,"bermuda":218.0},"PL PC16":{"3p":911.0,"3p+x":1133.0,"2p":718.0,"2p+x":932.0,"jacket":514.0,"trousers":231.0,"waistcoat":215.0,"quilted_vest":304.0,"vest":304.0,"jkt_bermuda":721.0,"bermuda":221.0},"PL PC17":{"3p":941.0,"3p+x":1178.0,"2p":730.0,"2p+x":967.0,"jacket":527.0,"trousers":242.0,"waistcoat":215.0,"quilted_vest":314.0,"vest":314.0,"jkt_bermuda":751.0,"bermuda":228.0},"PL PC18":{"3p":980.0,"3p+x":1219.0,"2p":755.0,"2p+x":1003.0,"jacket":575.0,"trousers":249.0,"waistcoat":224.0,"quilted_vest":344.0,"vest":344.0,"jkt_bermuda":776.0,"bermuda":241.0},"PL PC19":{"3p":1016.0,"3p+x":1267.0,"2p":784.0,"2p+x":1044.0,"jacket":580.0,"trousers":260.0,"waistcoat":233.0,"quilted_vest":350.0,"vest":350.0,"jkt_bermuda":806.0,"bermuda":249.0},"PL PC20":{"3p":1061.0,"3p+x":1319.0,"2p":818.0,"2p+x":1089.0,"jacket":604.0,"trousers":272.0,"waistcoat":244.0,"quilted_vest":363.0,"vest":363.0,"jkt_bermuda":838.0,"bermuda":262.0},"PL PC21":{"3p":1095.0,"3p+x":1365.0,"2p":842.0,"2p+x":1125.0,"jacket":623.0,"trousers":282.0,"waistcoat":251.0,"quilted_vest":377.0,"vest":377.0,"jkt_bermuda":868.0,"bermuda":271.0},"PL PC22":{"3p":1167.0,"3p+x":1457.0,"2p":898.0,"2p+x":1200.0,"jacket":664.0,"trousers":302.0,"waistcoat":269.0,"quilted_vest":405.0,"vest":405.0,"jkt_bermuda":925.0,"bermuda":290.0},"PL PC23":{"3p":1248.0,"3p+x":1557.0,"2p":961.0,"2p+x":1286.0,"jacket":708.0,"trousers":324.0,"waistcoat":289.0,"quilted_vest":433.0,"vest":433.0,"jkt_bermuda":987.0,"bermuda":312.0},"PL PC24":{"3p":1292.0,"3p+x":1612.0,"2p":994.0,"2p+x":1331.0,"jacket":733.0,"trousers":336.0,"waistcoat":299.0,"quilted_vest":450.0,"vest":450.0,"jkt_bermuda":1022.0,"bermuda":323.0},"PL PC25":{"3p":1347.0,"3p+x":1681.0,"2p":1036.0,"2p+x":1387.0,"jacket":762.0,"trousers":352.0,"waistcoat":311.0,"quilted_vest":469.0,"vest":469.0,"jkt_bermuda":1065.0,"bermuda":337.0},"PL PC26":{"3p":1401.0,"3p+x":1749.0,"2p":1078.0,"2p+x":1443.0,"jacket":792.0,"trousers":367.0,"waistcoat":324.0,"quilted_vest":489.0,"vest":489.0,"jkt_bermuda":1108.0,"bermuda":352.0},"PL PC27":{"3p":1465.0,"3p+x":1831.0,"2p":1128.0,"2p+x":1510.0,"jacket":828.0,"trousers":385.0,"waistcoat":339.0,"quilted_vest":512.0,"vest":512.0,"jkt_bermuda":1159.0,"bermuda":369.0},"PL PC28":{"3p":1530.0,"3p+x":1913.0,"2p":1178.0,"2p+x":1578.0,"jacket":863.0,"trousers":404.0,"waistcoat":354.0,"quilted_vest":536.0,"vest":536.0,"jkt_bermuda":1210.0,"bermuda":386.0},"PL PC29":{"3p":1605.0,"3p+x":2008.0,"2p":1236.0,"2p+x":1657.0,"jacket":905.0,"trousers":424.0,"waistcoat":372.0,"quilted_vest":563.0,"vest":563.0,"jkt_bermuda":1269.0,"bermuda":407.0},"PL PC30":{"3p":1681.0,"3p+x":2103.0,"2p":1295.0,"2p+x":1735.0,"jacket":947.0,"trousers":445.0,"waistcoat":389.0,"quilted_vest":591.0,"vest":591.0,"jkt_bermuda":1328.0,"bermuda":427.0}},"HM":{"PL PC01":{"3p":541.0,"3p+x":678.0,"2p":430.0,"2p+x":568.0,"jacket":310.0,"trousers":140.0,"waistcoat":118.0,"quilted_vest":145.0,"vest":145.0,"jkt_bermuda":410.0,"bermuda":105.0},"PL PC02":{"3p":595.0,"3p+x":750.0,"2p":470.0,"2p+x":626.0,"jacket":341.0,"trousers":159.0,"waistcoat":129.0,"quilted_vest":168.0,"vest":168.0,"jkt_bermuda":459.0,"bermuda":121.0},"PL PC03":{"3p":642.0,"3p+x":813.0,"2p":508.0,"2p+x":676.0,"jacket":369.0,"trousers":173.0,"waistcoat":140.0,"quilted_vest":185.0,"vest":185.0,"jkt_bermuda":498.0,"bermuda":133.0},"PL PC04":{"3p":654.0,"3p+x":822.0,"2p":522.0,"2p+x":689.0,"jacket":375.0,"trousers":173.0,"waistcoat":144.0,"quilted_vest":190.0,"vest":190.0,"jkt_bermuda":503.0,"bermuda":135.0},"PL PC05":{"3p":674.0,"3p+x":847.0,"2p":539.0,"2p+x":708.0,"jacket":381.0,"trousers":179.0,"waistcoat":146.0,"quilted_vest":194.0,"vest":194.0,"jkt_bermuda":519.0,"bermuda":138.0},"PL PC06":{"3p":708.0,"3p+x":892.0,"2p":562.0,"2p+x":744.0,"jacket":405.0,"trousers":186.0,"waistcoat":151.0,"quilted_vest":210.0,"vest":210.0,"jkt_bermuda":550.0,"bermuda":147.0},"PL PC07":{"3p":741.0,"3p+x":932.0,"2p":584.0,"2p+x":781.0,"jacket":421.0,"trousers":198.0,"waistcoat":159.0,"quilted_vest":220.0,"vest":220.0,"jkt_bermuda":573.0,"bermuda":157.0},"PL PC08":{"3p":793.0,"3p+x":994.0,"2p":629.0,"2p+x":833.0,"jacket":456.0,"trousers":205.0,"waistcoat":168.0,"quilted_vest":227.0,"vest":227.0,"jkt_bermuda":618.0,"bermuda":167.0},"PL PC09":{"3p":805.0,"3p+x":1012.0,"2p":636.0,"2p+x":845.0,"jacket":462.0,"trousers":210.0,"waistcoat":172.0,"quilted_vest":234.0,"vest":234.0,"jkt_bermuda":632.0,"bermuda":171.0},"PL PC10":{"3p":840.0,"3p+x":1043.0,"2p":654.0,"2p+x":872.0,"jacket":467.0,"trousers":217.0,"waistcoat":189.0,"quilted_vest":250.0,"vest":250.0,"jkt_bermuda":641.0,"bermuda":180.0},"PL PC11":{"3p":859.0,"3p+x":1084.0,"2p":670.0,"2p+x":893.0,"jacket":476.0,"trousers":227.0,"waistcoat":198.0,"quilted_vest":256.0,"vest":256.0,"jkt_bermuda":660.0,"bermuda":188.0},"PL PC12":{"3p":891.0,"3p+x":1120.0,"2p":707.0,"2p+x":927.0,"jacket":486.0,"trousers":234.0,"waistcoat":201.0,"quilted_vest":263.0,"vest":263.0,"jkt_bermuda":681.0,"bermuda":198.0},"PL PC13":{"3p":908.0,"3p+x":1150.0,"2p":719.0,"2p+x":946.0,"jacket":507.0,"trousers":246.0,"waistcoat":204.0,"quilted_vest":265.0,"vest":265.0,"jkt_bermuda":705.0,"bermuda":205.0},"PL PC14":{"3p":936.0,"3p+x":1178.0,"2p":728.0,"2p+x":973.0,"jacket":518.0,"trousers":247.0,"waistcoat":209.0,"quilted_vest":285.0,"vest":285.0,"jkt_bermuda":723.0,"bermuda":206.0},"PL PC15":{"3p":966.0,"3p+x":1215.0,"2p":773.0,"2p+x":1004.0,"jacket":528.0,"trousers":254.0,"waistcoat":216.0,"quilted_vest":291.0,"vest":291.0,"jkt_bermuda":744.0,"bermuda":218.0},"PL PC16":{"3p":983.0,"3p+x":1232.0,"2p":778.0,"2p+x":1019.0,"jacket":547.0,"trousers":258.0,"waistcoat":227.0,"quilted_vest":304.0,"vest":304.0,"jkt_bermuda":754.0,"bermuda":221.0},"PL PC17":{"3p":1013.0,"3p+x":1277.0,"2p":790.0,"2p+x":1054.0,"jacket":560.0,"trousers":269.0,"waistcoat":227.0,"quilted_vest":314.0,"vest":314.0,"jkt_bermuda":784.0,"bermuda":228.0},"PL PC18":{"3p":1052.0,"3p+x":1318.0,"2p":815.0,"2p+x":1090.0,"jacket":608.0,"trousers":276.0,"waistcoat":236.0,"quilted_vest":344.0,"vest":344.0,"jkt_bermuda":809.0,"bermuda":241.0},"PL PC19":{"3p":1088.0,"3p+x":1366.0,"2p":844.0,"2p+x":1131.0,"jacket":613.0,"trousers":287.0,"waistcoat":245.0,"quilted_vest":350.0,"vest":350.0,"jkt_bermuda":839.0,"bermuda":249.0},"PL PC20":{"3p":1133.0,"3p+x":1418.0,"2p":878.0,"2p+x":1176.0,"jacket":637.0,"trousers":299.0,"waistcoat":256.0,"quilted_vest":363.0,"vest":363.0,"jkt_bermuda":871.0,"bermuda":262.0},"PL PC21":{"3p":1167.0,"3p+x":1464.0,"2p":902.0,"2p+x":1212.0,"jacket":656.0,"trousers":309.0,"waistcoat":263.0,"quilted_vest":377.0,"vest":377.0,"jkt_bermuda":901.0,"bermuda":271.0},"PL PC22":{"3p":1239.0,"3p+x":1556.0,"2p":958.0,"2p+x":1287.0,"jacket":697.0,"trousers":329.0,"waistcoat":281.0,"quilted_vest":405.0,"vest":405.0,"jkt_bermuda":958.0,"bermuda":290.0},"PL PC23":{"3p":1320.0,"3p+x":1656.0,"2p":1021.0,"2p+x":1373.0,"jacket":741.0,"trousers":351.0,"waistcoat":301.0,"quilted_vest":433.0,"vest":433.0,"jkt_bermuda":1020.0,"bermuda":312.0},"PL PC24":{"3p":1364.0,"3p+x":1711.0,"2p":1054.0,"2p+x":1418.0,"jacket":766.0,"trousers":363.0,"waistcoat":311.0,"quilted_vest":450.0,"vest":450.0,"jkt_bermuda":1055.0,"bermuda":323.0},"PL PC25":{"3p":1419.0,"3p+x":1780.0,"2p":1096.0,"2p+x":1474.0,"jacket":795.0,"trousers":379.0,"waistcoat":323.0,"quilted_vest":469.0,"vest":469.0,"jkt_bermuda":1098.0,"bermuda":337.0},"PL PC26":{"3p":1473.0,"3p+x":1848.0,"2p":1138.0,"2p+x":1530.0,"jacket":825.0,"trousers":394.0,"waistcoat":336.0,"quilted_vest":489.0,"vest":489.0,"jkt_bermuda":1141.0,"bermuda":352.0},"PL PC27":{"3p":1537.0,"3p+x":1930.0,"2p":1188.0,"2p+x":1597.0,"jacket":861.0,"trousers":412.0,"waistcoat":351.0,"quilted_vest":512.0,"vest":512.0,"jkt_bermuda":1192.0,"bermuda":369.0},"PL PC28":{"3p":1602.0,"3p+x":2012.0,"2p":1238.0,"2p+x":1665.0,"jacket":896.0,"trousers":431.0,"waistcoat":366.0,"quilted_vest":536.0,"vest":536.0,"jkt_bermuda":1243.0,"bermuda":386.0},"PL PC29":{"3p":1677.0,"3p+x":2107.0,"2p":1296.0,"2p+x":1744.0,"jacket":938.0,"trousers":451.0,"waistcoat":384.0,"quilted_vest":563.0,"vest":563.0,"jkt_bermuda":1302.0,"bermuda":407.0},"PL PC30":{"3p":1753.0,"3p+x":2202.0,"2p":1355.0,"2p+x":1822.0,"jacket":980.0,"trousers":472.0,"waistcoat":401.0,"quilted_vest":591.0,"vest":591.0,"jkt_bermuda":1361.0,"bermuda":427.0}},"shirts":{"PL PC01":50.0,"PL PC02":59.0,"PL PC03":64.0,"PL PC04":73.0,"PL PC05":78.0,"PL PC06":87.0,"PL PC07":97.0,"PL PC08":102.0,"PL PC09":106.0,"PL PC10":115.0,"PL PC11":121.0,"PL PC12":130.0,"PL PC13":135.0,"PL PC14":144.0,"PL PC15":157.0,"PL PC16":173.0,"PL PC17":185.0,"PL PC18":201.0,"PL PC19":215.0,"PL PC20":229.0,"PL PC21":243.0,"PL PC22":259.0,"PL PC23":272.0,"PL SALE 01":60.0,"PL SALE 02":72.0,"PL SALE 03":83.0},"coats":{"PL PC01":{"Overcoat":303.0,"Pea coat":303.0,"Coat":302.0,"Coat + Detachable liner":369.0},"PL PC02":{"Overcoat":334.0,"Pea coat":334.0,"Coat":331.0,"Coat + Detachable liner":398.0},"PL PC03":{"Overcoat":368.0,"Pea coat":368.0,"Coat":366.0,"Coat + Detachable liner":434.0},"PL PC04":{"Overcoat":389.0,"Pea coat":389.0,"Coat":380.0,"Coat + Detachable liner":448.0},"PL PC05":{"Overcoat":403.0,"Pea coat":403.0,"Coat":395.0,"Coat + Detachable liner":462.0},"PL PC06":{"Overcoat":436.0,"Pea coat":436.0,"Coat":402.0,"Coat + Detachable liner":469.0},"PL PC07":{"Overcoat":455.0,"Pea coat":455.0,"Coat":423.0,"Coat + Detachable liner":492.0},"PL PC08":{"Overcoat":505.0,"Pea coat":505.0,"Coat":437.0,"Coat + Detachable liner":504.0},"PL PC09":{"Overcoat":529.0,"Pea coat":529.0,"Coat":462.0,"Coat + Detachable liner":530.0},"PL PC10":{"Overcoat":540.0,"Pea coat":540.0,"Coat":476.0,"Coat + Detachable liner":545.0},"PL PC11":{"Overcoat":549.0,"Pea coat":549.0,"Coat":492.0,"Coat + Detachable liner":560.0},"PL PC12":{"Overcoat":560.0,"Pea coat":560.0,"Coat":509.0,"Coat + Detachable liner":577.0},"PL PC13":{"Overcoat":567.0,"Pea coat":567.0,"Coat":530.0,"Coat + Detachable liner":599.0},"PL PC14":{"Overcoat":571.0,"Pea coat":571.0,"Coat":545.0,"Coat + Detachable liner":613.0},"PL PC15":{"Overcoat":635.0,"Pea coat":635.0,"Coat":555.0,"Coat + Detachable liner":623.0},"PL PC16":{"Overcoat":670.0,"Pea coat":670.0,"Coat":575.0,"Coat + Detachable liner":644.0},"PL PC17":{"Overcoat":687.0,"Pea coat":687.0,"Coat":598.0,"Coat + Detachable liner":666.0},"PL PC18":{"Overcoat":726.0,"Pea coat":726.0,"Coat":623.0,"Coat + Detachable liner":691.0},"PL PC19":{"Overcoat":757.0,"Pea coat":757.0,"Coat":650.0,"Coat + Detachable liner":718.0},"PL PC20":{"Overcoat":789.0,"Pea coat":789.0,"Coat":678.0,"Coat + Detachable liner":747.0},"PL PC21":{"Overcoat":819.0,"Pea coat":819.0,"Coat":705.0,"Coat + Detachable liner":772.0},"PL PC22":{"Overcoat":854.0,"Pea coat":854.0,"Coat":758.0,"Coat + Detachable liner":825.0},"PL PC23":{"Overcoat":922.0,"Pea coat":922.0,"Coat":814.0,"Coat + Detachable liner":881.0},"PL PC24":{"Overcoat":979.0,"Pea coat":979.0,"Coat":864.0,"Coat + Detachable liner":931.0},"PL PC25":{"Overcoat":1031.0,"Pea coat":1031.0,"Coat":910.0,"Coat + Detachable liner":977.0},"PL PC26":{"Overcoat":1083.0,"Pea coat":1083.0,"Coat":956.0,"Coat + Detachable liner":1023.0},"PL PC27":{"Overcoat":1136.0,"Pea coat":1136.0,"Coat":1002.0,"Coat + Detachable liner":1069.0},"PL PC28":{"Overcoat":1188.0,"Pea coat":1188.0,"Coat":1048.0,"Coat + Detachable liner":1115.0},"PL PC29":{"Overcoat":1248.0,"Pea coat":1248.0,"Coat":1101.0,"Coat + Detachable liner":1168.0},"PL PC30":{"Overcoat":1308.0,"Pea coat":1308.0,"Coat":1154.0,"Coat + Detachable liner":1221.0},"PL PC31":{"Overcoat":1369.0,"Pea coat":1369.0,"Coat":1207.0,"Coat + Detachable liner":1275.0},"PL PC32":{"Overcoat":1429.0,"Pea coat":1429.0,"Coat":1260.0,"Coat + Detachable liner":1328.0},"PL PC33":{"Overcoat":1498.0,"Pea coat":1498.0,"Coat":1322.0,"Coat + Detachable liner":1389.0},"PL PC34":{"Overcoat":1568.0,"Pea coat":1568.0,"Coat":1383.0,"Coat + Detachable liner":1450.0}},"jeans":{"PL PC01":{"Jeans/5-Pocket":101.0,"Chinos":88.0},"PL PC02":{"Jeans/5-Pocket":105.0,"Chinos":93.0},"PL PC03":{"Jeans/5-Pocket":112.0,"Chinos":101.0},"PL PC04":{"Jeans/5-Pocket":118.0,"Chinos":105.0},"PL PC05":{"Jeans/5-Pocket":127.0,"Chinos":112.0},"PL PC06":{"Jeans/5-Pocket":130.0,"Chinos":118.0},"PL PC07":{"Jeans/5-Pocket":135.0,"Chinos":127.0},"PL PC08":{"Jeans/5-Pocket":143.0,"Chinos":130.0},"PL PC09":{"Jeans/5-Pocket":146.0,"Chinos":135.0},"PL PC10":{"Jeans/5-Pocket":157.0,"Chinos":143.0},"PL PC11":{"Jeans/5-Pocket":160.0,"Chinos":146.0},"PL PC12":{"Jeans/5-Pocket":168.0,"Chinos":157.0},"PL PC13":{"Jeans/5-Pocket":173.0,"Chinos":160.0},"PL PC14":{"Jeans/5-Pocket":176.0,"Chinos":168.0},"PL PC15":{"Jeans/5-Pocket":185.0,"Chinos":173.0},"PL PC16":{"Jeans/5-Pocket":193.0,"Chinos":181.0},"PL PC17":{"Jeans/5-Pocket":201.0,"Chinos":190.0},"PL PC18":{"Jeans/5-Pocket":211.0,"Chinos":199.0},"PL PC19":{"Jeans/5-Pocket":220.0,"Chinos":210.0},"PL PC20":{"Jeans/5-Pocket":230.0,"Chinos":220.0},"PL PC21":{"Jeans/5-Pocket":240.0,"Chinos":231.0},"PL PC22":{"Jeans/5-Pocket":250.0,"Chinos":242.0},"PL PC23":{"Jeans/5-Pocket":262.0,"Chinos":255.0}},"knit":{"Crew neck":{"Merino Wool (PC06)":111.0,"Cotton (PC07)":117.0,"CottonCash/ExtraFineMerino (PC09)":126.0,"WoolCash/CottonSilk 80/20 (PC10)":139.0,"CottonSilk 70/30 (PC11)":153.0,"S160 UltraFineMerino (PC14)":190.0,"Cashmere (PC16)":215.0,"CashmereSilk (PC18)":239.0},"Crew neck tshirt":{"Merino Wool (PC06)":111.0,"Cotton (PC07)":117.0,"CottonCash/ExtraFineMerino (PC09)":126.0,"WoolCash/CottonSilk 80/20 (PC10)":139.0,"CottonSilk 70/30 (PC11)":153.0,"S160 UltraFineMerino (PC14)":190.0,"Cashmere (PC16)":215.0,"CashmereSilk (PC18)":239.0},"V-neck":{"Merino Wool (PC06)":111.0,"Cotton (PC07)":117.0,"CottonCash/ExtraFineMerino (PC09)":126.0,"WoolCash/CottonSilk 80/20 (PC10)":139.0,"CottonSilk 70/30 (PC11)":153.0,"S160 UltraFineMerino (PC14)":190.0,"Cashmere (PC16)":215.0,"CashmereSilk (PC18)":239.0},"Turtle neck":{"Merino Wool (PC06)":111.0,"Cotton (PC07)":117.0,"CottonCash/ExtraFineMerino (PC09)":126.0,"WoolCash/CottonSilk 80/20 (PC10)":139.0,"CottonSilk 70/30 (PC11)":153.0,"S160 UltraFineMerino (PC14)":190.0,"Cashmere (PC16)":215.0,"CashmereSilk (PC18)":239.0},"Mock neck":{"Merino Wool (PC06)":111.0,"Cotton (PC07)":117.0,"CottonCash/ExtraFineMerino (PC09)":126.0,"WoolCash/CottonSilk 80/20 (PC10)":139.0,"CottonSilk 70/30 (PC11)":153.0,"S160 UltraFineMerino (PC14)":190.0,"Cashmere (PC16)":215.0,"CashmereSilk (PC18)":239.0},"Hoodie drawstring":{"Merino Wool (PC06)":119.0,"Cotton (PC07)":125.0,"CottonCash/ExtraFineMerino (PC09)":134.0,"WoolCash/CottonSilk 80/20 (PC10)":147.0,"CottonSilk 70/30 (PC11)":161.0,"S160 UltraFineMerino (PC14)":198.0,"Cashmere (PC16)":223.0,"CashmereSilk (PC18)":247.0},"Polo without buttons":{"Merino Wool (PC06)":119.0,"Cotton (PC07)":125.0,"CottonCash/ExtraFineMerino (PC09)":134.0,"WoolCash/CottonSilk 80/20 (PC10)":147.0,"CottonSilk 70/30 (PC11)":161.0,"S160 UltraFineMerino (PC14)":198.0,"Cashmere (PC16)":223.0,"CashmereSilk (PC18)":247.0},"Polo with buttons":{"Merino Wool (PC06)":119.0,"Cotton (PC07)":125.0,"CottonCash/ExtraFineMerino (PC09)":134.0,"WoolCash/CottonSilk 80/20 (PC10)":147.0,"CottonSilk 70/30 (PC11)":161.0,"S160 UltraFineMerino (PC14)":198.0,"Cashmere (PC16)":223.0,"CashmereSilk (PC18)":247.0},"Polo with zip":{"Merino Wool (PC06)":119.0,"Cotton (PC07)":125.0,"CottonCash/ExtraFineMerino (PC09)":134.0,"WoolCash/CottonSilk 80/20 (PC10)":147.0,"CottonSilk 70/30 (PC11)":161.0,"S160 UltraFineMerino (PC14)":198.0,"Cashmere (PC16)":223.0,"CashmereSilk (PC18)":247.0},"Half zip":{"Merino Wool (PC06)":119.0,"Cotton (PC07)":125.0,"CottonCash/ExtraFineMerino (PC09)":134.0,"WoolCash/CottonSilk 80/20 (PC10)":147.0,"CottonSilk 70/30 (PC11)":161.0,"S160 UltraFineMerino (PC14)":198.0,"Cashmere (PC16)":223.0,"CashmereSilk (PC18)":247.0},"Half button":{"Merino Wool (PC06)":119.0,"Cotton (PC07)":125.0,"CottonCash/ExtraFineMerino (PC09)":134.0,"WoolCash/CottonSilk 80/20 (PC10)":147.0,"CottonSilk 70/30 (PC11)":161.0,"S160 UltraFineMerino (PC14)":198.0,"Cashmere (PC16)":223.0,"CashmereSilk (PC18)":247.0},"Full zip":{"Merino Wool (PC06)":135.0,"Cotton (PC07)":141.0,"CottonCash/ExtraFineMerino (PC09)":150.0,"WoolCash/CottonSilk 80/20 (PC10)":163.0,"CottonSilk 70/30 (PC11)":177.0,"S160 UltraFineMerino (PC14)":214.0,"Cashmere (PC16)":239.0,"CashmereSilk (PC18)":263.0},"Full zip with baseball collar":{"Merino Wool (PC06)":135.0,"Cotton (PC07)":141.0,"CottonCash/ExtraFineMerino (PC09)":150.0,"WoolCash/CottonSilk 80/20 (PC10)":163.0,"CottonSilk 70/30 (PC11)":177.0,"S160 UltraFineMerino (PC14)":214.0,"Cashmere (PC16)":239.0,"CashmereSilk (PC18)":263.0},"Full button":{"Merino Wool (PC06)":135.0,"Cotton (PC07)":141.0,"CottonCash/ExtraFineMerino (PC09)":150.0,"WoolCash/CottonSilk 80/20 (PC10)":163.0,"CottonSilk 70/30 (PC11)":177.0,"S160 UltraFineMerino (PC14)":214.0,"Cashmere (PC16)":239.0,"CashmereSilk (PC18)":263.0},"Cardigan":{"Merino Wool (PC06)":135.0,"Cotton (PC07)":141.0,"CottonCash/ExtraFineMerino (PC09)":150.0,"WoolCash/CottonSilk 80/20 (PC10)":163.0,"CottonSilk 70/30 (PC11)":177.0,"S160 UltraFineMerino (PC14)":214.0,"Cashmere (PC16)":239.0,"CashmereSilk (PC18)":263.0},"Cardigan with polo collar":{"Merino Wool (PC06)":135.0,"Cotton (PC07)":141.0,"CottonCash/ExtraFineMerino (PC09)":150.0,"WoolCash/CottonSilk 80/20 (PC10)":163.0,"CottonSilk 70/30 (PC11)":177.0,"S160 UltraFineMerino (PC14)":214.0,"Cashmere (PC16)":239.0,"CashmereSilk (PC18)":263.0},"Hoodie with full zip":{"Merino Wool (PC06)":146.0,"Cotton (PC07)":152.0,"CottonCash/ExtraFineMerino (PC09)":161.0,"WoolCash/CottonSilk 80/20 (PC10)":174.0,"CottonSilk 70/30 (PC11)":188.0,"S160 UltraFineMerino (PC14)":225.0,"Cashmere (PC16)":250.0,"CashmereSilk (PC18)":274.0},"Full button bomber*":{"Merino Wool (PC06)":null,"Cotton (PC07)":null,"CottonCash/ExtraFineMerino (PC09)":null,"WoolCash/CottonSilk 80/20 (PC10)":174.0,"CottonSilk 70/30 (PC11)":null,"S160 UltraFineMerino (PC14)":null,"Cashmere (PC16)":250.0,"CashmereSilk (PC18)":null},"Full button shawl collar*":{"Merino Wool (PC06)":null,"Cotton (PC07)":null,"CottonCash/ExtraFineMerino (PC09)":null,"WoolCash/CottonSilk 80/20 (PC10)":174.0,"CottonSilk 70/30 (PC11)":null,"S160 UltraFineMerino (PC14)":null,"Cashmere (PC16)":250.0,"CashmereSilk (PC18)":null},"Leisure pants*":{"Merino Wool (PC06)":null,"Cotton (PC07)":null,"CottonCash/ExtraFineMerino (PC09)":null,"WoolCash/CottonSilk 80/20 (PC10)":200.0,"CottonSilk 70/30 (PC11)":null,"S160 UltraFineMerino (PC14)":null,"Cashmere (PC16)":289.0,"CashmereSilk (PC18)":null}}},"EUR":{"HC":{"PL PC01":{"3p":236.0,"3p+x":302.0,"2p":188.0,"2p+x":252.0,"jacket":128.0,"trousers":67.0,"waistcoat":54.0,"quilted_vest":87.0,"vest":87.0,"jkt_bermuda":185.0,"bermuda":59.0},"PL PC02":{"3p":260.0,"3p+x":332.0,"2p":205.0,"2p+x":277.0,"jacket":142.0,"trousers":74.0,"waistcoat":59.0,"quilted_vest":97.0,"vest":97.0,"jkt_bermuda":202.0,"bermuda":64.0},"PL PC03":{"3p":292.0,"3p+x":373.0,"2p":231.0,"2p+x":313.0,"jacket":160.0,"trousers":82.0,"waistcoat":65.0,"quilted_vest":110.0,"vest":110.0,"jkt_bermuda":229.0,"bermuda":72.0},"PL PC04":{"3p":304.0,"3p+x":387.0,"2p":242.0,"2p+x":324.0,"jacket":166.0,"trousers":86.0,"waistcoat":68.0,"quilted_vest":113.0,"vest":113.0,"jkt_bermuda":238.0,"bermuda":75.0},"PL PC05":{"3p":316.0,"3p+x":404.0,"2p":253.0,"2p+x":336.0,"jacket":171.0,"trousers":90.0,"waistcoat":72.0,"quilted_vest":117.0,"vest":117.0,"jkt_bermuda":246.0,"bermuda":77.0},"PL PC06":{"3p":328.0,"3p+x":417.0,"2p":259.0,"2p+x":348.0,"jacket":180.0,"trousers":92.0,"waistcoat":73.0,"quilted_vest":123.0,"vest":123.0,"jkt_bermuda":256.0,"bermuda":78.0},"PL PC07":{"3p":356.0,"3p+x":454.0,"2p":280.0,"2p+x":380.0,"jacket":195.0,"trousers":101.0,"waistcoat":79.0,"quilted_vest":133.0,"vest":133.0,"jkt_bermuda":278.0,"bermuda":87.0},"PL PC08":{"3p":386.0,"3p+x":492.0,"2p":308.0,"2p+x":412.0,"jacket":215.0,"trousers":106.0,"waistcoat":83.0,"quilted_vest":141.0,"vest":141.0,"jkt_bermuda":305.0,"bermuda":93.0},"PL PC09":{"3p":398.0,"3p+x":503.0,"2p":314.0,"2p+x":420.0,"jacket":217.0,"trousers":108.0,"waistcoat":85.0,"quilted_vest":144.0,"vest":144.0,"jkt_bermuda":313.0,"bermuda":95.0},"PL PC10":{"3p":415.0,"3p+x":520.0,"2p":322.0,"2p+x":433.0,"jacket":219.0,"trousers":112.0,"waistcoat":89.0,"quilted_vest":161.0,"vest":161.0,"jkt_bermuda":318.0,"bermuda":101.0},"PL PC11":{"3p":431.0,"3p+x":548.0,"2p":334.0,"2p+x":449.0,"jacket":228.0,"trousers":117.0,"waistcoat":103.0,"quilted_vest":164.0,"vest":164.0,"jkt_bermuda":332.0,"bermuda":106.0},"PL PC12":{"3p":446.0,"3p+x":572.0,"2p":355.0,"2p+x":465.0,"jacket":232.0,"trousers":123.0,"waistcoat":104.0,"quilted_vest":166.0,"vest":166.0,"jkt_bermuda":340.0,"bermuda":110.0},"PL PC13":{"3p":455.0,"3p+x":584.0,"2p":363.0,"2p+x":482.0,"jacket":245.0,"trousers":129.0,"waistcoat":105.0,"quilted_vest":168.0,"vest":168.0,"jkt_bermuda":355.0,"bermuda":114.0},"PL PC14":{"3p":478.0,"3p+x":608.0,"2p":372.0,"2p+x":502.0,"jacket":252.0,"trousers":131.0,"waistcoat":111.0,"quilted_vest":172.0,"vest":172.0,"jkt_bermuda":369.0,"bermuda":118.0},"PL PC15":{"3p":491.0,"3p+x":622.0,"2p":394.0,"2p+x":512.0,"jacket":258.0,"trousers":136.0,"waistcoat":114.0,"quilted_vest":177.0,"vest":177.0,"jkt_bermuda":377.0,"bermuda":121.0},"PL PC16":{"3p":500.0,"3p+x":634.0,"2p":398.0,"2p+x":522.0,"jacket":272.0,"trousers":138.0,"waistcoat":117.0,"quilted_vest":186.0,"vest":186.0,"jkt_bermuda":383.0,"bermuda":123.0},"PL PC17":{"3p":516.0,"3p+x":654.0,"2p":402.0,"2p+x":541.0,"jacket":281.0,"trousers":142.0,"waistcoat":118.0,"quilted_vest":192.0,"vest":192.0,"jkt_bermuda":396.0,"bermuda":127.0},"PL PC18":{"3p":541.0,"3p+x":684.0,"2p":420.0,"2p+x":565.0,"jacket":304.0,"trousers":148.0,"waistcoat":123.0,"quilted_vest":207.0,"vest":207.0,"jkt_bermuda":415.0,"bermuda":135.0},"PL PC19":{"3p":563.0,"3p+x":713.0,"2p":436.0,"2p+x":589.0,"jacket":307.0,"trousers":154.0,"waistcoat":128.0,"quilted_vest":210.0,"vest":210.0,"jkt_bermuda":431.0,"bermuda":140.0},"PL PC20":{"3p":589.0,"3p+x":743.0,"2p":458.0,"2p+x":615.0,"jacket":320.0,"trousers":161.0,"waistcoat":136.0,"quilted_vest":220.0,"vest":220.0,"jkt_bermuda":452.0,"bermuda":146.0},"PL PC21":{"3p":609.0,"3p+x":771.0,"2p":472.0,"2p+x":638.0,"jacket":332.0,"trousers":167.0,"waistcoat":140.0,"quilted_vest":227.0,"vest":227.0,"jkt_bermuda":467.0,"bermuda":151.0},"PL PC22":{"3p":652.0,"3p+x":826.0,"2p":506.0,"2p+x":683.0,"jacket":356.0,"trousers":180.0,"waistcoat":150.0,"quilted_vest":243.0,"vest":243.0,"jkt_bermuda":501.0,"bermuda":161.0},"PL PC23":{"3p":700.0,"3p+x":886.0,"2p":544.0,"2p+x":733.0,"jacket":381.0,"trousers":193.0,"waistcoat":161.0,"quilted_vest":261.0,"vest":261.0,"jkt_bermuda":538.0,"bermuda":174.0},"PL PC24":{"3p":726.0,"3p+x":919.0,"2p":564.0,"2p+x":760.0,"jacket":396.0,"trousers":200.0,"waistcoat":168.0,"quilted_vest":270.0,"vest":270.0,"jkt_bermuda":557.0,"bermuda":180.0},"PL PC25":{"3p":757.0,"3p+x":960.0,"2p":589.0,"2p+x":794.0,"jacket":413.0,"trousers":210.0,"waistcoat":175.0,"quilted_vest":282.0,"vest":282.0,"jkt_bermuda":582.0,"bermuda":188.0},"PL PC26":{"3p":789.0,"3p+x":1001.0,"2p":613.0,"2p+x":828.0,"jacket":430.0,"trousers":219.0,"waistcoat":182.0,"quilted_vest":294.0,"vest":294.0,"jkt_bermuda":606.0,"bermuda":196.0},"PL PC27":{"3p":828.0,"3p+x":1050.0,"2p":643.0,"2p+x":869.0,"jacket":452.0,"trousers":229.0,"waistcoat":191.0,"quilted_vest":309.0,"vest":309.0,"jkt_bermuda":636.0,"bermuda":205.0},"PL PC28":{"3p":867.0,"3p+x":1099.0,"2p":673.0,"2p+x":910.0,"jacket":473.0,"trousers":239.0,"waistcoat":200.0,"quilted_vest":323.0,"vest":323.0,"jkt_bermuda":665.0,"bermuda":215.0},"PL PC29":{"3p":912.0,"3p+x":1156.0,"2p":707.0,"2p+x":957.0,"jacket":498.0,"trousers":251.0,"waistcoat":211.0,"quilted_vest":339.0,"vest":339.0,"jkt_bermuda":700.0,"bermuda":226.0},"PL PC30":{"3p":957.0,"3p+x":1213.0,"2p":742.0,"2p+x":1004.0,"jacket":522.0,"trousers":264.0,"waistcoat":221.0,"quilted_vest":356.0,"vest":356.0,"jkt_bermuda":735.0,"bermuda":237.0}},"FC":{"PL PC01":{"3p":288.0,"3p+x":354.0,"2p":230.0,"2p+x":294.0,"jacket":170.0,"trousers":67.0,"waistcoat":64.0,"quilted_vest":87.0,"vest":87.0,"jkt_bermuda":227.0,"bermuda":59.0},"PL PC02":{"3p":312.0,"3p+x":384.0,"2p":247.0,"2p+x":319.0,"jacket":184.0,"trousers":74.0,"waistcoat":69.0,"quilted_vest":97.0,"vest":97.0,"jkt_bermuda":244.0,"bermuda":64.0},"PL PC03":{"3p":344.0,"3p+x":425.0,"2p":273.0,"2p+x":355.0,"jacket":202.0,"trousers":82.0,"waistcoat":75.0,"quilted_vest":110.0,"vest":110.0,"jkt_bermuda":271.0,"bermuda":72.0},"PL PC04":{"3p":356.0,"3p+x":439.0,"2p":284.0,"2p+x":366.0,"jacket":208.0,"trousers":86.0,"waistcoat":78.0,"quilted_vest":113.0,"vest":113.0,"jkt_bermuda":280.0,"bermuda":75.0},"PL PC05":{"3p":368.0,"3p+x":456.0,"2p":295.0,"2p+x":378.0,"jacket":213.0,"trousers":90.0,"waistcoat":82.0,"quilted_vest":117.0,"vest":117.0,"jkt_bermuda":288.0,"bermuda":77.0},"PL PC06":{"3p":380.0,"3p+x":469.0,"2p":301.0,"2p+x":390.0,"jacket":222.0,"trousers":92.0,"waistcoat":83.0,"quilted_vest":123.0,"vest":123.0,"jkt_bermuda":298.0,"bermuda":78.0},"PL PC07":{"3p":408.0,"3p+x":506.0,"2p":322.0,"2p+x":422.0,"jacket":237.0,"trousers":101.0,"waistcoat":89.0,"quilted_vest":133.0,"vest":133.0,"jkt_bermuda":320.0,"bermuda":87.0},"PL PC08":{"3p":438.0,"3p+x":544.0,"2p":350.0,"2p+x":454.0,"jacket":257.0,"trousers":106.0,"waistcoat":93.0,"quilted_vest":141.0,"vest":141.0,"jkt_bermuda":347.0,"bermuda":93.0},"PL PC09":{"3p":450.0,"3p+x":555.0,"2p":356.0,"2p+x":462.0,"jacket":259.0,"trousers":108.0,"waistcoat":95.0,"quilted_vest":144.0,"vest":144.0,"jkt_bermuda":355.0,"bermuda":95.0},"PL PC10":{"3p":467.0,"3p+x":572.0,"2p":364.0,"2p+x":475.0,"jacket":261.0,"trousers":112.0,"waistcoat":99.0,"quilted_vest":161.0,"vest":161.0,"jkt_bermuda":360.0,"bermuda":101.0},"PL PC11":{"3p":483.0,"3p+x":600.0,"2p":376.0,"2p+x":491.0,"jacket":270.0,"trousers":117.0,"waistcoat":113.0,"quilted_vest":164.0,"vest":164.0,"jkt_bermuda":374.0,"bermuda":106.0},"PL PC12":{"3p":498.0,"3p+x":624.0,"2p":397.0,"2p+x":507.0,"jacket":274.0,"trousers":123.0,"waistcoat":114.0,"quilted_vest":166.0,"vest":166.0,"jkt_bermuda":382.0,"bermuda":110.0},"PL PC13":{"3p":507.0,"3p+x":636.0,"2p":405.0,"2p+x":524.0,"jacket":287.0,"trousers":129.0,"waistcoat":115.0,"quilted_vest":168.0,"vest":168.0,"jkt_bermuda":397.0,"bermuda":114.0},"PL PC14":{"3p":530.0,"3p+x":660.0,"2p":414.0,"2p+x":544.0,"jacket":294.0,"trousers":131.0,"waistcoat":121.0,"quilted_vest":172.0,"vest":172.0,"jkt_bermuda":411.0,"bermuda":118.0},"PL PC15":{"3p":543.0,"3p+x":674.0,"2p":436.0,"2p+x":554.0,"jacket":300.0,"trousers":136.0,"waistcoat":124.0,"quilted_vest":177.0,"vest":177.0,"jkt_bermuda":419.0,"bermuda":121.0},"PL PC16":{"3p":552.0,"3p+x":686.0,"2p":440.0,"2p+x":564.0,"jacket":314.0,"trousers":138.0,"waistcoat":127.0,"quilted_vest":186.0,"vest":186.0,"jkt_bermuda":425.0,"bermuda":123.0},"PL PC17":{"3p":568.0,"3p+x":706.0,"2p":444.0,"2p+x":583.0,"jacket":323.0,"trousers":142.0,"waistcoat":128.0,"quilted_vest":192.0,"vest":192.0,"jkt_bermuda":438.0,"bermuda":127.0},"PL PC18":{"3p":593.0,"3p+x":736.0,"2p":462.0,"2p+x":607.0,"jacket":346.0,"trousers":148.0,"waistcoat":133.0,"quilted_vest":207.0,"vest":207.0,"jkt_bermuda":457.0,"bermuda":135.0},"PL PC19":{"3p":615.0,"3p+x":765.0,"2p":478.0,"2p+x":631.0,"jacket":349.0,"trousers":154.0,"waistcoat":138.0,"quilted_vest":210.0,"vest":210.0,"jkt_bermuda":473.0,"bermuda":140.0},"PL PC20":{"3p":641.0,"3p+x":795.0,"2p":500.0,"2p+x":657.0,"jacket":362.0,"trousers":161.0,"waistcoat":146.0,"quilted_vest":220.0,"vest":220.0,"jkt_bermuda":494.0,"bermuda":146.0},"PL PC21":{"3p":661.0,"3p+x":823.0,"2p":514.0,"2p+x":680.0,"jacket":374.0,"trousers":167.0,"waistcoat":150.0,"quilted_vest":227.0,"vest":227.0,"jkt_bermuda":509.0,"bermuda":151.0},"PL PC22":{"3p":704.0,"3p+x":878.0,"2p":548.0,"2p+x":725.0,"jacket":398.0,"trousers":180.0,"waistcoat":160.0,"quilted_vest":243.0,"vest":243.0,"jkt_bermuda":543.0,"bermuda":161.0},"PL PC23":{"3p":752.0,"3p+x":938.0,"2p":586.0,"2p+x":775.0,"jacket":423.0,"trousers":193.0,"waistcoat":171.0,"quilted_vest":261.0,"vest":261.0,"jkt_bermuda":580.0,"bermuda":174.0},"PL PC24":{"3p":778.0,"3p+x":971.0,"2p":606.0,"2p+x":802.0,"jacket":438.0,"trousers":200.0,"waistcoat":178.0,"quilted_vest":270.0,"vest":270.0,"jkt_bermuda":599.0,"bermuda":180.0},"PL PC25":{"3p":809.0,"3p+x":1012.0,"2p":631.0,"2p+x":836.0,"jacket":455.0,"trousers":210.0,"waistcoat":185.0,"quilted_vest":282.0,"vest":282.0,"jkt_bermuda":624.0,"bermuda":188.0},"PL PC26":{"3p":841.0,"3p+x":1053.0,"2p":655.0,"2p+x":870.0,"jacket":472.0,"trousers":219.0,"waistcoat":192.0,"quilted_vest":294.0,"vest":294.0,"jkt_bermuda":648.0,"bermuda":196.0},"PL PC27":{"3p":880.0,"3p+x":1102.0,"2p":685.0,"2p+x":911.0,"jacket":494.0,"trousers":229.0,"waistcoat":201.0,"quilted_vest":309.0,"vest":309.0,"jkt_bermuda":678.0,"bermuda":205.0},"PL PC28":{"3p":919.0,"3p+x":1151.0,"2p":715.0,"2p+x":952.0,"jacket":515.0,"trousers":239.0,"waistcoat":210.0,"quilted_vest":323.0,"vest":323.0,"jkt_bermuda":707.0,"bermuda":215.0},"PL PC29":{"3p":964.0,"3p+x":1208.0,"2p":749.0,"2p+x":999.0,"jacket":540.0,"trousers":251.0,"waistcoat":221.0,"quilted_vest":339.0,"vest":339.0,"jkt_bermuda":742.0,"bermuda":226.0},"PL PC30":{"3p":1009.0,"3p+x":1265.0,"2p":784.0,"2p+x":1046.0,"jacket":564.0,"trousers":264.0,"waistcoat":231.0,"quilted_vest":356.0,"vest":356.0,"jkt_bermuda":777.0,"bermuda":237.0}},"HM":{"PL PC01":{"3p":337.0,"3p+x":422.0,"2p":271.0,"2p+x":354.0,"jacket":192.0,"trousers":86.0,"waistcoat":72.0,"quilted_vest":87.0,"vest":87.0,"jkt_bermuda":268.0,"bermuda":78.0},"PL PC02":{"3p":361.0,"3p+x":452.0,"2p":288.0,"2p+x":379.0,"jacket":206.0,"trousers":93.0,"waistcoat":77.0,"quilted_vest":97.0,"vest":97.0,"jkt_bermuda":285.0,"bermuda":83.0},"PL PC03":{"3p":393.0,"3p+x":493.0,"2p":314.0,"2p+x":415.0,"jacket":224.0,"trousers":101.0,"waistcoat":83.0,"quilted_vest":110.0,"vest":110.0,"jkt_bermuda":312.0,"bermuda":91.0},"PL PC04":{"3p":405.0,"3p+x":507.0,"2p":325.0,"2p+x":426.0,"jacket":230.0,"trousers":105.0,"waistcoat":86.0,"quilted_vest":113.0,"vest":113.0,"jkt_bermuda":321.0,"bermuda":94.0},"PL PC05":{"3p":417.0,"3p+x":524.0,"2p":336.0,"2p+x":438.0,"jacket":235.0,"trousers":109.0,"waistcoat":90.0,"quilted_vest":117.0,"vest":117.0,"jkt_bermuda":329.0,"bermuda":96.0},"PL PC06":{"3p":429.0,"3p+x":537.0,"2p":342.0,"2p+x":450.0,"jacket":244.0,"trousers":111.0,"waistcoat":91.0,"quilted_vest":123.0,"vest":123.0,"jkt_bermuda":339.0,"bermuda":97.0},"PL PC07":{"3p":457.0,"3p+x":574.0,"2p":363.0,"2p+x":482.0,"jacket":259.0,"trousers":120.0,"waistcoat":97.0,"quilted_vest":133.0,"vest":133.0,"jkt_bermuda":361.0,"bermuda":106.0},"PL PC08":{"3p":487.0,"3p+x":612.0,"2p":391.0,"2p+x":514.0,"jacket":279.0,"trousers":125.0,"waistcoat":101.0,"quilted_vest":141.0,"vest":141.0,"jkt_bermuda":388.0,"bermuda":112.0},"PL PC09":{"3p":499.0,"3p+x":623.0,"2p":397.0,"2p+x":522.0,"jacket":281.0,"trousers":127.0,"waistcoat":103.0,"quilted_vest":144.0,"vest":144.0,"jkt_bermuda":396.0,"bermuda":114.0},"PL PC10":{"3p":516.0,"3p+x":640.0,"2p":405.0,"2p+x":535.0,"jacket":283.0,"trousers":131.0,"waistcoat":107.0,"quilted_vest":161.0,"vest":161.0,"jkt_bermuda":401.0,"bermuda":120.0},"PL PC11":{"3p":532.0,"3p+x":668.0,"2p":417.0,"2p+x":551.0,"jacket":292.0,"trousers":136.0,"waistcoat":121.0,"quilted_vest":164.0,"vest":164.0,"jkt_bermuda":415.0,"bermuda":125.0},"PL PC12":{"3p":547.0,"3p+x":692.0,"2p":438.0,"2p+x":567.0,"jacket":296.0,"trousers":142.0,"waistcoat":122.0,"quilted_vest":166.0,"vest":166.0,"jkt_bermuda":423.0,"bermuda":129.0},"PL PC13":{"3p":556.0,"3p+x":704.0,"2p":446.0,"2p+x":584.0,"jacket":309.0,"trousers":148.0,"waistcoat":123.0,"quilted_vest":168.0,"vest":168.0,"jkt_bermuda":438.0,"bermuda":133.0},"PL PC14":{"3p":579.0,"3p+x":728.0,"2p":455.0,"2p+x":604.0,"jacket":316.0,"trousers":150.0,"waistcoat":129.0,"quilted_vest":172.0,"vest":172.0,"jkt_bermuda":452.0,"bermuda":137.0},"PL PC15":{"3p":592.0,"3p+x":742.0,"2p":477.0,"2p+x":614.0,"jacket":322.0,"trousers":155.0,"waistcoat":132.0,"quilted_vest":177.0,"vest":177.0,"jkt_bermuda":460.0,"bermuda":140.0},"PL PC16":{"3p":601.0,"3p+x":754.0,"2p":481.0,"2p+x":624.0,"jacket":336.0,"trousers":157.0,"waistcoat":135.0,"quilted_vest":186.0,"vest":186.0,"jkt_bermuda":466.0,"bermuda":142.0},"PL PC17":{"3p":617.0,"3p+x":774.0,"2p":485.0,"2p+x":643.0,"jacket":345.0,"trousers":161.0,"waistcoat":136.0,"quilted_vest":192.0,"vest":192.0,"jkt_bermuda":479.0,"bermuda":146.0},"PL PC18":{"3p":642.0,"3p+x":804.0,"2p":503.0,"2p+x":667.0,"jacket":368.0,"trousers":167.0,"waistcoat":141.0,"quilted_vest":207.0,"vest":207.0,"jkt_bermuda":498.0,"bermuda":154.0},"PL PC19":{"3p":664.0,"3p+x":833.0,"2p":519.0,"2p+x":691.0,"jacket":371.0,"trousers":173.0,"waistcoat":146.0,"quilted_vest":210.0,"vest":210.0,"jkt_bermuda":514.0,"bermuda":159.0},"PL PC20":{"3p":690.0,"3p+x":863.0,"2p":541.0,"2p+x":717.0,"jacket":384.0,"trousers":180.0,"waistcoat":154.0,"quilted_vest":220.0,"vest":220.0,"jkt_bermuda":535.0,"bermuda":165.0},"PL PC21":{"3p":710.0,"3p+x":891.0,"2p":555.0,"2p+x":740.0,"jacket":396.0,"trousers":186.0,"waistcoat":158.0,"quilted_vest":227.0,"vest":227.0,"jkt_bermuda":550.0,"bermuda":170.0},"PL PC22":{"3p":753.0,"3p+x":946.0,"2p":589.0,"2p+x":785.0,"jacket":420.0,"trousers":199.0,"waistcoat":168.0,"quilted_vest":243.0,"vest":243.0,"jkt_bermuda":584.0,"bermuda":180.0},"PL PC23":{"3p":801.0,"3p+x":1006.0,"2p":627.0,"2p+x":835.0,"jacket":445.0,"trousers":212.0,"waistcoat":179.0,"quilted_vest":261.0,"vest":261.0,"jkt_bermuda":621.0,"bermuda":193.0},"PL PC24":{"3p":827.0,"3p+x":1039.0,"2p":647.0,"2p+x":862.0,"jacket":460.0,"trousers":219.0,"waistcoat":186.0,"quilted_vest":270.0,"vest":270.0,"jkt_bermuda":640.0,"bermuda":199.0},"PL PC25":{"3p":858.0,"3p+x":1080.0,"2p":672.0,"2p+x":896.0,"jacket":477.0,"trousers":229.0,"waistcoat":193.0,"quilted_vest":282.0,"vest":282.0,"jkt_bermuda":665.0,"bermuda":207.0},"PL PC26":{"3p":890.0,"3p+x":1121.0,"2p":696.0,"2p+x":930.0,"jacket":494.0,"trousers":238.0,"waistcoat":200.0,"quilted_vest":294.0,"vest":294.0,"jkt_bermuda":689.0,"bermuda":215.0},"PL PC27":{"3p":929.0,"3p+x":1170.0,"2p":726.0,"2p+x":971.0,"jacket":516.0,"trousers":248.0,"waistcoat":209.0,"quilted_vest":309.0,"vest":309.0,"jkt_bermuda":719.0,"bermuda":224.0},"PL PC28":{"3p":968.0,"3p+x":1219.0,"2p":756.0,"2p+x":1012.0,"jacket":537.0,"trousers":258.0,"waistcoat":218.0,"quilted_vest":323.0,"vest":323.0,"jkt_bermuda":748.0,"bermuda":234.0},"PL PC29":{"3p":1013.0,"3p+x":1276.0,"2p":790.0,"2p+x":1059.0,"jacket":562.0,"trousers":270.0,"waistcoat":229.0,"quilted_vest":339.0,"vest":339.0,"jkt_bermuda":783.0,"bermuda":245.0},"PL PC30":{"3p":1058.0,"3p+x":1333.0,"2p":825.0,"2p+x":1106.0,"jacket":586.0,"trousers":283.0,"waistcoat":239.0,"quilted_vest":356.0,"vest":356.0,"jkt_bermuda":818.0,"bermuda":256.0}},"shirts":{"PL PC01":33.0,"PL PC02":38.0,"PL PC03":42.0,"PL PC04":47.0,"PL PC05":50.0,"PL PC06":55.0,"PL PC07":60.0,"PL PC08":65.0,"PL PC09":68.0,"PL PC10":74.0,"PL PC11":78.0,"PL PC12":82.0,"PL PC13":85.0,"PL PC14":92.0,"PL PC15":101.0,"PL PC16":109.0,"PL PC17":118.0,"PL PC18":127.0,"PL PC19":137.0,"PL PC20":145.0,"PL PC21":155.0,"PL PC22":163.0,"PL PC23":172.0,"PL SALE 01":39.0,"PL SALE 02":46.0,"PL SALE 03":53.0},"coats":{"PL PC01":{"Overcoat":183.0,"Pea coat":183.0,"Coat":204.0,"Coat + Detachable liner":247.0},"PL PC02":{"Overcoat":199.0,"Pea coat":199.0,"Coat":226.0,"Coat + Detachable liner":269.0},"PL PC03":{"Overcoat":226.0,"Pea coat":226.0,"Coat":248.0,"Coat + Detachable liner":292.0},"PL PC04":{"Overcoat":234.0,"Pea coat":234.0,"Coat":259.0,"Coat + Detachable liner":302.0},"PL PC05":{"Overcoat":242.0,"Pea coat":242.0,"Coat":269.0,"Coat + Detachable liner":312.0},"PL PC06":{"Overcoat":253.0,"Pea coat":253.0,"Coat":273.0,"Coat + Detachable liner":316.0},"PL PC07":{"Overcoat":274.0,"Pea coat":274.0,"Coat":288.0,"Coat + Detachable liner":331.0},"PL PC08":{"Overcoat":305.0,"Pea coat":305.0,"Coat":297.0,"Coat + Detachable liner":340.0},"PL PC09":{"Overcoat":319.0,"Pea coat":319.0,"Coat":315.0,"Coat + Detachable liner":358.0},"PL PC10":{"Overcoat":325.0,"Pea coat":325.0,"Coat":324.0,"Coat + Detachable liner":368.0},"PL PC11":{"Overcoat":332.0,"Pea coat":332.0,"Coat":334.0,"Coat + Detachable liner":377.0},"PL PC12":{"Overcoat":345.0,"Pea coat":345.0,"Coat":346.0,"Coat + Detachable liner":389.0},"PL PC13":{"Overcoat":359.0,"Pea coat":359.0,"Coat":361.0,"Coat + Detachable liner":405.0},"PL PC14":{"Overcoat":374.0,"Pea coat":374.0,"Coat":370.0,"Coat + Detachable liner":413.0},"PL PC15":{"Overcoat":382.0,"Pea coat":382.0,"Coat":378.0,"Coat + Detachable liner":421.0},"PL PC16":{"Overcoat":405.0,"Pea coat":405.0,"Coat":391.0,"Coat + Detachable liner":434.0},"PL PC17":{"Overcoat":418.0,"Pea coat":418.0,"Coat":407.0,"Coat + Detachable liner":450.0},"PL PC18":{"Overcoat":436.0,"Pea coat":436.0,"Coat":424.0,"Coat + Detachable liner":467.0},"PL PC19":{"Overcoat":456.0,"Pea coat":456.0,"Coat":444.0,"Coat + Detachable liner":487.0},"PL PC20":{"Overcoat":475.0,"Pea coat":475.0,"Coat":462.0,"Coat + Detachable liner":505.0},"PL PC21":{"Overcoat":494.0,"Pea coat":494.0,"Coat":478.0,"Coat + Detachable liner":522.0},"PL PC22":{"Overcoat":518.0,"Pea coat":518.0,"Coat":515.0,"Coat + Detachable liner":559.0},"PL PC23":{"Overcoat":555.0,"Pea coat":555.0,"Coat":553.0,"Coat + Detachable liner":600.0},"PL PC24":{"Overcoat":590.0,"Pea coat":590.0,"Coat":587.0,"Coat + Detachable liner":630.0},"PL PC25":{"Overcoat":621.0,"Pea coat":621.0,"Coat":617.0,"Coat + Detachable liner":660.0},"PL PC26":{"Overcoat":653.0,"Pea coat":653.0,"Coat":648.0,"Coat + Detachable liner":691.0},"PL PC27":{"Overcoat":685.0,"Pea coat":685.0,"Coat":679.0,"Coat + Detachable liner":722.0},"PL PC28":{"Overcoat":716.0,"Pea coat":716.0,"Coat":709.0,"Coat + Detachable liner":752.0},"PL PC29":{"Overcoat":753.0,"Pea coat":753.0,"Coat":745.0,"Coat + Detachable liner":788.0},"PL PC30":{"Overcoat":790.0,"Pea coat":790.0,"Coat":781.0,"Coat + Detachable liner":824.0},"PL PC31":{"Overcoat":827.0,"Pea coat":827.0,"Coat":817.0,"Coat + Detachable liner":860.0},"PL PC32":{"Overcoat":864.0,"Pea coat":864.0,"Coat":852.0,"Coat + Detachable liner":895.0},"PL PC33":{"Overcoat":906.0,"Pea coat":906.0,"Coat":893.0,"Coat + Detachable liner":936.0},"PL PC34":{"Overcoat":947.0,"Pea coat":947.0,"Coat":934.0,"Coat + Detachable liner":977.0}},"jeans":{"PL PC01":{"Jeans/5-Pocket":57.0,"Chinos":50.0},"PL PC02":{"Jeans/5-Pocket":63.0,"Chinos":54.0},"PL PC03":{"Jeans/5-Pocket":66.0,"Chinos":57.0},"PL PC04":{"Jeans/5-Pocket":71.0,"Chinos":63.0},"PL PC05":{"Jeans/5-Pocket":74.0,"Chinos":66.0},"PL PC06":{"Jeans/5-Pocket":80.0,"Chinos":71.0},"PL PC07":{"Jeans/5-Pocket":83.0,"Chinos":74.0},"PL PC08":{"Jeans/5-Pocket":87.0,"Chinos":80.0},"PL PC09":{"Jeans/5-Pocket":91.0,"Chinos":83.0},"PL PC10":{"Jeans/5-Pocket":97.0,"Chinos":87.0},"PL PC11":{"Jeans/5-Pocket":101.0,"Chinos":91.0},"PL PC12":{"Jeans/5-Pocket":104.0,"Chinos":97.0},"PL PC13":{"Jeans/5-Pocket":108.0,"Chinos":101.0},"PL PC14":{"Jeans/5-Pocket":111.0,"Chinos":104.0},"PL PC15":{"Jeans/5-Pocket":118.0,"Chinos":108.0},"PL PC16":{"Jeans/5-Pocket":123.0,"Chinos":113.0},"PL PC17":{"Jeans/5-Pocket":129.0,"Chinos":120.0},"PL PC18":{"Jeans/5-Pocket":135.0,"Chinos":126.0},"PL PC19":{"Jeans/5-Pocket":141.0,"Chinos":132.0},"PL PC20":{"Jeans/5-Pocket":147.0,"Chinos":138.0},"PL PC21":{"Jeans/5-Pocket":154.0,"Chinos":145.0},"PL PC22":{"Jeans/5-Pocket":161.0,"Chinos":152.0},"PL PC23":{"Jeans/5-Pocket":169.0,"Chinos":159.0}},"knit":{"Crew neck":{"Merino Wool (PC06)":75.0,"Cotton (PC07)":78.0,"CottonCash/ExtraFineMerino (PC09)":84.0,"WoolCash/CottonSilk 80/20 (PC10)":94.0,"CottonSilk 70/30 (PC11)":102.0,"S160 UltraFineMerino (PC14)":127.0,"Cashmere (PC16)":144.0,"CashmereSilk (PC18)":160.0},"Crew neck tshirt":{"Merino Wool (PC06)":75.0,"Cotton (PC07)":78.0,"CottonCash/ExtraFineMerino (PC09)":84.0,"WoolCash/CottonSilk 80/20 (PC10)":94.0,"CottonSilk 70/30 (PC11)":102.0,"S160 UltraFineMerino (PC14)":127.0,"Cashmere (PC16)":144.0,"CashmereSilk (PC18)":160.0},"V-neck":{"Merino Wool (PC06)":75.0,"Cotton (PC07)":78.0,"CottonCash/ExtraFineMerino (PC09)":84.0,"WoolCash/CottonSilk 80/20 (PC10)":94.0,"CottonSilk 70/30 (PC11)":102.0,"S160 UltraFineMerino (PC14)":127.0,"Cashmere (PC16)":144.0,"CashmereSilk (PC18)":160.0},"Turtle neck":{"Merino Wool (PC06)":75.0,"Cotton (PC07)":78.0,"CottonCash/ExtraFineMerino (PC09)":84.0,"WoolCash/CottonSilk 80/20 (PC10)":94.0,"CottonSilk 70/30 (PC11)":102.0,"S160 UltraFineMerino (PC14)":127.0,"Cashmere (PC16)":144.0,"CashmereSilk (PC18)":160.0},"Mock neck":{"Merino Wool (PC06)":75.0,"Cotton (PC07)":78.0,"CottonCash/ExtraFineMerino (PC09)":84.0,"WoolCash/CottonSilk 80/20 (PC10)":94.0,"CottonSilk 70/30 (PC11)":102.0,"S160 UltraFineMerino (PC14)":127.0,"Cashmere (PC16)":144.0,"CashmereSilk (PC18)":160.0},"Hoodie drawstring":{"Merino Wool (PC06)":85.0,"Cotton (PC07)":88.0,"CottonCash/ExtraFineMerino (PC09)":94.0,"WoolCash/CottonSilk 80/20 (PC10)":104.0,"CottonSilk 70/30 (PC11)":112.0,"S160 UltraFineMerino (PC14)":137.0,"Cashmere (PC16)":154.0,"CashmereSilk (PC18)":170.0},"Polo without buttons":{"Merino Wool (PC06)":85.0,"Cotton (PC07)":88.0,"CottonCash/ExtraFineMerino (PC09)":94.0,"WoolCash/CottonSilk 80/20 (PC10)":104.0,"CottonSilk 70/30 (PC11)":112.0,"S160 UltraFineMerino (PC14)":137.0,"Cashmere (PC16)":154.0,"CashmereSilk (PC18)":170.0},"Polo with buttons":{"Merino Wool (PC06)":85.0,"Cotton (PC07)":88.0,"CottonCash/ExtraFineMerino (PC09)":94.0,"WoolCash/CottonSilk 80/20 (PC10)":104.0,"CottonSilk 70/30 (PC11)":112.0,"S160 UltraFineMerino (PC14)":137.0,"Cashmere (PC16)":154.0,"CashmereSilk (PC18)":170.0},"Polo with zip":{"Merino Wool (PC06)":85.0,"Cotton (PC07)":88.0,"CottonCash/ExtraFineMerino (PC09)":94.0,"WoolCash/CottonSilk 80/20 (PC10)":104.0,"CottonSilk 70/30 (PC11)":112.0,"S160 UltraFineMerino (PC14)":137.0,"Cashmere (PC16)":154.0,"CashmereSilk (PC18)":170.0},"Half zip":{"Merino Wool (PC06)":85.0,"Cotton (PC07)":88.0,"CottonCash/ExtraFineMerino (PC09)":94.0,"WoolCash/CottonSilk 80/20 (PC10)":104.0,"CottonSilk 70/30 (PC11)":112.0,"S160 UltraFineMerino (PC14)":137.0,"Cashmere (PC16)":154.0,"CashmereSilk (PC18)":170.0},"Half button":{"Merino Wool (PC06)":85.0,"Cotton (PC07)":88.0,"CottonCash/ExtraFineMerino (PC09)":94.0,"WoolCash/CottonSilk 80/20 (PC10)":104.0,"CottonSilk 70/30 (PC11)":112.0,"S160 UltraFineMerino (PC14)":137.0,"Cashmere (PC16)":154.0,"CashmereSilk (PC18)":170.0},"Full zip":{"Merino Wool (PC06)":95.0,"Cotton (PC07)":98.0,"CottonCash/ExtraFineMerino (PC09)":104.0,"WoolCash/CottonSilk 80/20 (PC10)":114.0,"CottonSilk 70/30 (PC11)":122.0,"S160 UltraFineMerino (PC14)":147.0,"Cashmere (PC16)":164.0,"CashmereSilk (PC18)":180.0},"Full zip with baseball collar":{"Merino Wool (PC06)":95.0,"Cotton (PC07)":98.0,"CottonCash/ExtraFineMerino (PC09)":104.0,"WoolCash/CottonSilk 80/20 (PC10)":114.0,"CottonSilk 70/30 (PC11)":122.0,"S160 UltraFineMerino (PC14)":147.0,"Cashmere (PC16)":164.0,"CashmereSilk (PC18)":180.0},"Full button":{"Merino Wool (PC06)":95.0,"Cotton (PC07)":98.0,"CottonCash/ExtraFineMerino (PC09)":104.0,"WoolCash/CottonSilk 80/20 (PC10)":114.0,"CottonSilk 70/30 (PC11)":122.0,"S160 UltraFineMerino (PC14)":147.0,"Cashmere (PC16)":164.0,"CashmereSilk (PC18)":180.0},"Cardigan":{"Merino Wool (PC06)":95.0,"Cotton (PC07)":98.0,"CottonCash/ExtraFineMerino (PC09)":104.0,"WoolCash/CottonSilk 80/20 (PC10)":114.0,"CottonSilk 70/30 (PC11)":122.0,"S160 UltraFineMerino (PC14)":147.0,"Cashmere (PC16)":164.0,"CashmereSilk (PC18)":180.0},"Cardigan with polo collar":{"Merino Wool (PC06)":95.0,"Cotton (PC07)":98.0,"CottonCash/ExtraFineMerino (PC09)":104.0,"WoolCash/CottonSilk 80/20 (PC10)":114.0,"CottonSilk 70/30 (PC11)":122.0,"S160 UltraFineMerino (PC14)":147.0,"Cashmere (PC16)":164.0,"CashmereSilk (PC18)":180.0},"Hoodie with full zip":{"Merino Wool (PC06)":110.0,"Cotton (PC07)":113.0,"CottonCash/ExtraFineMerino (PC09)":119.0,"WoolCash/CottonSilk 80/20 (PC10)":129.0,"CottonSilk 70/30 (PC11)":137.0,"S160 UltraFineMerino (PC14)":162.0,"Cashmere (PC16)":179.0,"CashmereSilk (PC18)":195.0},"Full button bomber*":{"Merino Wool (PC06)":null,"Cotton (PC07)":null,"CottonCash/ExtraFineMerino (PC09)":null,"WoolCash/CottonSilk 80/20 (PC10)":129.0,"CottonSilk 70/30 (PC11)":null,"S160 UltraFineMerino (PC14)":null,"Cashmere (PC16)":179.0,"CashmereSilk (PC18)":null},"Full button shawl collar*":{"Merino Wool (PC06)":null,"Cotton (PC07)":null,"CottonCash/ExtraFineMerino (PC09)":null,"WoolCash/CottonSilk 80/20 (PC10)":129.0,"CottonSilk 70/30 (PC11)":null,"S160 UltraFineMerino (PC14)":null,"Cashmere (PC16)":179.0,"CashmereSilk (PC18)":null},"Leisure pants*":{"Merino Wool (PC06)":null,"Cotton (PC07)":null,"CottonCash/ExtraFineMerino (PC09)":null,"WoolCash/CottonSilk 80/20 (PC10)":142.0,"CottonSilk 70/30 (PC11)":null,"S160 UltraFineMerino (PC14)":null,"Cashmere (PC16)":199.0,"CashmereSilk (PC18)":null}}}},"settings":{"TB":0.75,"round_USD":50,"round_SEK":500,"EUR_to_SEK":11.5,"moms":0.25,"DO_USD":50,"DO_EUR":40,"pleat_USD":10,"pleat_EUR":6,"shirt_HM_USD":21,"shirt_HM_EUR":15,"sartorial_USD":21,"sartorial_EUR":15,"byxa_HM_USD":27,"byxa_HM_EUR":19,"kostym_FC_2p_USD":58,"kostym_FC_3p_USD":72,"kostym_FC_2p_EUR":42,"kostym_FC_3p_EUR":52,"kostym_HM_2p_USD":118,"kostym_HM_2px_USD":145,"kostym_HM_3p_USD":144,"kostym_HM_3px_USD":171,"kostym_HM_2p_EUR":83,"kostym_HM_2px_EUR":102,"kostym_HM_3p_EUR":101,"kostym_HM_3px_EUR":120,"kavaj_FC_USD":58,"kavaj_HM_USD":91,"kavaj_FC_EUR":42,"kavaj_HM_EUR":64,"vast_FC_USD":14,"vast_HM_USD":26,"vast_FC_EUR":11,"vast_HM_EUR":19},"knit_adders":{"USD":{"eng_rib":{"WoolCash/CottonSilk 80/20 (PC10)":13,"CottonSilk 70/30 (PC11)":13,"Cashmere (PC16)":30},"cable_knit":{"WoolCash/CottonSilk 80/20 (PC10)":22,"CottonSilk 70/30 (PC11)":22,"Cashmere (PC16)":38},"double_yarn":{"Merino Wool (PC06)":4,"Cotton (PC07)":4,"CottonCash/ExtraFineMerino (PC09)":9,"WoolCash/CottonSilk 80/20 (PC10)":9,"CottonSilk 70/30 (PC11)":9,"S160 UltraFineMerino (PC14)":16,"Cashmere (PC16)":27,"CashmereSilk (PC18)":27},"short_sleeves":{"Merino Wool (PC06)":-2,"Cotton (PC07)":-2,"CottonCash/ExtraFineMerino (PC09)":-2,"WoolCash/CottonSilk 80/20 (PC10)":-2,"CottonSilk 70/30 (PC11)":-2,"S160 UltraFineMerino (PC14)":-6,"Cashmere (PC16)":-9,"CashmereSilk (PC18)":-9},"no_sleeves":{"Merino Wool (PC06)":-3,"Cotton (PC07)":-3,"CottonCash/ExtraFineMerino (PC09)":-3,"WoolCash/CottonSilk 80/20 (PC10)":-3,"CottonSilk 70/30 (PC11)":-3,"S160 UltraFineMerino (PC14)":-9,"Cashmere (PC16)":-13,"CashmereSilk (PC18)":-13},"suit_buttons":4.5,"shirt_buttons":3},"EUR":{"eng_rib":{"WoolCash/CottonSilk 80/20 (PC10)":9,"CottonSilk 70/30 (PC11)":9,"Cashmere (PC16)":24},"cable_knit":{"WoolCash/CottonSilk 80/20 (PC10)":15,"CottonSilk 70/30 (PC11)":15,"Cashmere (PC16)":30},"double_yarn":{"Merino Wool (PC06)":3,"Cotton (PC07)":3,"CottonCash/ExtraFineMerino (PC09)":7,"WoolCash/CottonSilk 80/20 (PC10)":7,"CottonSilk 70/30 (PC11)":7,"S160 UltraFineMerino (PC14)":12.5,"Cashmere (PC16)":18.5,"CashmereSilk (PC18)":18.5},"short_sleeves":{"Merino Wool (PC06)":-2,"Cotton (PC07)":-2,"CottonCash/ExtraFineMerino (PC09)":-2,"WoolCash/CottonSilk 80/20 (PC10)":-2,"CottonSilk 70/30 (PC11)":-2,"S160 UltraFineMerino (PC14)":-4.5,"Cashmere (PC16)":-7,"CashmereSilk (PC18)":-7},"no_sleeves":{"Merino Wool (PC06)":-3,"Cotton (PC07)":-3,"CottonCash/ExtraFineMerino (PC09)":-3,"WoolCash/CottonSilk 80/20 (PC10)":-3,"CottonSilk 70/30 (PC11)":-3,"S160 UltraFineMerino (PC14)":-6,"Cashmere (PC16)":-9,"CashmereSilk (PC18)":-9},"suit_buttons":3,"shirt_buttons":2}}};  
+  
+const PC_LISTS = {  
+  full: ["PL PC01", "PL PC02", "PL PC03", "PL PC04", "PL PC05", "PL PC06", "PL PC07", "PL PC08", "PL PC09", "PL PC10", "PL PC11", "PL PC12", "PL PC13", "PL PC14", "PL PC15", "PL PC16", "PL PC17", "PL PC18", "PL PC19", "PL PC20", "PL PC21", "PL PC22", "PL PC23", "PL PC24", "PL PC25", "PL PC26", "PL PC27", "PL PC28", "PL PC29", "PL PC30"],  
+  shirt: ["PL PC01", "PL PC02", "PL PC03", "PL PC04", "PL PC05", "PL PC06", "PL PC07", "PL PC08", "PL PC09", "PL PC10", "PL PC11", "PL PC12", "PL PC13", "PL PC14", "PL PC15", "PL PC16", "PL PC17", "PL PC18", "PL PC19", "PL PC20", "PL PC21", "PL PC22", "PL PC23", "PL SALE 01", "PL SALE 02", "PL SALE 03"],  
+  coat: ["PL PC01", "PL PC02", "PL PC03", "PL PC04", "PL PC05", "PL PC06", "PL PC07", "PL PC08", "PL PC09", "PL PC10", "PL PC11", "PL PC12", "PL PC13", "PL PC14", "PL PC15", "PL PC16", "PL PC17", "PL PC18", "PL PC19", "PL PC20", "PL PC21", "PL PC22", "PL PC23", "PL PC24", "PL PC25", "PL PC26", "PL PC27", "PL PC28", "PL PC29", "PL PC30", "PL PC31", "PL PC32", "PL PC33", "PL PC34"],  
+  jeans: ["PL PC01", "PL PC02", "PL PC03", "PL PC04", "PL PC05", "PL PC06", "PL PC07", "PL PC08", "PL PC09", "PL PC10", "PL PC11", "PL PC12", "PL PC13", "PL PC14", "PL PC15", "PL PC16", "PL PC17", "PL PC18", "PL PC19", "PL PC20", "PL PC21", "PL PC22", "PL PC23"],  
+  knit_models: ["Crew neck", "Crew neck tshirt", "V-neck", "Turtle neck", "Mock neck", "Hoodie drawstring", "Polo without buttons", "Polo with buttons", "Polo with zip", "Half zip", "Half button", "Full zip", "Full zip with baseball collar", "Full button", "Cardigan", "Cardigan with polo collar", "Hoodie with full zip", "Full button bomber*", "Full button shawl collar*", "Leisure pants*"],  
+  knit_yarns: ["Merino Wool (PC06)", "Cotton (PC07)", "CottonCash/ExtraFineMerino (PC09)", "WoolCash/CottonSilk 80/20 (PC10)", "CottonSilk 70/30 (PC11)", "S160 UltraFineMerino (PC14)", "Cashmere (PC16)", "CashmereSilk (PC18)"],  
+};  
+  
+  
+  
+// Safe property access helper (replaces ?. for max compat)  
+function _g(o) { for (var i=1;i<arguments.length;i++) { if (o==null) return null; o = o[arguments[i]]; } return o==null ? null : o; }  
+  
+// ============================================================  
+// PRICING LOGIC — defensive: returns {error:'incomplete'} on missing inputs  
+// ============================================================  
+function safeNum(v) { return (typeof v === 'number' && isFinite(v)) ? v : null; }  
+  
+function calcPrice(currency, product, p) {  
+  try {  
+    const cd = currency === 'USD' ? DATA.prices.USD : DATA.prices.EUR;  
+    const S = DATA.settings;  
+    const A = DATA.knit_adders[currency === 'USD' ? 'USD' : 'EUR'];  
+    const DO = currency === 'USD' ? S.DO_USD : S.DO_EUR;  
+    const PLEAT = currency === 'USD' ? S.pleat_USD : S.pleat_EUR;  
+    const SHIRT_HM = currency === 'USD' ? S.shirt_HM_USD : S.shirt_HM_EUR;  
+    const SART = currency === 'USD' ? S.sartorial_USD : S.sartorial_EUR;  
+    p = p || {};  
+    let withAdds = null;  
+    const detail = { components: [] };  
+    const push = (lbl, val) => { if (val !== 0 && val !== null) detail.components.push([lbl, val]); };  
+  
+    const rangeFromMake = m => m === 'UHM' ? 'HM' : (m === 'UC' ? 'HC' : m);  
+  
+    switch (product) {  
+      case 'kostym': {  
+        if (!p.pc || !p.config || !p.make) return { error: 'incomplete' };  
+        const rng = rangeFromMake(p.make);  
+        const colMap = {'2p':'2p','2px':'2p+x','3p':'3p','3px':'3p+x'};  
+        const ink = safeNum(_g(cd, rng, p.pc, colMap[p.config]));  
+        if (ink == null) return { error: 'unavailable' };  
+        push('Inköp ' + p.make, ink); push('Design options', DO); push('Pleated waistband', PLEAT);  
+        withAdds = ink + DO + PLEAT;  
+        break;  
+      }  
+      case 'kavaj': {  
+        if (!p.pc || !p.make) return { error: 'incomplete' };  
+        const rng = rangeFromMake(p.make);  
+        const ink = safeNum(_g(cd, rng, p.pc, 'jacket'));  
+        if (ink == null) return { error: 'unavailable' };  
+        push('Inköp jacket', ink); push('Design options', DO);  
+        withAdds = ink + DO;  
+        break;  
+      }  
+      case 'informal_jacket': {  
+        if (!p.pc || !p.make) return { error: 'incomplete' };  
+        const rng = p.make === 'UHM' ? 'HM' : 'HC';  
+        const ink = safeNum(_g(cd, rng, p.pc, 'jacket'));  
+        if (ink == null) return { error: 'unavailable' };  
+        push('Inköp informal jacket', ink); push('Design options', DO);  
+        withAdds = ink + DO;  
+        break;  
+      }  
+      case 'kombo': {  
+        if (!p.jpc || !p.jmake || !p.ppc || !p.pmake) return { error: 'incomplete' };  
+        const jRng = p.jmake === 'UHM' ? 'HM' : 'HC';  
+        const pRng = p.pmake === 'HM' ? 'HM' : 'HC';  
+        const jInk = safeNum(_g(cd, jRng, p.jpc, 'jacket'));  
+        const pInk = safeNum(_g(cd, pRng, p.ppc, 'trousers'));  
+        if (jInk == null || pInk == null) return { error: 'unavailable' };  
+        push('Inköp jacket', jInk); push('Inköp byxa', pInk); push('Design options', DO); push('Pleated waistband', PLEAT);  
+        withAdds = jInk + pInk + DO + PLEAT;  
+        break;  
+      }  
+      case 'byxa': {  
+        if (!p.pc || !p.make) return { error: 'incomplete' };  
+        const rng = p.make === 'HM' ? 'HM' : 'HC';  
+        const ink = safeNum(_g(cd, rng, p.pc, 'trousers'));  
+        if (ink == null) return { error: 'unavailable' };  
+        push('Inköp byxa', ink); push('Pleated waistband', PLEAT);  
+        withAdds = ink + PLEAT;  
+        break;  
+      }  
+      case 'vast': {  
+        if (!p.pc || !p.make) return { error: 'incomplete' };  
+        const rng = rangeFromMake(p.make);  
+        const ink = safeNum(_g(cd, rng, p.pc, 'waistcoat'));  
+        if (ink == null) return { error: 'unavailable' };  
+        push('Inköp suit-väst', ink); push('Design options', DO);  
+        withAdds = ink + DO;  
+        break;  
+      }  
+      case 'vest': {  
+        if (!p.pc) return { error: 'incomplete' };  
+        const ink = safeNum(_g(cd, 'HC', p.pc, 'vest'));  
+        if (ink == null) return { error: 'unavailable' };  
+        push('Inköp outerwear vest', ink);  
+        withAdds = ink;  
+        break;  
+      }  
+      case 'quilted_vest': {  
+        if (!p.pc) return { error: 'incomplete' };  
+        const ink = safeNum(_g(cd, 'HC', p.pc, 'quilted_vest'));  
+        if (ink == null) return { error: 'unavailable' };  
+        push('Inköp quilted vest', ink);  
+        withAdds = ink;  
+        break;  
+      }  
+      case 'bermuda': {  
+        if (!p.pc) return { error: 'incomplete' };  
+        const ink = safeNum(_g(cd, 'HC', p.pc, 'bermuda'));  
+        if (ink == null) return { error: 'unavailable' };  
+        push('Inköp bermuda', ink);  
+        withAdds = ink;  
+        break;  
+      }  
+      case 'skjorta': {  
+        if (!p.pc || !p.make) return { error: 'incomplete' };  
+        const ink = safeNum(_g(cd, 'shirts', p.pc));  
+        if (ink == null) return { error: 'unavailable' };  
+        push('Inköp skjorta', ink);  
+        let total = ink;  
+        if (p.make === 'hm') { push('Handmade-tillägg', SHIRT_HM); total += SHIRT_HM; }  
+        withAdds = total;  
+        break;  
+      }  
+      case 'rock': {  
+        if (!p.pc || !p.typ) return { error: 'incomplete' };  
+        const ink = safeNum(_g(cd, 'coats', p.pc, p.typ));  
+        if (ink == null) return { error: 'unavailable' };  
+        push('Inköp ' + p.typ, ink);  
+        withAdds = ink;  
+        break;  
+      }  
+      case 'jeans': {  
+        if (!p.pc || !p.typ || !p.make) return { error: 'incomplete' };  
+        const ink = safeNum(_g(cd, 'jeans', p.pc, p.typ));  
+        if (ink == null) return { error: 'unavailable' };  
+        push('Inköp ' + p.typ, ink);  
+        let total = ink;  
+        if (p.make === 'sart') { push('Sartorial-tillägg', SART); total += SART; }  
+        withAdds = total;  
+        break;  
+      }  
+      case 'stickat': {  
+        if (!p.yarn || !p.model) return { error: 'incomplete' };  
+        const o = p.options || {};  
+        const ribCableYarns = ['WoolCash/CottonSilk 80/20 (PC10)','CottonSilk 70/30 (PC11)','Cashmere (PC16)'];  
+        const starredModels = ['Full button bomber*','Full button shawl collar*','Leisure pants*'];  
+        const starredYarns = ['WoolCash/CottonSilk 80/20 (PC10)','Cashmere (PC16)'];  
+        if (o.eng_rib && !ribCableYarns.includes(p.yarn))  
+          return { error: 'invalid', msg: 'English half rib finns endast i WoolCash (PC10), CottonSilk 70/30 (PC11) eller Cashmere (PC16).' };  
+        if (o.cable_knit && !ribCableYarns.includes(p.yarn))  
+          return { error: 'invalid', msg: 'Cable knit finns endast i WoolCash (PC10), CottonSilk 70/30 (PC11) eller Cashmere (PC16).' };  
+        if (starredModels.includes(p.model) && !starredYarns.includes(p.yarn))  
+          return { error: 'invalid', msg: p.model + ' finns endast i WoolCash (PC10) eller Cashmere (PC16).' };  
+        const ink = safeNum(_g(cd, 'knit', p.model, p.yarn));  
+        if (ink == null) return { error: 'unavailable' };  
+        push('Inköp ' + p.model, ink);  
+        let total = ink;  
+        const addOpt = (k, label) => {  
+          if (!o[k]) return;  
+          const v = (typeof A[k] === 'number') ? A[k] : (A[k][p.yarn] || 0);  
+          push(label, v); total += v;  
+        };  
+        addOpt('eng_rib', 'English half rib');  
+        addOpt('cable_knit', 'Cable knit');  
+        addOpt('double_yarn', 'Double yarn');  
+        addOpt('short_sleeves', 'Short sleeves (rabatt)');  
+        addOpt('no_sleeves', 'No sleeves (rabatt)');  
+        addOpt('suit_buttons', 'Suit buttons');  
+        addOpt('shirt_buttons', 'Shirt buttons');  
+        withAdds = total;  
+        break;  
+      }  
+      default: return { error: 'incomplete' };  
+    }  
+  
+    if (withAdds == null) return { error: 'incomplete' };  
+  
+    if (currency === 'USD') {  
+      let target = withAdds / (1 - S.TB);  
+      let rounded = Math.ceil(target / S.round_USD) * S.round_USD;  
+      if (p.bigSize && p.bigSize > 0) rounded += p.bigSize;  
+      return { price: rounded, currency: 'USD', detail, withAdds, target };  
+    } else {  
+      let sekTarget = withAdds * S.EUR_to_SEK / (1 - S.TB);  
+      let sekEx = Math.ceil(sekTarget / S.round_SEK) * S.round_SEK;  
+      let moms = sekEx * S.moms;  
+      let total = sekEx + moms;  
+      if (p.bigSize && p.bigSize > 0) total += p.bigSize;  
+      return { price: total, sekExMoms: sekEx, moms, currency: 'SEK', detail, withAdds };  
+    }  
+  } catch (err) {  
+    console.error('calcPrice error', err);  
+    return { error: 'incomplete' };  
+  }  
+}  
+  
+// ============================================================  
+// PRODUCT SCHEMAS  
+// ============================================================  
+const PRODUCTS = [  
+  { key: 'kostym', label: 'Kostym' },  
+  { key: 'kavaj', label: 'Kavaj' },  
+  { key: 'informal_jacket', label: 'Informal Jacket' },  
+  { key: 'kombo', label: 'Informal Jacket + Byxa' },  
+  { key: 'byxa', label: 'Byxa' },  
+  { key: 'vast', label: 'Suit-väst' },  
+  { key: 'vest', label: 'Vest (outerwear)' },  
+  { key: 'quilted_vest', label: 'Quilted Vest' },  
+  { key: 'bermuda', label: 'Bermuda Shorts' },  
+  { key: 'skjorta', label: 'Skjorta' },  
+  { key: 'rock', label: 'Rock' },  
+  { key: 'jeans', label: 'Jeans / Chinos' },  
+  { key: 'stickat', label: 'Stickat' },  
+];  
+  
+const MAKES_5 = [  
+  { v: 'HC', t: 'Half Canvas (Traditional)' },  
+  { v: 'UC', t: 'Unconstructed' },  
+  { v: 'FC', t: 'Full Canvas' },  
+  { v: 'HM', t: 'Handmade' },  
+  { v: 'UHM', t: 'Unconstructed Handmade' },  
+];  
+const MAKES_INFORMAL = [  
+  { v: 'HC', t: 'Unconstructed (HC-pris)' },  
+  { v: 'UHM', t: 'Unconstructed Handmade (HM-pris)' },  
+];  
+const MAKES_BYXA = [  
+  { v: 'HC', t: 'Traditional / Full Canvas' },  
+  { v: 'HM', t: 'Handmade' },  
+];  
+const CONFIGS = [  
+  { v: '2p', t: '2-piece' },  
+  { v: '2px', t: '2-piece + extra trousers' },  
+  { v: '3p', t: '3-piece' },  
+  { v: '3px', t: '3-piece + extra trousers' },  
+];  
+const COAT_TYPES = [  
+  { v: 'Overcoat', t: 'Overcoat' },  
+  { v: 'Pea coat', t: 'Pea coat' },  
+  { v: 'Coat', t: 'Coat' },  
+  { v: 'Coat + Detachable liner', t: 'Coat + Detachable liner' },  
+];  
+const JEANS_TYPES = [  
+  { v: 'Jeans/5-Pocket', t: 'Jeans / 5-Pocket' },  
+  { v: 'Chinos', t: 'Chinos' },  
+];  
+const JEANS_MAKES = [  
+  { v: 'trad', t: 'Traditional' },  
+  { v: 'sart', t: 'The Sartorial' },  
+];  
+const SHIRT_MAKES = [  
+  { v: 'trad', t: 'Traditional' },  
+  { v: 'hm', t: 'Handmade' },  
+];  
+const KNIT_OPTS = [  
+  { k: 'eng_rib', t: 'English half rib' },  
+  { k: 'cable_knit', t: 'Cable knit' },  
+  { k: 'double_yarn', t: 'Double yarn' },  
+  { k: 'short_sleeves', t: 'Short sleeves' },  
+  { k: 'no_sleeves', t: 'No sleeves' },  
+  { k: 'suit_buttons', t: 'Suit buttons' },  
+  { k: 'shirt_buttons', t: 'Shirt buttons' },  
+];  
+  
+// ============================================================  
+// STATE  
+// ============================================================  
+const state = {  
+  currency: 'USD',  
+  product: 'kostym',  
+  inputs: {},  
+  bigSize: 0,  
+};  
+function getInputs() {  
+  if (!state.inputs[state.product]) state.inputs[state.product] = {};  
+  return state.inputs[state.product];  
+}  
+  
+// ============================================================  
+// DOM HELPERS  
+// ============================================================  
+function el(tag, attrs, children) {  
+  attrs = attrs || {}; children = children || [];  
+  const e = document.createElement(tag);  
+  for (const k in attrs) {  
+    if (k === 'class') e.className = attrs[k];  
+    else if (k === 'html') e.innerHTML = attrs[k];  
+    else if (k.startsWith('on')) e.addEventListener(k.substring(2).toLowerCase(), attrs[k]);  
+    else e.setAttribute(k, attrs[k]);  
+  }  
+  (Array.isArray(children) ? children : [children]).forEach(c => {  
+    if (c == null) return;  
+    if (typeof c === 'string' || typeof c === 'number') e.appendChild(document.createTextNode(String(c)));  
+    else e.appendChild(c);  
+  });  
+  return e;  
+}  
+function selectField(label, options, value, onChange) {  
+  const sel = el('select', { onchange: e => onChange(e.target.value) });  
+  sel.appendChild(el('option', { value: '' }, '— Välj —'));  
+  options.forEach(opt => {  
+    const o = el('option', { value: opt.v }, opt.t);  
+    if (opt.v === value) o.selected = true;  
+    sel.appendChild(o);  
+  });  
+  return el('div', { class: 'field' }, [el('label', {}, label), sel]);  
+}  
+function pcSelect(label, list, value, onChange) {  
+  return selectField(label, list.map(pc => ({ v: pc, t: pc })), value, onChange);  
+}  
+function optionToggle(label, on, onChange) {  
+  return el('div', {  
+    class: 'option-toggle' + (on ? ' on' : ''),  
+    onclick: () => onChange(!on),  
+  }, [el('div', { class: 'check' }), el('span', {}, label)]);  
+}  
+  
+// ============================================================  
+// RENDER  
+// ============================================================  
+function renderProductSelect() {  
+  const sel = document.getElementById('product-select');  
+  sel.innerHTML = '';  
+  PRODUCTS.forEach(p => {  
+    const o = el('option', { value: p.key }, p.label);  
+    if (p.key === state.product) o.selected = true;  
+    sel.appendChild(o);  
+  });  
+  sel.onchange = e => { state.product = e.target.value; rerender(); };  
+}  
+  
+function renderForm() {  
+  const form = document.getElementById('form');  
+  form.innerHTML = '';  
+  const p = getInputs();  
+  const set = (k, v) => { p[k] = v; rerender(); };  
+  const setO = (k, v) => { p.options = p.options || {}; p.options[k] = v; rerender(); };  
+  const fields = [];  
+  
+  switch (state.product) {  
+    case 'kostym':  
+      fields.push(pcSelect('Tygkategori', PC_LISTS.full, p.pc, v => set('pc', v)));  
+      fields.push(selectField('Konfiguration', CONFIGS, p.config, v => set('config', v)));  
+      fields.push(selectField('Make · Konstruktion', MAKES_5, p.make, v => set('make', v)));  
+      break;  
+    case 'kavaj':  
+      fields.push(pcSelect('Tygkategori', PC_LISTS.full, p.pc, v => set('pc', v)));  
+      fields.push(selectField('Make · Konstruktion', MAKES_5, p.make, v => set('make', v)));  
+      break;  
+    case 'informal_jacket':  
+      fields.push(pcSelect('Tygkategori', PC_LISTS.full, p.pc, v => set('pc', v)));  
+      fields.push(selectField('Make · Konstruktion', MAKES_INFORMAL, p.make, v => set('make', v)));  
+      break;  
+    case 'kombo':  
+      fields.push(el('div', { class: 'subsection' }, '· Jacket'));  
+      fields.push(pcSelect('Tygkategori', PC_LISTS.full, p.jpc, v => set('jpc', v)));  
+      fields.push(selectField('Make', MAKES_INFORMAL, p.jmake, v => set('jmake', v)));  
+      fields.push(el('div', { class: 'subsection' }, '· Byxa'));  
+      fields.push(pcSelect('Tygkategori', PC_LISTS.full, p.ppc, v => set('ppc', v)));  
+      fields.push(selectField('Make', MAKES_BYXA, p.pmake, v => set('pmake', v)));  
+      break;  
+    case 'byxa':  
+      fields.push(pcSelect('Tygkategori', PC_LISTS.full, p.pc, v => set('pc', v)));  
+      fields.push(selectField('Make · Konstruktion', MAKES_BYXA, p.make, v => set('make', v)));  
+      break;  
+    case 'vast':  
+      fields.push(pcSelect('Tygkategori', PC_LISTS.full, p.pc, v => set('pc', v)));  
+      fields.push(selectField('Make · Konstruktion', MAKES_5, p.make, v => set('make', v)));  
+      break;  
+    case 'vest':  
+    case 'quilted_vest':  
+    case 'bermuda':  
+      fields.push(pcSelect('Tygkategori', PC_LISTS.full, p.pc, v => set('pc', v)));  
+      break;  
+    case 'skjorta':  
+      fields.push(pcSelect('Tygkategori', PC_LISTS.shirt, p.pc, v => set('pc', v)));  
+      fields.push(selectField('Make', SHIRT_MAKES, p.make, v => set('make', v)));  
+      break;  
+    case 'rock':  
+      fields.push(pcSelect('Tygkategori', PC_LISTS.coat, p.pc, v => set('pc', v)));  
+      fields.push(selectField('Typ', COAT_TYPES, p.typ, v => set('typ', v)));  
+      break;  
+    case 'jeans':  
+      fields.push(pcSelect('Tygkategori', PC_LISTS.jeans, p.pc, v => set('pc', v)));  
+      fields.push(selectField('Typ', JEANS_TYPES, p.typ, v => set('typ', v)));  
+      fields.push(selectField('Make', JEANS_MAKES, p.make, v => set('make', v)));  
+      break;  
+    case 'stickat': {  
+      p.options = p.options || {};  
+      fields.push(selectField('Garnkvalitet', PC_LISTS.knit_yarns.map(y => ({ v: y, t: y })), p.yarn, v => set('yarn', v)));  
+      fields.push(selectField('Modell', PC_LISTS.knit_models.map(m => ({ v: m, t: m })), p.model, v => set('model', v)));  
+      fields.push(el('div', { class: 'field' }, [  
+        el('label', {}, 'Design options'),  
+        el('div', { class: 'options-grid' }, KNIT_OPTS.map(o => optionToggle(o.t, !!p.options[o.k], v => setO(o.k, v)))),  
+        el('div', { class: 'note' }, 'English half rib & Cable knit: endast PC10, PC11, PC16. Stjärnmodeller (*): endast PC10 eller PC16.'),  
+      ]));  
+      break;  
+    }  
+  }  
+  
+  if (state.product !== 'kombo') {  
+    fields.push(el('div', { class: 'field' }, [  
+      el('label', {}, 'Big Size-tillägg (storlek 60+) · valfritt'),  
+      el('input', {  
+        type: 'number',  
+        inputmode: 'numeric',  
+        placeholder: state.currency === 'USD' ? 'Belopp i USD' : 'Belopp i SEK',  
+        value: state.bigSize || '',  
+        oninput: e => { state.bigSize = parseFloat(e.target.value) || 0; rerender(); },  
+      }),  
+    ]));  
+  }  
+  
+  fields.forEach(f => form.appendChild(f));  
+}  
+  
+function fmtMoney(v, currency) {  
+  if (v == null) return '—';  
+  const r = Math.round(v);  
+  if (currency === 'USD') return '$' + r.toLocaleString('en-US');  
+  return r.toLocaleString('en-US').replace(/,/g, ' ') + ' kr';  
+}  
+  
+function renderPrice() {  
+  const sec = document.getElementById('price-section');  
+  sec.innerHTML = '';  
+  const p = Object.assign({}, getInputs(), { bigSize: state.bigSize });  
+  const result = calcPrice(state.currency, state.product, p);  
+  
+  if (result.error === 'incomplete') {  
+    const card = el('section', { class: 'price-card empty' }, [  
+      el('div', { class: 'label' }, 'Pris · Pending'),  
+      el('div', { class: 'value' }, 'Fyll i alla val'),  
+      el('div', { class: 'meta' }, 'Välj tyg, make och övriga alternativ.'),  
+    ]);  
+    sec.appendChild(card);  
+    document.getElementById('details').style.display = 'none';  
+    return;  
+  }  
+  if (result.error === 'unavailable') {  
+    const card = el('section', { class: 'price-card empty' }, [  
+      el('div', { class: 'label' }, 'Ej tillgänglig'),  
+      el('div', { class: 'value' }, '—'),  
+      el('div', { class: 'meta' }, 'Kombinationen finns inte i prislistan.'),  
+    ]);  
+    sec.appendChild(card);  
+    document.getElementById('details').style.display = 'none';  
+    return;  
+  }  
+  if (result.error === 'invalid') {  
+    const card = el('section', { class: 'price-card error' }, [  
+      el('div', { class: 'label' }, 'Ogiltig kombination'),  
+      el('div', { class: 'value' }, result.msg || 'Vänligen kontrollera valen.'),  
+    ]);  
+    sec.appendChild(card);  
+    document.getElementById('details').style.display = 'none';  
+    return;  
+  }  
+  
+  const cur = result.currency;  
+  const r = Math.round(result.price);  
+  const formattedNum = r.toLocaleString('en-US').replace(/,/g, ' ');  
+  let valueNode;  
+  if (cur === 'USD') {  
+    valueNode = el('div', { class: 'value' }, [  
+      el('span', { class: 'currency-sym' }, '$'),  
+      formattedNum,  
+    ]);  
+  } else {  
+    valueNode = el('div', { class: 'value' }, [  
+      formattedNum,  
+      el('span', { class: 'currency-suffix' }, 'kr'),  
+    ]);  
+  }  
+  const meta = cur === 'USD' ? 'Customer price · exkl. NYC sales tax' : 'Customer price · inkl. moms 25%';  
+  sec.appendChild(el('section', { class: 'price-card' }, [  
+    el('div', { class: 'label' }, 'Customer Price'),  
+    valueNode,  
+    el('div', { class: 'meta' }, meta),  
+  ]));  
+  
+  // Details  
+  document.getElementById('details').style.display = '';  
+  const bd = document.getElementById('breakdown');  
+  bd.innerHTML = '';  
+  const symFor = (v) => cur === 'USD' ? ('$' + Math.round(v).toLocaleString('en-US')) : ('€' + Math.round(v).toLocaleString('en-US'));  
+  result.detail.components.forEach(([lbl, val]) => {  
+    bd.appendChild(el('div', { class: 'bk-label' }, lbl));  
+    bd.appendChild(el('div', { class: 'bk-value' }, symFor(val)));  
+  });  
+  bd.appendChild(el('div', { class: 'bk-divider' }));  
+  bd.appendChild(el('div', { class: 'bk-label' }, 'Totalt inköp'));  
+  bd.appendChild(el('div', { class: 'bk-value' }, symFor(result.withAdds)));  
+  if (cur === 'USD') {  
+    bd.appendChild(el('div', { class: 'bk-label' }, 'Säljpris @ 75 % TB'));  
+    bd.appendChild(el('div', { class: 'bk-value' }, '$' + Math.round(result.target).toLocaleString('en-US')));  
+    bd.appendChild(el('div', { class: 'bk-label' }, 'Avrundat ($50)'));  
+    bd.appendChild(el('div', { class: 'bk-value' }, fmtMoney(result.price - (state.bigSize || 0), cur)));  
+  } else {  
+    bd.appendChild(el('div', { class: 'bk-label' }, 'SEK ex moms · avrundat 500 kr'));  
+    bd.appendChild(el('div', { class: 'bk-value' }, fmtMoney(result.sekExMoms, cur)));  
+    bd.appendChild(el('div', { class: 'bk-label' }, 'Moms 25 %'));  
+    bd.appendChild(el('div', { class: 'bk-value' }, fmtMoney(result.moms, cur)));  
+  }  
+  if (state.bigSize > 0) {  
+    bd.appendChild(el('div', { class: 'bk-label' }, 'Big Size-tillägg'));  
+    bd.appendChild(el('div', { class: 'bk-value' }, fmtMoney(state.bigSize, cur)));  
+  }  
+  bd.appendChild(el('div', { class: 'bk-divider' }));  
+  bd.appendChild(el('div', { class: 'bk-label bk-final' }, 'Slutpris'));  
+  bd.appendChild(el('div', { class: 'bk-value bk-final' }, fmtMoney(result.price, cur)));  
+}  
+  
+function rerender() {  
+  renderProductSelect();  
+  renderForm();  
+  renderPrice();  
+}  
+  
+document.getElementById('currency').addEventListener('click', e => {  
+  if (e.target.tagName !== 'BUTTON') return;  
+  state.currency = e.target.dataset.cur;  
+  state.bigSize = 0;  
+  document.querySelectorAll('#currency button').forEach(b => {  
+    b.classList.toggle('active', b.dataset.cur === state.currency);  
+  });  
+  rerender();  
+});  
+  
+rerender();  
+</script>  
+  
+</body>  
+</html>  
