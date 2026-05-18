@@ -93,11 +93,12 @@ body {
 .currency {
   display: flex;
   justify-content: center;
-  gap: 26px;
+  gap: 18px;
   padding: 14px 0 28px;
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
   margin-bottom: 32px;
+  flex-wrap: wrap;
 }
 .currency button {
   background: transparent;
@@ -520,6 +521,278 @@ body {
   margin-top: 40px;
 }
 
+
+/* ===== Admin panel ===== */
+.admin-trigger {
+  display: inline-block;
+  font-family: 'DM Sans', -apple-system, sans-serif;
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--muted-soft);
+  margin-top: 12px;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  padding: 6px 12px;
+  -webkit-tap-highlight-color: transparent;
+}
+.admin-trigger:active { opacity: 0.5; }
+
+.admin-overlay {
+  position: fixed;
+  inset: 0;
+  background: #FFFFFF;
+  z-index: 9000;
+  overflow-y: auto;
+  display: none;
+  padding-top: max(20px, env(safe-area-inset-top));
+  padding-bottom: max(40px, env(safe-area-inset-bottom));
+}
+.admin-overlay.show { display: block; }
+
+.admin-inner {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 24px 22px 60px;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+}
+.admin-title {
+  font-family: "Hoefler Text", "Cormorant Garamond", Georgia, serif;
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--ink);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.admin-close {
+  background: transparent;
+  border: 0;
+  font-family: "Hoefler Text", Georgia, serif;
+  font-size: 28px;
+  font-weight: 300;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 4px 12px;
+  line-height: 1;
+}
+
+.admin-section {
+  margin-bottom: 28px;
+}
+.admin-section-title {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.admin-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  gap: 16px;
+}
+.admin-row label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  color: var(--ink-soft);
+  flex: 1;
+}
+.admin-row .hint {
+  font-family: "Hoefler Text", Georgia, serif;
+  font-style: italic;
+  font-size: 12px;
+  color: var(--muted);
+  margin-left: 4px;
+}
+.admin-row input[type="number"] {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 6px 0;
+  width: 90px;
+  text-align: right;
+  -webkit-appearance: none;
+  appearance: none;
+  font-variant-numeric: tabular-nums;
+}
+.admin-row input[type="number"]:focus { outline: none; border-bottom-color: var(--ink); }
+.admin-row .unit {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  color: var(--muted);
+  min-width: 24px;
+  text-align: left;
+}
+
+.admin-actions {
+  margin-top: 32px;
+  display: flex;
+  gap: 12px;
+}
+.admin-btn {
+  flex: 1;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 14px 16px;
+  border: 1px solid var(--ink);
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  border-radius: 2px;
+}
+.admin-btn.primary {
+  background: var(--ink);
+  color: var(--bg);
+}
+.admin-btn:active { opacity: 0.7; }
+
+.admin-saved {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--ink);
+  color: var(--bg);
+  padding: 10px 18px;
+  border-radius: 2px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 240ms ease;
+  z-index: 10000;
+}
+.admin-saved.show { opacity: 1; }
+
+.admin-pin-gate {
+  position: fixed;
+  inset: 0;
+  background: #FFFFFF;
+  z-index: 9500;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+}
+.admin-pin-gate.show { display: flex; }
+.admin-pin-gate .admin-pin-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: #666;
+  margin-bottom: 20px;
+}
+.admin-pin-gate input {
+  font-family: "Hoefler Text", Georgia, serif;
+  font-size: 32px;
+  font-weight: 300;
+  letter-spacing: 0.6em;
+  text-align: center;
+  border: 0;
+  border-bottom: 1px solid #1A1A1A;
+  background: transparent;
+  color: #000;
+  width: 200px;
+  padding: 10px 0 10px 12px;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  font-variant-numeric: tabular-nums;
+}
+.admin-pin-gate .err {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  color: #8A2A1A;
+  margin-top: 14px;
+  opacity: 0;
+  transition: opacity 200ms;
+}
+.admin-pin-gate .err.show { opacity: 1; }
+.admin-pin-gate .cancel {
+  margin-top: 30px;
+  background: transparent;
+  border: 0;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+/* ===== Checkbox (för pleated waistband) ===== */
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.checkbox-row .check {
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--muted-soft);
+  border-radius: 0;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 150ms ease;
+  background: transparent;
+}
+.checkbox-row.on .check {
+  background: var(--ink);
+  border-color: var(--ink);
+}
+.checkbox-row.on .check::after {
+  content: '';
+  width: 8px;
+  height: 4px;
+  border-left: 1.5px solid var(--bg);
+  border-bottom: 1.5px solid var(--bg);
+  transform: rotate(-45deg) translate(1px, -1px);
+}
+.checkbox-row .cbox-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+.checkbox-row .cbox-price {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  color: var(--muted);
+  margin-left: auto;
+}
+
 </style>
 </head>
 <body>
@@ -539,7 +812,8 @@ body {
 
   <div class="currency" id="currency">
     <button data-cur="USD" class="active">USD · NYC</button>
-    <button data-cur="SEK">SEK · Stockholm</button>
+    <button data-cur="SEK">SEK · STO</button>
+    <button data-cur="CHF">CHF · ZRH</button>
   </div>
 
   <div class="section-label">Produkt</div>
@@ -560,6 +834,7 @@ body {
     <div class="ornament">·</div>
     <div class="cities">New York · Stockholm · Zürich</div>
     <div class="since">Effortless elegance, uncompromising quality.</div>
+    <button class="admin-trigger" id="admin-trigger" type="button">Inställningar</button>
   </footer>
 </div>
 
@@ -625,6 +900,65 @@ const PC_LISTS = {
 // Safe property access helper (replaces ?. for max compat)
 function _g(o) { for (var i=1;i<arguments.length;i++) { if (o==null) return null; o = o[arguments[i]]; } return o==null ? null : o; }
 
+
+// ===== Settings management (admin-editable) =====
+var SETTINGS_KEY = 'rb_settings_v2';
+function _tbCats(pct) {
+  return {
+    kostym: pct, kavaj: pct, informal_jacket: pct, kombo: pct, byxa: pct,
+    vast: pct, vest: pct, quilted_vest: pct, bermuda: pct,
+    skjorta: pct, rock: pct, jeans: pct, stickat: pct
+  };
+}
+var DEFAULT_SETTINGS = {
+  EUR_to_SEK: 11,
+  EUR_to_CHF: 11/12,
+  USD: { moms_pct: 0, rounding: 20 },
+  SEK: { moms_pct: 25, rounding: 100 },
+  CHF: { moms_pct: 8.1, rounding: 10 },
+  adders: {
+    USD: { DO: 50, pleat: 10, shirt_HM: 21, sartorial: 21 },
+    EUR: { DO: 40, pleat: 6, shirt_HM: 15, sartorial: 15 }
+  },
+  TB: {
+    USD: _tbCats(75),
+    SEK: _tbCats(75),
+    CHF: _tbCats(80)
+  }
+};
+var settings = JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
+function loadSettings() {
+  try {
+    var stored = localStorage.getItem(SETTINGS_KEY);
+    if (stored) {
+      var parsed = JSON.parse(stored);
+      // Deep merge respecting nested structure
+      for (var k in DEFAULT_SETTINGS) {
+        if (typeof DEFAULT_SETTINGS[k] === 'object' && parsed[k] != null) {
+          settings[k] = Object.assign({}, DEFAULT_SETTINGS[k], parsed[k]);
+          // 2nd-level merge for TB and adders
+          if (k === 'TB') {
+            ['USD','SEK','CHF'].forEach(function(m) {
+              settings.TB[m] = Object.assign({}, DEFAULT_SETTINGS.TB[m], (parsed.TB && parsed.TB[m]) || {});
+            });
+          }
+          if (k === 'adders') {
+            ['USD','EUR'].forEach(function(c) {
+              settings.adders[c] = Object.assign({}, DEFAULT_SETTINGS.adders[c], (parsed.adders && parsed.adders[c]) || {});
+            });
+          }
+        } else if (parsed[k] != null) {
+          settings[k] = parsed[k];
+        }
+      }
+    }
+  } catch(_) {}
+}
+function saveSettings() {
+  try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); } catch(_) {}
+}
+loadSettings();
+
 // ============================================================
 // PRICING LOGIC — defensive: returns {error:'incomplete'} on missing inputs
 // ============================================================
@@ -632,13 +966,21 @@ function safeNum(v) { return (typeof v === 'number' && isFinite(v)) ? v : null; 
 
 function calcPrice(currency, product, p) {
   try {
-    const cd = currency === 'USD' ? DATA.prices.USD : DATA.prices.EUR;
-    const S = DATA.settings;
-    const A = DATA.knit_adders[currency === 'USD' ? 'USD' : 'EUR'];
-    const DO = currency === 'USD' ? S.DO_USD : S.DO_EUR;
-    const PLEAT = currency === 'USD' ? S.pleat_USD : S.pleat_EUR;
-    const SHIRT_HM = currency === 'USD' ? S.shirt_HM_USD : S.shirt_HM_EUR;
-    const SART = currency === 'USD' ? S.sartorial_USD : S.sartorial_EUR;
+    const inkopCurrency = currency === 'USD' ? 'USD' : 'EUR';
+    const cd = DATA.prices[inkopCurrency];
+    const A = DATA.knit_adders[inkopCurrency];
+    const ad = settings.adders[inkopCurrency];
+    const DO = ad.DO;
+    const PLEAT = ad.pleat;
+    const SHIRT_HM = ad.shirt_HM;
+    const SART = ad.sartorial;
+    const TB = ((settings.TB[currency] || {})[product] != null ? settings.TB[currency][product] : 75) / 100;
+    const MOMS = (settings[currency] || {}).moms_pct / 100 || 0;
+    const ROUND = (settings[currency] || {}).rounding || 1;
+    var rate;
+    if (currency === 'USD') rate = 1;
+    else if (currency === 'SEK') rate = settings.EUR_to_SEK;
+    else if (currency === 'CHF') rate = settings.EUR_to_CHF;
     p = p || {};
     let withAdds = null;
     const detail = { components: [] };
@@ -653,8 +995,9 @@ function calcPrice(currency, product, p) {
         const colMap = {'2p':'2p','2px':'2p+x','3p':'3p','3px':'3p+x'};
         const ink = safeNum(_g(cd, rng, p.pc, colMap[p.config]));
         if (ink == null) return { error: 'unavailable' };
-        push('Inköp ' + p.make, ink); push('Design options', DO); push('Pleated waistband', PLEAT);
-        withAdds = ink + DO + PLEAT;
+        push('Inköp ' + p.make, ink); push('Design options', DO);
+        withAdds = ink + DO;
+        if (p.pleated) { push('Pleated waistband', PLEAT); withAdds += PLEAT; }
         break;
       }
       case 'kavaj': {
@@ -682,8 +1025,9 @@ function calcPrice(currency, product, p) {
         const jInk = safeNum(_g(cd, jRng, p.jpc, 'jacket'));
         const pInk = safeNum(_g(cd, pRng, p.ppc, 'trousers'));
         if (jInk == null || pInk == null) return { error: 'unavailable' };
-        push('Inköp jacket', jInk); push('Inköp byxa', pInk); push('Design options', DO); push('Pleated waistband', PLEAT);
-        withAdds = jInk + pInk + DO + PLEAT;
+        push('Inköp jacket', jInk); push('Inköp byxa', pInk); push('Design options', DO);
+        withAdds = jInk + pInk + DO;
+        if (p.pleated) { push('Pleated waistband', PLEAT); withAdds += PLEAT; }
         break;
       }
       case 'byxa': {
@@ -691,8 +1035,9 @@ function calcPrice(currency, product, p) {
         const rng = p.make === 'HM' ? 'HM' : 'HC';
         const ink = safeNum(_g(cd, rng, p.pc, 'trousers'));
         if (ink == null) return { error: 'unavailable' };
-        push('Inköp byxa', ink); push('Pleated waistband', PLEAT);
-        withAdds = ink + PLEAT;
+        push('Inköp byxa', ink);
+        withAdds = ink;
+        if (p.pleated) { push('Pleated waistband', PLEAT); withAdds += PLEAT; }
         break;
       }
       case 'vast': {
@@ -792,19 +1137,23 @@ function calcPrice(currency, product, p) {
 
     if (withAdds == null) return { error: 'incomplete' };
 
-    if (currency === 'USD') {
-      let target = withAdds / (1 - S.TB);
-      let rounded = Math.ceil(target / S.round_USD) * S.round_USD;
-      if (p.bigSize && p.bigSize > 0) rounded += p.bigSize;
-      return { price: rounded, currency: 'USD', detail, withAdds, target };
-    } else {
-      let sekTarget = withAdds * S.EUR_to_SEK / (1 - S.TB);
-      let sekEx = Math.ceil(sekTarget / S.round_SEK) * S.round_SEK;
-      let moms = sekEx * S.moms;
-      let total = sekEx + moms;
-      if (p.bigSize && p.bigSize > 0) total += p.bigSize;
-      return { price: total, sekExMoms: sekEx, moms, currency: 'SEK', detail, withAdds };
-    }
+    // Convert withAdds (in inkop currency) to display currency via rate
+    let localTarget = withAdds * rate / (1 - TB);
+    let localEx = Math.ceil(localTarget / ROUND) * ROUND;
+    let moms = localEx * MOMS;
+    let total = localEx + moms;
+    if (p.bigSize && p.bigSize > 0) total += p.bigSize;
+    return {
+      price: total,
+      exMoms: localEx,
+      moms: moms,
+      target: localTarget,
+      currency: currency,
+      detail: detail,
+      withAdds: withAdds,
+      rate: rate,
+      inkopCurrency: inkopCurrency
+    };
   } catch (err) {
     console.error('calcPrice error', err);
     return { error: 'incomplete' };
@@ -842,7 +1191,7 @@ const MAKES_INFORMAL = [
   { v: 'UHM', t: 'Unconstructed Handmade (HM-pris)' },
 ];
 const MAKES_BYXA = [
-  { v: 'HC', t: 'Traditional / Full Canvas' },
+  { v: 'HC', t: 'Traditional' },
   { v: 'HM', t: 'Handmade' },
 ];
 const CONFIGS = [
@@ -932,6 +1281,15 @@ function optionToggle(label, on, onChange) {
   }, [el('div', { class: 'check' }), el('span', {}, label)]);
 }
 
+function checkboxRow(label, priceLabel, on, onChange) {
+  const row = el('div', { class: 'checkbox-row' + (on ? ' on' : ''), onclick: () => onChange(!on) }, [
+    el('div', { class: 'check' }),
+    el('span', { class: 'cbox-label' }, label),
+  ]);
+  if (priceLabel) row.appendChild(el('span', { class: 'cbox-price' }, priceLabel));
+  return row;
+}
+
 // ============================================================
 // RENDER
 // ============================================================
@@ -959,6 +1317,7 @@ function renderForm() {
       fields.push(pcSelect('Tygkategori', PC_LISTS.full, p.pc, v => set('pc', v)));
       fields.push(selectField('Konfiguration', CONFIGS, p.config, v => set('config', v)));
       fields.push(selectField('Make · Konstruktion', MAKES_5, p.make, v => set('make', v)));
+      fields.push(checkboxRow('Pleated waistband', (state.currency === 'USD' ? '+$' + settings.adders.USD.pleat : '+€' + settings.adders.EUR.pleat), !!p.pleated, v => set('pleated', v)));
       break;
     case 'kavaj':
       fields.push(pcSelect('Tygkategori', PC_LISTS.full, p.pc, v => set('pc', v)));
@@ -975,10 +1334,12 @@ function renderForm() {
       fields.push(el('div', { class: 'subsection' }, '· Byxa'));
       fields.push(pcSelect('Tygkategori', PC_LISTS.full, p.ppc, v => set('ppc', v)));
       fields.push(selectField('Make', MAKES_BYXA, p.pmake, v => set('pmake', v)));
+      fields.push(checkboxRow('Pleated waistband', (state.currency === 'USD' ? '+$' + settings.adders.USD.pleat : '+€' + settings.adders.EUR.pleat), !!p.pleated, v => set('pleated', v)));
       break;
     case 'byxa':
       fields.push(pcSelect('Tygkategori', PC_LISTS.full, p.pc, v => set('pc', v)));
       fields.push(selectField('Make · Konstruktion', MAKES_BYXA, p.make, v => set('make', v)));
+      fields.push(checkboxRow('Pleated waistband', (state.currency === 'USD' ? '+$' + settings.adders.USD.pleat : '+€' + settings.adders.EUR.pleat), !!p.pleated, v => set('pleated', v)));
       break;
     case 'vast':
       fields.push(pcSelect('Tygkategori', PC_LISTS.full, p.pc, v => set('pc', v)));
@@ -1021,7 +1382,7 @@ function renderForm() {
       el('input', {
         type: 'number',
         inputmode: 'numeric',
-        placeholder: state.currency === 'USD' ? 'Belopp i USD' : 'Belopp i SEK',
+        placeholder: state.currency === 'USD' ? 'Belopp i USD' : (state.currency === 'CHF' ? 'Belopp i CHF' : 'Belopp i SEK'),
         value: state.bigSize || '',
         oninput: e => { state.bigSize = parseFloat(e.target.value) || 0; rerender(); },
       }),
@@ -1035,6 +1396,7 @@ function fmtMoney(v, currency) {
   if (v == null) return '—';
   const r = Math.round(v);
   if (currency === 'USD') return '$' + r.toLocaleString('en-US');
+  if (currency === 'CHF') return r.toLocaleString('en-US').replace(/,/g, ' ') + ' CHF';
   return r.toLocaleString('en-US').replace(/,/g, ' ') + ' kr';
 }
 
@@ -1083,13 +1445,21 @@ function renderPrice() {
       el('span', { class: 'currency-sym' }, '$'),
       formattedNum,
     ]);
+  } else if (cur === 'CHF') {
+    valueNode = el('div', { class: 'value' }, [
+      formattedNum,
+      el('span', { class: 'currency-suffix' }, 'CHF'),
+    ]);
   } else {
     valueNode = el('div', { class: 'value' }, [
       formattedNum,
       el('span', { class: 'currency-suffix' }, 'kr'),
     ]);
   }
-  const meta = cur === 'USD' ? 'Customer price · exkl. NYC sales tax' : 'Customer price · inkl. moms 25%';
+  const momsPct = settings[cur] ? settings[cur].moms_pct : 0;
+  const meta = cur === 'USD'
+    ? 'Customer price · exkl. NYC sales tax'
+    : 'Customer price · inkl. moms ' + momsPct + '%';
   sec.appendChild(el('section', { class: 'price-card' }, [
     el('div', { class: 'label' }, 'Customer Price'),
     valueNode,
@@ -1100,7 +1470,10 @@ function renderPrice() {
   document.getElementById('details').style.display = '';
   const bd = document.getElementById('breakdown');
   bd.innerHTML = '';
-  const symFor = (v) => cur === 'USD' ? ('$' + Math.round(v).toLocaleString('en-US')) : ('€' + Math.round(v).toLocaleString('en-US'));
+  const symFor = (v) => {
+    if (cur === 'USD') return '$' + Math.round(v).toLocaleString('en-US');
+    return '€' + Math.round(v).toLocaleString('en-US');
+  };
   result.detail.components.forEach(([lbl, val]) => {
     bd.appendChild(el('div', { class: 'bk-label' }, lbl));
     bd.appendChild(el('div', { class: 'bk-value' }, symFor(val)));
@@ -1108,15 +1481,19 @@ function renderPrice() {
   bd.appendChild(el('div', { class: 'bk-divider' }));
   bd.appendChild(el('div', { class: 'bk-label' }, 'Totalt inköp'));
   bd.appendChild(el('div', { class: 'bk-value' }, symFor(result.withAdds)));
+  const tbPct = ((settings.TB[cur] || {})[state.product] != null ? settings.TB[cur][state.product] : 75);
+  const roundUnit = (settings[cur] || {}).rounding || 1;
+  const momsP = (settings[cur] || {}).moms_pct || 0;
   if (cur === 'USD') {
-    bd.appendChild(el('div', { class: 'bk-label' }, 'Säljpris @ 75 % TB'));
+    bd.appendChild(el('div', { class: 'bk-label' }, 'Säljpris @ ' + tbPct + '% TB'));
     bd.appendChild(el('div', { class: 'bk-value' }, '$' + Math.round(result.target).toLocaleString('en-US')));
-    bd.appendChild(el('div', { class: 'bk-label' }, 'Avrundat ($50)'));
+    bd.appendChild(el('div', { class: 'bk-label' }, 'Avrundat ($' + roundUnit + ')'));
     bd.appendChild(el('div', { class: 'bk-value' }, fmtMoney(result.price - (state.bigSize || 0), cur)));
   } else {
-    bd.appendChild(el('div', { class: 'bk-label' }, 'SEK ex moms · avrundat 500 kr'));
-    bd.appendChild(el('div', { class: 'bk-value' }, fmtMoney(result.sekExMoms, cur)));
-    bd.appendChild(el('div', { class: 'bk-label' }, 'Moms 25 %'));
+    const unitLbl = cur === 'CHF' ? (roundUnit + ' CHF') : (roundUnit + ' kr');
+    bd.appendChild(el('div', { class: 'bk-label' }, 'Ex moms · avrundat ' + unitLbl));
+    bd.appendChild(el('div', { class: 'bk-value' }, fmtMoney(result.exMoms, cur)));
+    bd.appendChild(el('div', { class: 'bk-label' }, 'Moms ' + momsP + ' %'));
     bd.appendChild(el('div', { class: 'bk-value' }, fmtMoney(result.moms, cur)));
   }
   if (state.bigSize > 0) {
@@ -1144,7 +1521,317 @@ document.getElementById('currency').addEventListener('click', e => {
   rerender();
 });
 
+
+// ============================================================
+// ADMIN PANEL
+// ============================================================
+function _initAdmin() {
+  var ADMIN_PIN = '3699';
+  var trigger = document.getElementById('admin-trigger');
+  if (!trigger) { setTimeout(_initAdmin, 50); return; }
+  var pinGate = document.getElementById('admin-pin-gate');
+  var pinInput = document.getElementById('admin-pin-input');
+  var pinErr = document.getElementById('admin-pin-err');
+  var pinCancel = document.getElementById('admin-pin-cancel');
+  var overlay = document.getElementById('admin-overlay');
+  var closeBtn = document.getElementById('admin-close');
+  var saveBtn = document.getElementById('admin-save');
+  var resetBtn = document.getElementById('admin-reset');
+  var savedToast = document.getElementById('admin-saved');
+  
+  var PRODUCT_LABELS = {
+    kostym: 'Kostym', kavaj: 'Kavaj', informal_jacket: 'Informal Jacket',
+    kombo: 'Informal Jacket + Byxa', byxa: 'Byxa', vast: 'Suit-väst',
+    vest: 'Vest (outerwear)', quilted_vest: 'Quilted Vest',
+    bermuda: 'Bermuda Shorts', skjorta: 'Skjorta', rock: 'Rock',
+    jeans: 'Jeans / Chinos', stickat: 'Stickat'
+  };
+  
+  function getByPath(obj, path) {
+    var parts = path.split('.');
+    var cur = obj;
+    for (var i = 0; i < parts.length; i++) {
+      if (cur == null) return null;
+      cur = cur[parts[i]];
+    }
+    return cur;
+  }
+  function setByPath(obj, path, val) {
+    var parts = path.split('.');
+    var cur = obj;
+    for (var i = 0; i < parts.length - 1; i++) {
+      if (cur[parts[i]] == null) cur[parts[i]] = {};
+      cur = cur[parts[i]];
+    }
+    cur[parts[parts.length - 1]] = val;
+  }
+  
+  function buildTbRows() {
+    ['USD','SEK','CHF'].forEach(function(market) {
+      var container = document.querySelector('[data-tb-market="' + market + '"]');
+      if (!container) return;
+      container.innerHTML = '';
+      Object.keys(PRODUCT_LABELS).forEach(function(key) {
+        var row = document.createElement('div');
+        row.className = 'admin-row';
+        var lbl = document.createElement('label');
+        lbl.textContent = PRODUCT_LABELS[key];
+        var inp = document.createElement('input');
+        inp.type = 'number';
+        inp.step = '0.5';
+        inp.min = '0';
+        inp.max = '95';
+        inp.dataset.tbMarket = market;
+        inp.dataset.tbKey = key;
+        inp.value = (settings.TB[market] && settings.TB[market][key] != null) ? settings.TB[market][key] : 75;
+        var unit = document.createElement('span');
+        unit.className = 'unit';
+        unit.textContent = '%';
+        row.appendChild(lbl);
+        row.appendChild(inp);
+        row.appendChild(unit);
+        container.appendChild(row);
+      });
+    });
+  }
+  
+  function populateFields() {
+    var inputs = document.querySelectorAll('[data-path]');
+    inputs.forEach(function(el) {
+      var v = getByPath(settings, el.dataset.path);
+      if (v != null) {
+        // Round display to 4 decimal places for floats
+        el.value = (typeof v === 'number') ? +v.toFixed(4) : v;
+      }
+    });
+    buildTbRows();
+  }
+  
+  function readFields() {
+    var inputs = document.querySelectorAll('[data-path]');
+    inputs.forEach(function(el) {
+      if (el.value === '') return;
+      var v = parseFloat(el.value);
+      if (!isNaN(v)) setByPath(settings, el.dataset.path, v);
+    });
+    var tbInputs = document.querySelectorAll('[data-tb-market][data-tb-key]');
+    tbInputs.forEach(function(inp) {
+      var market = inp.dataset.tbMarket;
+      var key = inp.dataset.tbKey;
+      var v = parseFloat(inp.value);
+      if (!isNaN(v) && v >= 0 && v < 100) {
+        if (!settings.TB[market]) settings.TB[market] = {};
+        settings.TB[market][key] = v;
+      }
+    });
+  }
+  
+  function showToast(msg) {
+    savedToast.textContent = msg;
+    savedToast.classList.add('show');
+    setTimeout(function() { savedToast.classList.remove('show'); }, 1800);
+  }
+  
+  function openAdmin() {
+    populateFields();
+    overlay.classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+  
+  function closeAdmin() {
+    overlay.classList.remove('show');
+    document.body.style.overflow = '';
+  }
+  
+  // Trigger button → show PIN gate
+  trigger.addEventListener('click', function() {
+    pinGate.classList.add('show');
+    pinInput.value = '';
+    pinErr.classList.remove('show');
+    setTimeout(function() { pinInput.focus(); }, 100);
+  });
+  
+  pinInput.addEventListener('input', function(e) {
+    pinErr.classList.remove('show');
+    if (e.target.value === ADMIN_PIN) {
+      pinGate.classList.remove('show');
+      e.target.value = '';
+      openAdmin();
+    } else if (e.target.value.length >= ADMIN_PIN.length) {
+      pinErr.classList.add('show');
+      setTimeout(function() {
+        e.target.value = '';
+        pinErr.classList.remove('show');
+      }, 1000);
+    }
+  });
+  
+  pinCancel.addEventListener('click', function() {
+    pinGate.classList.remove('show');
+    pinInput.value = '';
+  });
+  
+  closeBtn.addEventListener('click', closeAdmin);
+  
+  saveBtn.addEventListener('click', function() {
+    readFields();
+    saveSettings();
+    showToast('Inställningar sparade');
+    closeAdmin();
+    rerender();
+  });
+  
+  resetBtn.addEventListener('click', function() {
+    if (confirm('Återställ alla inställningar till standard?')) {
+      settings = JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
+      saveSettings();
+      populateFields();
+      showToast('Återställd');
+      rerender();
+    }
+  });
+}
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', _initAdmin);
+} else {
+  _initAdmin();
+}
+
 rerender();
 </script>
+
+<div class="admin-pin-gate" id="admin-pin-gate">
+  <div class="admin-pin-label">Admin PIN</div>
+  <input type="tel" inputmode="numeric" maxlength="6" id="admin-pin-input" placeholder="••••" autocomplete="off">
+  <div class="err" id="admin-pin-err">Fel PIN</div>
+  <button class="cancel" id="admin-pin-cancel" type="button">Avbryt</button>
+</div>
+
+<div class="admin-overlay" id="admin-overlay">
+  <div class="admin-inner">
+    <div class="admin-header">
+      <div class="admin-title">Inställningar</div>
+      <button class="admin-close" id="admin-close" type="button">×</button>
+    </div>
+    
+    <div class="admin-section">
+      <div class="admin-section-title">Valutakurser</div>
+      <div class="admin-row">
+        <label>EUR → SEK</label>
+        <input type="number" step="0.01" data-path="EUR_to_SEK">
+        <span class="unit">kr/€</span>
+      </div>
+      <div class="admin-row">
+        <label>EUR → CHF</label>
+        <input type="number" step="0.001" data-path="EUR_to_CHF">
+        <span class="unit">CHF/€</span>
+      </div>
+    </div>
+    
+    <div class="admin-section">
+      <div class="admin-section-title">Per marknad</div>
+      <div class="admin-row">
+        <label>USD · NYC moms</label>
+        <input type="number" step="0.1" data-path="USD.moms_pct">
+        <span class="unit">%</span>
+      </div>
+      <div class="admin-row">
+        <label>USD · NYC avrundning</label>
+        <input type="number" step="1" data-path="USD.rounding">
+        <span class="unit">$</span>
+      </div>
+      <div class="admin-row">
+        <label>SEK · STO moms</label>
+        <input type="number" step="0.5" data-path="SEK.moms_pct">
+        <span class="unit">%</span>
+      </div>
+      <div class="admin-row">
+        <label>SEK · STO avrundning</label>
+        <input type="number" step="10" data-path="SEK.rounding">
+        <span class="unit">kr</span>
+      </div>
+      <div class="admin-row">
+        <label>CHF · ZRH moms</label>
+        <input type="number" step="0.1" data-path="CHF.moms_pct">
+        <span class="unit">%</span>
+      </div>
+      <div class="admin-row">
+        <label>CHF · ZRH avrundning</label>
+        <input type="number" step="1" data-path="CHF.rounding">
+        <span class="unit">CHF</span>
+      </div>
+    </div>
+    
+    <div class="admin-section">
+      <div class="admin-section-title">Tillägg · USD</div>
+      <div class="admin-row">
+        <label>Design options</label>
+        <input type="number" step="1" data-path="adders.USD.DO">
+        <span class="unit">$</span>
+      </div>
+      <div class="admin-row">
+        <label>Pleated waistband</label>
+        <input type="number" step="1" data-path="adders.USD.pleat">
+        <span class="unit">$</span>
+      </div>
+      <div class="admin-row">
+        <label>Shirt HM-tillägg</label>
+        <input type="number" step="1" data-path="adders.USD.shirt_HM">
+        <span class="unit">$</span>
+      </div>
+      <div class="admin-row">
+        <label>Sartorial-tillägg</label>
+        <input type="number" step="1" data-path="adders.USD.sartorial">
+        <span class="unit">$</span>
+      </div>
+    </div>
+    
+    <div class="admin-section">
+      <div class="admin-section-title">Tillägg · EUR (för SEK &amp; CHF)</div>
+      <div class="admin-row">
+        <label>Design options</label>
+        <input type="number" step="1" data-path="adders.EUR.DO">
+        <span class="unit">€</span>
+      </div>
+      <div class="admin-row">
+        <label>Pleated waistband</label>
+        <input type="number" step="1" data-path="adders.EUR.pleat">
+        <span class="unit">€</span>
+      </div>
+      <div class="admin-row">
+        <label>Shirt HM-tillägg</label>
+        <input type="number" step="1" data-path="adders.EUR.shirt_HM">
+        <span class="unit">€</span>
+      </div>
+      <div class="admin-row">
+        <label>Sartorial-tillägg</label>
+        <input type="number" step="1" data-path="adders.EUR.sartorial">
+        <span class="unit">€</span>
+      </div>
+    </div>
+    
+    <div class="admin-section">
+      <div class="admin-section-title">Bruttomarginal (TB%) · USD · NYC</div>
+      <div data-tb-market="USD"></div>
+    </div>
+    
+    <div class="admin-section">
+      <div class="admin-section-title">Bruttomarginal (TB%) · SEK · STO</div>
+      <div data-tb-market="SEK"></div>
+    </div>
+    
+    <div class="admin-section">
+      <div class="admin-section-title">Bruttomarginal (TB%) · CHF · ZRH</div>
+      <div data-tb-market="CHF"></div>
+    </div>
+    
+    <div class="admin-actions">
+      <button class="admin-btn" id="admin-reset" type="button">Återställ</button>
+      <button class="admin-btn primary" id="admin-save" type="button">Spara</button>
+    </div>
+  </div>
+</div>
+
+<div class="admin-saved" id="admin-saved">Inställningar sparade</div>
 </body>
 </html>
