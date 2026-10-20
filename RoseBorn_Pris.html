@@ -579,7 +579,7 @@ to { opacity: 1; transform: translateY(0); }
 .admin-row .unit { font-size: 11px; color: #888; }
 .admin-section .admin-msg-inline { font-size: 11px; color: #888; margin-top: 6px; }
 .admin-tb-grid {
-  display: grid; grid-template-columns: 130px repeat(3, 1fr);
+  display: grid; grid-template-columns: 110px repeat(4, 1fr);
   gap: 6px; font-size: 12px; align-items: center;
 }
 .admin-tb-grid .head {
@@ -626,6 +626,7 @@ to { opacity: 1; transform: translateY(0); }
     <button data-mkt="USA" class="active">USA · USD</button>
     <button data-mkt="Stockholm">Stockholm · SEK</button>
     <button data-mkt="Zurich">Zürich · CHF</button>
+    <button data-mkt="EU">EU · EUR</button>
   </div>
 
   <div class="section-label">Product</div>
@@ -690,20 +691,25 @@ const MARKETS = {
   USA: { currency: 'USD', label: 'USA (USD)' },
   Stockholm: { currency: 'SEK', label: 'Stockholm (SEK)' },
   Zurich: { currency: 'CHF', label: 'Z\u00fcrich (CHF)' },
+  EU: { currency: 'EUR', label: 'EU (EUR)' },
 };
 
 // Extend settings with CHF / market defaults if not present
 if (!('tb_map' in DATA.settings)) {
-  // Per-market, per-product TB %. Defaults: 75% everywhere except Zurich at 80%
+  // Per-market, per-product TB %. Defaults: USA 75%, Stockholm 72%, Zurich 72%, EU 72%
   DATA.settings.tb_map = {
     USA: { kostym:0.75, kavaj:0.75, informal_jacket:0.75, kombo:0.75, byxa:0.75, vast:0.75, vest:0.75, quilted_vest:0.75, bermuda:0.75, skjorta:0.75, rock:0.75, jeans:0.75, stickat:0.75, shoes:0.75, belt:0.75 },
-    Stockholm: { kostym:0.75, kavaj:0.75, informal_jacket:0.75, kombo:0.75, byxa:0.75, vast:0.75, vest:0.75, quilted_vest:0.75, bermuda:0.75, skjorta:0.75, rock:0.75, jeans:0.75, stickat:0.75, shoes:0.75, belt:0.75 },
-    Zurich: { kostym:0.80, kavaj:0.80, informal_jacket:0.80, kombo:0.80, byxa:0.80, vast:0.80, vest:0.80, quilted_vest:0.80, bermuda:0.80, skjorta:0.80, rock:0.80, jeans:0.80, stickat:0.80, shoes:0.80, belt:0.80 },
+    Stockholm: { kostym:0.72, kavaj:0.72, informal_jacket:0.72, kombo:0.72, byxa:0.72, vast:0.72, vest:0.72, quilted_vest:0.72, bermuda:0.72, skjorta:0.72, rock:0.72, jeans:0.72, stickat:0.72, shoes:0.72, belt:0.72 },
+    Zurich: { kostym:0.72, kavaj:0.72, informal_jacket:0.72, kombo:0.72, byxa:0.72, vast:0.72, vest:0.72, quilted_vest:0.72, bermuda:0.72, skjorta:0.72, rock:0.72, jeans:0.72, stickat:0.72, shoes:0.72, belt:0.72 },
+    EU: { kostym:0.72, kavaj:0.72, informal_jacket:0.72, kombo:0.72, byxa:0.72, vast:0.72, vest:0.72, quilted_vest:0.72, bermuda:0.72, skjorta:0.72, rock:0.72, jeans:0.72, stickat:0.72, shoes:0.72, belt:0.72 },
   };
 }
+if (DATA.settings.tb_map && !DATA.settings.tb_map.EU) DATA.settings.tb_map.EU = { kostym:0.72, kavaj:0.72, informal_jacket:0.72, kombo:0.72, byxa:0.72, vast:0.72, vest:0.72, quilted_vest:0.72, bermuda:0.72, skjorta:0.72, rock:0.72, jeans:0.72, stickat:0.72, shoes:0.72, belt:0.72 };
 if (!('EUR_to_CHF' in DATA.settings)) DATA.settings.EUR_to_CHF = 1.08;
 if (!('round_CHF' in DATA.settings)) DATA.settings.round_CHF = 50;
 if (!('vat_CHF' in DATA.settings)) DATA.settings.vat_CHF = 0.081;
+if (!('round_EUR' in DATA.settings)) DATA.settings.round_EUR = 50;
+if (!('vat_EUR' in DATA.settings)) DATA.settings.vat_EUR = 0.25;
 if (!('rates_updated' in DATA.settings)) DATA.settings.rates_updated = '';
 
 const PC_LISTS = {
@@ -1001,6 +1007,15 @@ function calcPrice(currency, product, p) {
       let chfEx = finalExBS / (1 + (S.vat_CHF || 0));
       let vat = finalExBS - chfEx;
       return { price: final, sekExMoms: chfEx, moms: vat, currency: 'CHF', detail, withAdds };
+    } else if (state.market === 'EU') {
+      let eurTarget = withAdds / (1 - getEffectiveTB(product));   // EUR price list, no conversion
+      let total = eurTarget * (1 + (S.vat_EUR || 0));
+      let bs = (p.bigSize && p.bigSize > 0) ? p.bigSize : 0;
+      let final = Math.round((total + bs) / S.round_EUR) * S.round_EUR;
+      let finalExBS = final - bs;
+      let eurEx = finalExBS / (1 + (S.vat_EUR || 0));
+      let vat = finalExBS - eurEx;
+      return { price: final, sekExMoms: eurEx, moms: vat, currency: 'EUR', detail, withAdds };
     }
     return { error: 'incomplete' };
   } catch (err) {
@@ -1126,6 +1141,7 @@ function getRounding() {
   if (state.market === 'USA') return S.round_USD || 50;
   if (state.market === 'Stockholm') return S.round_SEK || 500;
   if (state.market === 'Zurich') return S.round_CHF || 50;
+  if (state.market === 'EU') return S.round_EUR || 50;
   return 50;
 }
 
@@ -1134,6 +1150,7 @@ function getVAT() {
   const S = DATA.settings;
   if (state.market === 'Stockholm') return S.moms || 0;
   if (state.market === 'Zurich') return S.vat_CHF || 0;
+  if (state.market === 'EU') return S.vat_EUR || 0;
   return 0;
 }
 
@@ -1563,6 +1580,11 @@ function renderPrice() {
       el('span', { class: 'currency-sym' }, 'CHF '),
       formattedNum,
     ]);
+  } else if (cur === 'EUR') {
+    valueNode = el('div', { class: 'value' }, [
+      el('span', { class: 'currency-sym' }, '€'),
+      formattedNum,
+    ]);
   } else {
     valueNode = el('div', { class: 'value' }, [
       formattedNum,
@@ -1572,6 +1594,7 @@ function renderPrice() {
   let meta;
   if (cur === 'USD') meta = 'Customer price · excl. NYC sales tax';
   else if (cur === 'SEK') meta = 'Customer price · incl. VAT ' + Math.round(DATA.settings.moms * 100) + '%';
+  else if (cur === 'EUR') meta = 'Customer price · incl. VAT ' + Math.round(DATA.settings.vat_EUR * 100) + '%';
   else meta = 'Customer price · incl. VAT ' + (DATA.settings.vat_CHF * 100).toFixed(1) + '%';
 
   sec.appendChild(el('section', { class: 'price-card' }, [
@@ -1611,6 +1634,11 @@ function renderPrice() {
     bd.appendChild(el('div', { class: 'bk-value' }, fmtMoney(result.sekExMoms, cur)));
     bd.appendChild(el('div', { class: 'bk-label' }, 'VAT ' + (DATA.settings.vat_CHF * 100).toFixed(1) + ' %'));
     bd.appendChild(el('div', { class: 'bk-value' }, fmtMoney(result.moms, cur)));
+  } else if (cur === 'EUR') {
+    bd.appendChild(el('div', { class: 'bk-label' }, 'EUR ex VAT (back-calculated)'));
+    bd.appendChild(el('div', { class: 'bk-value' }, fmtMoney(result.sekExMoms, cur)));
+    bd.appendChild(el('div', { class: 'bk-label' }, 'VAT ' + Math.round(DATA.settings.vat_EUR * 100) + ' %'));
+    bd.appendChild(el('div', { class: 'bk-value' }, fmtMoney(result.moms, cur)));
   }
   if (state.bigSize > 0) {
     bd.appendChild(el('div', { class: 'bk-label' }, 'Big Size surcharge'));
@@ -1620,7 +1648,8 @@ function renderPrice() {
   bd.appendChild(el('div', { class: 'bk-label bk-final' }, 'Final price' + (
     cur === 'USD' ? ' (rounded to $' + DATA.settings.round_USD + ')' :
     cur === 'SEK' ? ' (rounded to ' + DATA.settings.round_SEK + ' kr, incl VAT)' :
-    cur === 'CHF' ? ' (rounded to CHF ' + DATA.settings.round_CHF + ', incl VAT)' : ''
+    cur === 'CHF' ? ' (rounded to CHF ' + DATA.settings.round_CHF + ', incl VAT)' :
+    cur === 'EUR' ? ' (rounded to €' + DATA.settings.round_EUR + ', incl VAT)' : ''
 )));
   bd.appendChild(el('div', { class: 'bk-value bk-final' }, fmtMoney(result.price, cur)));
 }
@@ -1649,7 +1678,7 @@ document.getElementById('markets').addEventListener('click', e => {
 // ADMIN PANEL
 // ============================================================
 const ADMIN_PIN = '3699';
-const STORAGE_KEY = 'rb_settings_v14';
+const STORAGE_KEY = 'rb_settings_v15';
 
 // Load saved settings on startup
 (function loadSettings() {
@@ -1684,6 +1713,7 @@ function renderAdmin() {
     ['EUR_to_CHF', 'EUR → CHF', 'CHF/€'],
     ['moms', 'Sweden VAT', '(0.25 = 25%)'],
     ['vat_CHF', 'Switzerland VAT', '(0.081 = 8.1%)'],
+    ['vat_EUR', 'EU VAT (EUR market)', '(0.25 = 25%)'],
   ].forEach(([k, lbl, unit]) => sxr.appendChild(adminRow(k, lbl, unit)));
   // Auto-fetch removed — rates entered manually
   body.appendChild(sxr);
@@ -1695,6 +1725,7 @@ function renderAdmin() {
     ['round_USD', 'USA · nearest', '$'],
     ['round_SEK', 'Stockholm · nearest', 'kr'],
     ['round_CHF', 'Zürich · nearest', 'CHF'],
+    ['round_EUR', 'EU · nearest', '€'],
   ].forEach(([k, lbl, unit]) => srd.appendChild(adminRow(k, lbl, unit)));
   body.appendChild(srd);
 
@@ -1762,10 +1793,11 @@ function renderAdmin() {
   grid.appendChild(el('div', { class: 'head' }, 'USA'));
   grid.appendChild(el('div', { class: 'head' }, 'STO'));
   grid.appendChild(el('div', { class: 'head' }, 'ZRH'));
+  grid.appendChild(el('div', { class: 'head' }, 'EU'));
   Object.keys(PRODUCT_LABELS).forEach(prod => {
     grid.appendChild(el('div', { class: 'cat-label' }, PRODUCT_LABELS[prod]));
-    ['USA','Stockholm','Zurich'].forEach(mkt => {
-      const v = (S.tb_map && S.tb_map[mkt] && S.tb_map[mkt][prod] != null) ? S.tb_map[mkt][prod] : 0.75;
+    ['USA','Stockholm','Zurich','EU'].forEach(mkt => {
+      const v = (S.tb_map && S.tb_map[mkt] && S.tb_map[mkt][prod] != null) ? S.tb_map[mkt][prod] : (mkt === 'USA' ? 0.75 : 0.72);
       const inp = el('input', {
         type: 'number', step: '0.01', min: '0', max: '0.95',
         value: v, 'data-tb-mkt': mkt, 'data-tb-prod': prod,
