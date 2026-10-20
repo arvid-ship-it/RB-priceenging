@@ -1,0 +1,523 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>MTM Body Measurements</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&display=swap">
+<style>
+/* Layout: step rail at the left on wide screens, one step per screen, illustration beside a single input,
+   fixed Back / Next bar at the bottom. Square corners and hairlines, as on roseborn.com. */
+:root {
+  --paper: #ffffff;
+  --panel: #efedec;
+  --ink: #121212;
+  --on-ink: #ffffff;
+  --muted: #6a6562;
+  --line: #d8d4d0;
+  --missing: #800000;
+  --warn: #7a5200;
+  --plate: #fcf9f0;
+  --display: "Playfair Display", Didot, "Bodoni 72", Georgia, serif;
+  --body: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --gutter: 1rem;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #151413; --panel: #23211f; --ink: #f2efeb; --on-ink: #151413; --muted: #a59f99;
+    --line: #3b3734; --missing: #ee9a90; --warn: #e3b566; --plate: #fcf9f0; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #151413; --panel: #23211f; --ink: #f2efeb; --on-ink: #151413; --muted: #a59f99;
+  --line: #3b3734; --missing: #ee9a90; --warn: #e3b566; --plate: #fcf9f0; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--paper); color: var(--ink);
+  font-family: var(--body); font-weight: 300; font-size: 1rem; line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+}
+button, input, textarea { font: inherit; color: inherit; border-radius: 0; }
+button { cursor: pointer; background: none; border: 0; padding: 0; }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+h1, h2 { font-family: var(--display); font-weight: 400; margin: 0; text-wrap: balance; }
+.label {
+  font-size: .6875rem; letter-spacing: .12em; text-transform: uppercase; font-weight: 400; color: var(--muted);
+}
+
+/* ---------- top bar */
+.bar {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+  background: var(--paper); border-bottom: 1px solid var(--line);
+}
+.bar-in {
+  display: flex; align-items: center; gap: 1rem; justify-content: space-between;
+  padding: .625rem var(--gutter); max-width: 76rem; margin-inline: auto;
+}
+.logo { height: 2rem; width: auto; display: block; color: var(--ink); flex: none; }
+.where { min-width: 0; text-align: right; flex: 1; }
+.where .label { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.where b { display: block; font-weight: 400; font-size: .9375rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.steps-btn {
+  flex: none; border: 1px solid var(--ink); padding: .5rem .75rem; min-height: 2.75rem;
+  font-size: .6875rem; letter-spacing: .12em; text-transform: uppercase; font-weight: 400;
+}
+.progress { height: 3px; background: var(--line); }
+.progress i { display: block; height: 100%; background: var(--ink); width: 0; transition: width .2s ease; }
+
+/* ---------- shell */
+.shell {
+  display: grid; grid-template-columns: minmax(0, 1fr); gap: 0;
+  max-width: 76rem; margin-inline: auto; padding-inline: var(--gutter);
+  padding-block: 1.25rem 7.5rem;
+}
+.rail { min-width: 0; }
+.rail[hidden] { display: none !important; }
+.rail-group { margin-bottom: 1.25rem; }
+.rail-group > .label { display: block; padding-bottom: .375rem; border-bottom: 1px solid var(--line); margin-bottom: .25rem; }
+.rail button {
+  display: grid; grid-template-columns: 1.5rem minmax(0, 1fr) auto; align-items: center; gap: .5rem;
+  width: 100%; text-align: left; padding: .5rem .25rem; min-height: 2.5rem; font-size: .9375rem;
+}
+.rail button[aria-current="step"] { background: var(--panel); font-weight: 500; }
+.rail .mark { width: .625rem; height: .625rem; border: 1px solid var(--ink); justify-self: center; }
+.rail .done .mark { background: var(--ink); }
+.rail .bad .mark { border-color: var(--missing); background: var(--missing); }
+.rail .val { font-variant-numeric: tabular-nums; color: var(--muted); font-size: .8125rem; }
+.rail .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.stage { min-width: 0; }
+
+@media (min-width: 60rem) {
+  :root { --gutter: 1.5rem; }
+  .shell { grid-template-columns: 15rem minmax(0, 1fr); gap: 3rem; }
+  .rail, .rail[hidden] { display: block !important; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 4.5rem);
+    align-self: start; max-height: calc(100vh - 11rem); overflow-y: auto; }
+  .steps-btn { display: none; }
+}
+
+/* ---------- step content */
+.step-head { margin-bottom: 1.25rem; }
+.step-head h1 { font-size: clamp(1.75rem, 1.2rem + 2.2vw, 2.5rem); line-height: 1.15; margin-top: .25rem; }
+.lead { max-width: 38rem; margin: .625rem 0 0; }
+.note { color: var(--muted); font-size: .875rem; max-width: 38rem; margin: .5rem 0 0; }
+.err { color: var(--missing); font-weight: 400; font-size: .9375rem; margin: .75rem 0 0; min-height: 1.4em; }
+.soft { color: var(--warn); font-weight: 400; font-size: .875rem; margin: .5rem 0 0; }
+
+.fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: 1rem; max-width: 46rem; }
+.field { display: grid; gap: .375rem; min-width: 0; }
+.field input, .field textarea {
+  width: 100%; border: 1px solid var(--line); background: var(--panel); padding: .75rem; min-height: 3rem;
+  font-size: 1rem; font-weight: 400;
+}
+.field input:focus, .field textarea:focus { border-color: var(--ink); outline: none; }
+
+.plate { background: var(--plate); }
+.plate img { display: block; width: 100%; height: auto; }
+
+/* choice steps */
+.choice { max-width: min(46rem, 70vh); }  /* keeps the three options on screen under the illustration */
+.choice .plate { cursor: pointer; }
+.opts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .5rem; margin-top: .5rem; }
+.opt {
+  border: 1px solid var(--ink); padding: .75rem .5rem; min-height: 3.5rem; text-align: center;
+  display: grid; gap: .25rem; align-content: start;
+}
+.opt b { font-weight: 500; font-size: .8125rem; letter-spacing: .1em; text-transform: uppercase; }
+.opt span { font-size: .75rem; line-height: 1.35; color: var(--muted); }
+.opt[aria-pressed="true"] { background: var(--ink); color: var(--on-ink); }
+.opt[aria-pressed="true"] span { color: var(--on-ink); opacity: .8; }
+.seg { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); max-width: 28rem; margin-top: .5rem; }
+.seg button { border: 1px solid var(--ink); margin-left: -1px; padding: .75rem .25rem; min-height: 3rem; font-size: .875rem; font-weight: 400; }
+.seg button:first-child { margin-left: 0; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--on-ink); }
+.sub { margin-top: 1.5rem; }
+
+/* measurement steps */
+.measure { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.25rem; }
+.measure .plate { max-width: 14rem; justify-self: start; }
+@media (min-width: 40rem) {
+  .measure { grid-template-columns: minmax(0, 19rem) minmax(0, 1fr); gap: 2.5rem; align-items: start; }
+  .measure .plate { max-width: none; }
+}
+.entry { display: flex; align-items: stretch; gap: .5rem; margin-top: 1.5rem; flex-wrap: wrap; }
+.entry .nudge { width: 3.5rem; min-height: 3.5rem; border: 1px solid var(--ink); font-size: 1.5rem; font-weight: 300; }
+.entry .box { display: flex; align-items: baseline; gap: .5rem; border: 1px solid var(--ink); background: var(--panel); padding: .25rem .875rem; }
+.entry input {
+  width: 6.5ch; border: 0; background: transparent; text-align: right; padding: 0;
+  font-size: 2.25rem; font-weight: 300; font-variant-numeric: tabular-nums; min-height: 3rem;
+}
+.entry input:focus { outline: none; }
+.entry .box:focus-within { outline: 2px solid var(--ink); outline-offset: 2px; }
+.entry .unit { color: var(--muted); font-size: 1rem; }
+
+/* summary */
+.status { border: 1px solid var(--ink); padding: 1rem; max-width: 46rem; }
+.status.bad { border-color: var(--missing); color: var(--missing); }
+.status b { font-weight: 500; }
+.status .gaps { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .75rem; }
+.status .gaps button { border: 1px solid var(--missing); color: var(--missing); padding: .5rem .75rem; min-height: 2.75rem; font-size: .875rem; font-weight: 400; }
+.sum { display: grid; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); gap: 2rem 3rem; margin-top: 2rem; max-width: 60rem; }
+.sum section { min-width: 0; }
+.sum h2 { font-size: 1.25rem; padding-bottom: .5rem; border-bottom: 1px solid var(--ink); }
+.row { display: grid; grid-template-columns: 2rem minmax(0, 1fr) auto; gap: .5rem; align-items: baseline; width: 100%;
+  text-align: left; padding: .625rem 0; border-bottom: 1px solid var(--line); min-height: 2.75rem; }
+.row .n { color: var(--muted); font-size: .75rem; font-variant-numeric: tabular-nums; }
+.row .v { font-weight: 500; font-variant-numeric: tabular-nums; }
+.row.gap .v { color: var(--missing); font-weight: 400; }
+.row.plain { grid-template-columns: minmax(0, 1fr) auto; }
+.row.plain .v.none { color: var(--muted); font-weight: 300; }
+.actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 2rem; align-items: center; }
+.btn { border: 1px solid var(--ink); padding: .875rem 1.25rem; min-height: 3rem; font-size: .75rem; letter-spacing: .12em; text-transform: uppercase; font-weight: 400; }
+.btn.primary { background: var(--ink); color: var(--on-ink); }
+.btn:disabled { opacity: .35; cursor: not-allowed; }
+.said { font-size: .875rem; color: var(--muted); }
+.copybox { width: 100%; max-width: 46rem; min-height: 14rem; margin-top: 1rem; border: 1px solid var(--line); background: var(--panel); padding: .75rem; font-size: .875rem; font-weight: 400; }
+.banner { background: var(--panel); padding: .75rem 1rem; margin-bottom: 1.25rem; max-width: 46rem; font-size: .875rem; font-weight: 400; display: flex; gap: 1rem; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+.banner button { text-decoration: underline; min-height: 2.75rem; font-weight: 400; }
+
+/* ---------- bottom bar */
+.nav {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 5;
+  background: var(--paper); border-top: 1px solid var(--line);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.nav-in { display: flex; align-items: center; justify-content: space-between; gap: .75rem;
+  max-width: 76rem; margin-inline: auto; padding: .75rem var(--gutter); }
+.nav .count { font-size: .8125rem; color: var(--muted); font-variant-numeric: tabular-nums; text-align: center; min-width: 0; }
+.nav .btn { min-width: 6.5rem; }
+@media (prefers-reduced-motion: reduce) { .progress i { transition: none; } }
+</style>
+
+<header class="bar">
+  <div class="bar-in">
+    <svg class="logo" viewBox="0 0 428.23 119.74" role="img" aria-label="Rose &amp; Born"><path fill="currentColor" d="M258.39 65.03C256.51 68.26 254.27 71.38 250.43 71.38L243.9 71.38C242.63 71.28 241.64 70.22 241.61 68.94L241.61 59.22C246.92 59.22 249.36 59.22 250.84 64.79L250.89 64.79L250.89 52.72L250.84 52.72C250.1 57.68 247.03 58.1 243.02 58.13L241.61 58.13L241.61 45.97L248.92 45.98C252.08 45.98 254.14 47.97 257.17 51.39L257.17 51.39L257.22 51.38L254.94 44.88L234.01 44.88L234.01 44.95C235.81 45.11 237.23 46.61 237.26 48.45L237.27 48.45L237.27 68.85L237.27 68.85C237.26 70.71 235.83 72.24 234.01 72.4L234.01 72.47L256.9 72.47L258.45 65.05L258.39 65.03L258.39 65.03ZM320.52 71.38C320.31 71.38 316.73 71.38 316.73 71.38C315.45 71.27 314.46 70.19 314.46 68.89L314.46 59.22L318.26 59.22C319.58 59.25 320.92 59.4 321.78 59.66C323.76 60.25 325.34 61.27 326.06 63.26C327.47 67.47 324.81 71.32 320.52 71.38ZM314.46 45.97C314.67 45.97 316.33 45.97 317.11 45.97C320.16 46.04 322.32 45.86 323.95 48.29C325.5 50.6 325.21 54.16 323.15 56.07C321.64 57.64 319.33 58.05 316.91 58.13L314.46 58.13L314.46 45.97ZM323.48 58.02L323.48 58.02C323.48 58.02 323.3 58 323.01 57.97L323.47 57.87L323.47 57.87C326.74 57.18 329.38 55.22 329.34 51.7C329.39 48.7 327.48 46.69 324.85 45.68C323.14 45.04 321.39 44.89 319.53 44.88L306.85 44.88L306.85 44.95C308.66 45.11 310.08 46.61 310.11 48.45L310.11 68.85C310.11 70.71 308.68 72.24 306.85 72.4L306.85 72.47L317.71 72.47L317.71 72.47L319.69 72.47L319.69 72.47C321.01 72.45 322.17 72.42 322.9 72.35C326.2 72.22 329.29 70.61 330.49 67.41C332.27 62.32 328.37 58.54 323.48 58.02ZM110.38 93.15C101.73 110.25 83.14 119.08 65.16 116.19C74.96 112.13 83.41 104.7 88.57 94.52C90.06 91.58 91.21 88.53 92.03 85.42C95.58 81.97 98.64 77.91 100.99 73.26L100.99 73.26C105.17 65 106.74 55.88 105.62 46.89C108.78 50.85 111.25 55.38 112.87 60.34C116.45 71.25 115.56 82.9 110.38 93.15ZM59.73 114.94C57.32 114.22 54.93 113.29 52.6 112.11C42.89 107.2 35.55 98.98 31.76 88.85C34.06 90.62 36.54 92.2 39.18 93.53C45.82 96.89 52.89 98.48 59.87 98.48C69.88 98.48 79.68 95.18 87.68 89.15C87.16 90.51 86.56 91.85 85.89 93.17C80.34 104.14 70.69 111.69 59.73 114.94ZM28.11 112.1C17.86 106.92 10.25 98.05 6.67 87.14C3.1 76.22 3.99 64.57 9.18 54.32C10.63 51.45 12.37 48.82 14.34 46.43C13.43 53.2 14.05 60.15 16.24 66.83C18.53 73.81 22.38 80 27.44 85.05C27.7 86.06 27.98 87.07 28.31 88.08C32.13 99.75 40.28 109.24 51.24 114.78C52.25 115.29 53.27 115.75 54.3 116.18C45.65 117.57 36.5 116.36 28.11 112.1ZM18.16 42.36C26.17 34.88 36.76 30.75 47.61 30.75C49.86 30.75 52.12 30.94 54.37 31.3C44.57 35.37 36.12 42.8 30.97 52.98C26.79 61.24 25.23 70.36 26.35 79.34C23.19 75.38 20.72 70.85 19.09 65.9C16.56 58.17 16.27 50.07 18.16 42.36ZM21.59 33.08C29.15 18.13 44.32 9.5 60.03 9.5C66.55 9.5 73.16 10.99 79.37 14.13C89.07 19.04 96.41 27.25 100.2 37.38C97.91 35.61 95.43 34.04 92.78 32.7C82.18 27.34 70.46 26.48 59.82 29.42C45.88 25.55 31.07 28.58 19.82 37.06C20.34 35.71 20.93 34.39 21.59 33.08ZM51.11 86.28C53.33 87.43 55.86 88.06 58.58 88.06C63.44 88.06 67.74 86.12 70.69 82.59C71.63 81.47 72.38 80.2 72.98 78.85C79.2 76.07 83.07 69.97 83.6 62.07C83.97 56.63 82.54 50.1 78.96 44.37C83.19 48.89 86.42 54.3 88.4 60.36C90.93 68.09 91.21 76.18 89.32 83.89C86.41 86.61 83.16 88.87 79.68 90.66C69.83 95.06 58.71 93.28 51.11 86.28ZM53.63 48.04C54.21 48.03 54.76 48.03 55.27 48.05C49.79 50.41 44.64 58.25 42.97 67.55C42.58 69.71 42.53 71.84 42.79 73.86L42.77 73.86C43.02 76.33 43.97 79.25 45.26 81.47C45.38 81.68 45.5 81.9 45.65 82.13C50.94 90.23 59.58 94.57 68.58 94.57C68.61 94.57 68.65 94.56 68.68 94.56C59.47 96.49 49.57 95.43 40.53 90.86C36.67 88.9 33.18 86.43 30.15 83.51C29.18 79.39 28.83 75.2 29.09 71.05C30.56 58.38 40.52 48.77 53.63 48.04ZM69.54 81.63C66.88 84.81 62.99 86.56 58.58 86.56C54.17 86.56 50.28 84.81 47.62 81.63C44.66 78.09 43.5 73.05 44.45 67.81C46.33 57.33 52.67 48.8 58.58 48.8C59.65 48.8 60.73 49.09 61.8 49.61C61.87 49.65 61.95 49.69 62.02 49.73L62.03 49.72C66.77 52.19 71.19 59.37 72.71 67.81C73.65 73.06 72.5 78.1 69.54 81.63ZM74.18 67.55C72.6 58.74 67.9 51.24 62.75 48.47L62.77 48.43C61.14 47.49 58.6 46.43 53.57 46.54C43.91 47.08 35.72 52.43 31.2 60.21C31.87 58.21 32.68 56.25 33.65 54.33C39.21 43.35 48.88 35.79 59.85 32.54C62.26 33.27 64.64 34.21 66.97 35.39C67.98 35.9 68.96 36.46 69.93 37.05C79.05 43.29 82.65 53.89 82.1 61.97C81.65 68.69 78.63 73.98 73.74 76.78C74.58 73.94 74.77 70.78 74.18 67.55ZM98.32 71.9C96.86 74.78 95.12 77.41 93.15 79.8C94.06 73.03 93.44 66.1 91.25 59.42C87.42 47.75 79.28 38.26 68.32 32.71C67.32 32.2 66.3 31.75 65.27 31.32C67.52 30.96 69.8 30.75 72.09 30.75C78.61 30.75 85.23 32.24 91.43 35.38C95.29 37.33 98.78 39.81 101.82 42.72C104.13 52.55 102.93 62.78 98.32 71.9ZM104.53 41.19C104.27 40.17 103.99 39.16 103.66 38.15C99.83 26.48 91.68 17 80.72 11.45C58.09 0 30.36 9.1 18.91 31.73C17.43 34.66 16.28 37.7 15.46 40.8C11.91 44.24 8.86 48.31 6.5 52.97C0.95 63.93 0 76.39 3.82 88.07C7.65 99.74 15.79 109.23 26.75 114.78C33.39 118.14 40.47 119.74 47.46 119.74C51.63 119.74 55.77 119.16 59.75 118.06C63.78 119.18 67.87 119.73 71.93 119.73C88.74 119.73 104.96 110.5 113.05 94.51C118.6 83.54 119.55 71.08 115.72 59.4C113.43 52.42 109.59 46.23 104.53 41.19ZM154.8 58.69L152.91 58.69L152.91 45.97L154.49 45.97C157.46 46.02 160.47 46.47 161.98 48.88C163.69 51.55 163.09 55.49 160.4 57.37C158.78 58.51 156.8 58.68 154.8 58.69ZM173.62 72.41C170.97 72.14 169.47 70.38 167.72 67.99L163.47 61.85C162.78 60.91 162 59.92 161.02 59.4L160.87 59.32C160.94 59.31 161.01 59.29 161.02 59.29C161.04 59.28 161.06 59.27 161.09 59.27C164.29 58.26 167.42 55.9 167.34 52.24C167.48 47.97 163.87 45.28 159.95 45C159.19 44.94 158.5 44.89 157.78 44.88L145.31 44.88L145.31 44.95C147.11 45.11 148.53 46.61 148.56 48.45L148.56 68.85C148.56 70.71 147.13 72.24 145.31 72.4L145.31 72.47L156.17 72.47L156.17 72.4C154.34 72.24 152.91 70.71 152.91 68.85L152.91 59.78L153.24 59.78C155.59 59.82 156.63 60.4 158.3 62.28C160.47 64.79 161.79 66.98 163.55 69.56C163.63 69.68 163.71 69.79 163.79 69.9L163.79 69.9C164.6 71.19 166.06 72.47 167.77 72.47L173.62 72.47L173.62 72.41L173.62 72.41L173.62 72.41ZM280.94 70.3C277.85 70.3 274.95 67.42 275.04 64.42C275.02 61.87 276.59 59.66 278.41 58L278.49 57.93L286.79 67.3C284.86 69.17 283.4 70.3 280.94 70.3ZM283.81 48.31C284.41 50.69 284.01 52.51 281.55 54.45L281.34 54.6L278.9 51.83C278.48 51.33 277.76 50.15 277.79 48.3C278.03 44.75 282.3 43.75 283.81 48.31ZM302.28 67.33L302.28 67.33L302.28 67.33C300.84 69.77 297.96 71.38 295.33 69.75C294.43 69.18 293.59 68.39 292.81 67.52L290.43 64.86L292.51 62.54C293.47 61.51 294.73 60.11 295.94 59.4C297.03 58.75 298.25 58.33 299.58 58.18L299.58 58.13L286.2 58.13L286.2 58.18C286.21 58.19 286.22 58.19 286.23 58.19C288.03 58.34 290.98 58.51 291.12 60.68C291.2 62.11 290.56 63.09 290.01 63.7L289.7 64.04L282.06 55.42L282.65 55.05C284.9 53.63 286.92 51.84 286.85 49.29C286.77 46.25 283.86 44.36 281.09 44.42C276.92 44.44 272.83 48.25 274.34 52.46C274.73 53.61 275.4 54.49 276.18 55.31L277.77 57.11L275.68 58.58L275.68 58.58C274.02 59.69 272.6 61.07 271.69 62.99C270.43 65.48 271.03 68.8 273.01 70.8C275.54 73.35 279.52 73.79 282.19 72.68C284.46 71.73 287.07 68.7 287.54 68.15C287.54 68.15 289.46 70.32 289.49 70.36C290.82 71.86 292.31 72.97 295.12 72.97C298.36 72.97 301.17 70.2 302.33 67.36L302.33 67.36L302.33 67.36L302.28 67.33ZM188.91 71.67C183.38 71.67 179.43 65.84 179.43 58.67C179.43 51.51 183.38 45.68 188.91 45.68C194.45 45.68 198.39 51.51 198.39 58.67C198.39 65.84 194.45 71.67 188.91 71.67ZM188.91 44.59C180.98 44.59 174.54 50.9 174.54 58.67C174.54 66.45 180.98 72.76 188.91 72.76C196.85 72.76 203.28 66.45 203.28 58.67C203.28 50.9 196.85 44.59 188.91 44.59ZM378.4 58.69L376.51 58.69L376.51 45.97L378.09 45.97C381.06 46.02 384.07 46.47 385.58 48.88C387.29 51.55 386.69 55.49 384 57.37C382.38 58.51 380.4 58.68 378.4 58.69ZM397.22 72.41C394.57 72.14 393.07 70.38 391.32 67.99L387.07 61.85C386.38 60.91 385.6 59.92 384.62 59.4L384.47 59.32C384.54 59.31 384.61 59.29 384.62 59.29C384.64 59.28 384.66 59.27 384.69 59.27C387.89 58.26 391.02 55.9 390.94 52.24C391.08 47.97 387.47 45.28 383.54 45C382.79 44.94 382.1 44.89 381.38 44.88L368.91 44.88L368.91 44.95C370.71 45.11 372.13 46.61 372.16 48.45L372.16 68.85C372.16 70.71 370.73 72.24 368.91 72.4L368.91 72.47L379.77 72.47L379.77 72.4C377.94 72.24 376.51 70.71 376.51 68.85L376.51 59.78L376.84 59.78C379.19 59.82 380.23 60.4 381.9 62.28C384.07 64.79 385.39 66.98 387.15 69.56C387.23 69.68 387.31 69.79 387.39 69.9L387.39 69.9C388.2 71.19 389.66 72.47 391.37 72.47L397.22 72.47L397.22 72.41L397.22 72.41L397.22 72.41ZM418.45 44.88L418.45 44.93C420.84 44.93 422.77 46.85 422.8 49.23L422.8 64L406.39 44.88L398.12 44.88L398.12 44.93C398.12 44.93 398.12 44.93 398.12 44.93L398.13 44.93L398.13 44.93C400.5 44.94 402.43 46.85 402.46 49.23L402.46 68.12C402.43 70.5 400.5 72.41 398.12 72.41L398.12 72.47L407.89 72.47L407.89 72.41C405.51 72.41 403.58 70.5 403.55 68.12L403.55 49.5L423.89 73.21L423.89 49.23C423.91 46.85 425.85 44.93 428.23 44.93L428.23 44.88L418.45 44.88ZM217.92 55.66C215.46 54.69 213.22 53.44 213.25 50.61C213.24 49.01 213.78 48.14 214.92 47.13C216.01 46.16 217.78 45.68 219.27 45.68C223.2 45.65 226.19 48.8 227.41 52.14L227.47 52.14L227.47 45.81L222.34 44.83C221.47 44.67 220.25 44.59 219.31 44.59C215.92 44.57 212.1 45.87 210.56 49.04C209.75 50.61 209.51 52.97 210.22 54.76C211.01 56.88 212.78 58.58 214.86 59.38C217.37 60.38 220.07 60.92 222.49 62.13C224.14 62.98 225.21 64.22 225.17 66.15C225.21 69.8 222.37 71.67 218.81 71.67C217.65 71.67 216.12 71.36 215.18 70.87C212.97 69.62 210.94 67.17 210.1 64.78L210.04 64.78L210.04 71.59L213.85 72.24L215.94 72.55C218.28 72.92 220.84 72.78 222.87 72.25C225.18 71.65 227.04 70.25 228.1 68.19C229.32 65.89 229.02 62.28 227.41 60.35C225.3 57.54 221.08 56.99 217.92 55.66ZM350.63 71.67C345.09 71.67 341.15 65.84 341.15 58.67C341.15 51.51 345.09 45.68 350.63 45.68C356.17 45.68 360.11 51.51 360.11 58.67C360.11 65.84 356.17 71.67 350.63 71.67ZM350.63 44.59C342.69 44.59 336.26 50.9 336.26 58.67C336.26 66.45 342.69 72.76 350.63 72.76C358.57 72.76 365 66.45 365 58.67C365 50.9 358.57 44.59 350.63 44.59Z"/></svg>
+    <div class="where"><span class="label" id="whereKicker">Step</span><b id="whereTitle">Customer</b></div>
+    <button class="steps-btn" id="stepsBtn" type="button" aria-expanded="false" aria-controls="rail">Steps</button>
+  </div>
+  <div class="progress" aria-hidden="true"><i id="progressFill"></i></div>
+</header>
+
+<div class="shell">
+  <nav class="rail" id="rail" aria-label="All steps" hidden></nav>
+  <main class="stage" id="stage"></main>
+</div>
+
+<footer class="nav">
+  <div class="nav-in">
+    <button class="btn" id="backBtn" type="button">Back</button>
+    <span class="count" id="count">0 of 16 measured</span>
+    <button class="btn primary" id="nextBtn" type="button">Next</button>
+  </div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  // ---------------------------------------------------------------- content (order follows Custom Size Creator)
+  var FIT = function (slimText) {
+    return [
+      { v: 'Comfort', d: 'Roomier fit, a bit loose from the body' },
+      { v: 'Slim', d: slimText },
+      { v: 'Tight', d: 'Close fit, very tight to the body' }
+    ];
+  };
+  var plain = function (a) { return a.map(function (v) { return { v: v, d: '' }; }); };
+
+  var MEASURES = [
+    ['chest', 'Chest', 80, 142, 'Remove any jacket or thick sweater. Measure under the arms, around the fullest part of the chest, usually in line with the nipples. Arms relaxed at the sides, tape level all the way around.'],
+    ['neck', 'Neck', 33, 57, 'Measure around the neck where the collar would usually sit, just below the Adam’s apple. Head level, neck relaxed.'],
+    ['shoulder', 'Shoulder', 40, 60, 'Find the bones where the arms meet the shoulders. Measure from one bone over to the other, following the natural curve of the shoulders.'],
+    ['left_arm', 'Left arm', 52, 80, 'Arm relaxed. Measure from the bone of the left shoulder down to just below the wrist bone.'],
+    ['right_arm', 'Right arm', 52, 80, 'Arm relaxed. Measure from the bone of the right shoulder down to just below the wrist bone.'],
+    ['upper_arm', 'Upper arm', 25, 51, 'Arm relaxed, down by the side. Measure under the armpit, around the fullest part of the bicep, usually in line with the nipples.'],
+    ['forearm', 'Forearm', 23, 45, 'Arm relaxed, down by the side. Measure around the fullest part of the forearm, usually just below the elbow.'],
+    ['wrist', 'Wrist', 15, 25, 'Hand relaxed. Measure around the wrist, over the wrist bone.'],
+    ['jacket_length', 'Jacket length', 61, 95, 'Stand tall, chin slightly dropped to the chest. Measure from the most protruding bone at the back of the neck to just under the buttocks, or to where the jacket should end.'],
+    ['waistcoat_length', 'Waistcoat length', 50, 70, 'Stand tall, chin slightly dropped to the chest. Measure from the most protruding bone at the back of the neck to just above the buttocks, or to where the waistcoat should end.'],
+    ['stomach', 'Stomach', 70, 145, 'Measure around the stomach at its fullest part, usually in line with the belly button. Tape level all the way around.'],
+    ['hip', 'Hip', 80, 145, 'Empty the trouser pockets. Measure around the hips at the fullest point of the buttocks. Tape level all the way around.'],
+    ['waist', 'Waist', 66, 145, 'Place four fingers under the belly button and measure around the waist from that point. Tape level. Do not measure over a belt or the waistband.'],
+    ['thigh', 'Thigh', 42, 80, 'Measure around the fullest part of the thigh, just below the crotch. Tape level all the way around.'],
+    ['knee', 'Knee', 34, 60, 'Measure around the widest part of the kneecap, tape level. If the calf is bigger than the knee, enter the calf measurement instead.'],
+    ['inseam', 'Pants inseam (to the ground)', 68, 110, 'Shoes can stay on. Start just below the buttocks and measure down the leg in one straight line to the floor.']
+  ];
+
+  var STEPS = [
+    { id: 'customer', kind: 'customer', title: 'Customer', group: 'Profile' },
+    { id: 'business_fit', kind: 'choice', title: 'Business fit', group: 'Profile', img: 'img/t_business.jpg', w: 1500, h: 1000,
+      lead: 'How does the customer like to wear a business look?', opts: FIT('Most popular. Office appropriate and tailored, not too tight') },
+    { id: 'casual_fit', kind: 'choice', title: 'Casual fit', group: 'Profile', img: 'img/t_casual.jpg', w: 1500, h: 1000,
+      lead: 'Which fit does the customer prefer for casual wear?', opts: FIT('Tailored fit, not too tight') },
+    { id: 'body_type', kind: 'choice', title: 'Body type', group: 'Profile', img: 'img/t_body.jpg', w: 1500, h: 750,
+      lead: 'Which upper body type best describes the customer?', opts: plain(['Muscular', 'Regular', 'Robust']) },
+    { id: 'stomach_type', kind: 'choice', title: 'Stomach type', group: 'Profile', img: 'img/t_stomach.jpg', w: 1500, h: 1000,
+      lead: 'Which stomach type best describes the customer?', opts: plain(['Flat', 'Regular', 'Protruding']) },
+    { id: 'back_type', kind: 'text', title: 'Back type', group: 'Profile',
+      lead: 'Enter the back type as it is named in Custom Size Creator.',
+      note: 'This step has no illustration yet, so it is free text and optional.' },
+    { id: 'shoulder_type', kind: 'choice', title: 'Shoulder type', group: 'Profile', img: 'img/t_shoulder.jpg', w: 1500, h: 703,
+      lead: 'Which shoulder type best describes the customer?', opts: plain(['High', 'Regular', 'Low']),
+      side: true, note: 'Assess from behind, so the right shoulder is the customer’s right. If one shoulder differs from the other, say which side the choice applies to.' },
+    { id: 'rear_type', kind: 'choice', title: 'Rear type', group: 'Profile', img: 'img/t_rear.jpg', w: 1500, h: 750,
+      lead: 'Which rear type best describes the customer?', opts: plain(['Flat', 'Regular', 'Protruding']) },
+    { id: 'sizes', kind: 'sizes', title: 'Off-the-rack size', group: 'Profile' }
+  ];
+  MEASURES.forEach(function (m, i) {
+    var n = i + 1, nn = (n < 10 ? '0' : '') + n;
+    STEPS.push({ id: 'm' + nn + '_' + m[0], kind: 'measure', n: n, nn: nn, title: m[1], lo: m[2], hi: m[3], text: m[4],
+      img: 'img/n' + nn + '.jpg', group: 'Measurements' });
+  });
+  STEPS.push({ id: 'summary', kind: 'summary', title: 'Summary', group: 'Finish' });
+
+  var MSTEPS = STEPS.filter(function (s) { return s.kind === 'measure'; });
+  var CUSTOMER = [['first_name', 'First name', 'text'], ['last_name', 'Last name', 'text'], ['email', 'Email', 'email'],
+    ['date', 'Date', 'date'], ['height_cm', 'Height (cm)', 'decimal'], ['weight_kg', 'Weight (kg)', 'decimal'],
+    ['age', 'Age', 'numeric'], ['measured_by', 'Measured by', 'text'], ['reference', 'Order / reference', 'text']];
+  var SIZES = [['size_jacket', 'Jacket'], ['size_trousers', 'Trousers'], ['size_dress_shirt', 'Dress shirt'],
+    ['size_shoe', 'Shoe'], ['size_jeans', 'Jeans'], ['size_tshirt', 'T-shirt']];
+  var EXAMPLE = { first_name: 'Demo', last_name: 'Customer', email: 'demo@example.com', height_cm: '176', weight_kg: '84', age: '47',
+    business_fit: 'Slim', casual_fit: 'Slim', body_type: 'Regular', stomach_type: 'Regular', back_type: 'Regular',
+    shoulder_type: 'Regular', shoulder_side: 'Both', rear_type: 'Regular',
+    size_jacket: '50', size_trousers: '50', size_dress_shirt: '41', size_shoe: '42', size_jeans: '32', size_tshirt: 'L' };
+  [104, 40, 46, 65, 65, 34, 31, 19, 75, 59, 90, 104, 90, 56, 42, 85].forEach(function (v, i) { EXAMPLE[MSTEPS[i].id] = String(v); });
+
+  // ---------------------------------------------------------------- state
+  var KEY = 'rb-mtm-measure-draft-v1';
+  var state = { step: 0, v: {}, example: false };
+  var stage = document.getElementById('stage'), rail = document.getElementById('rail');
+  var confirmClear = false, copyFallback = '';
+
+  function today() { var d = new Date(); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { /* draft is a convenience only */ } }
+  function load() { try { var s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s && s.v) return s; } catch (e) {} return null; }
+  function val(id) { return (state.v[id] == null ? '' : String(state.v[id])).trim(); }
+  function num(id) { var t = val(id).replace(',', '.'); return t === '' ? NaN : Number(t); }
+  // '' = empty, 'bad' = not a number, 'ok'
+  function mstat(id) { var t = val(id); if (t === '') return ''; var n = num(id); return (isNaN(n) || n <= 0) ? 'bad' : 'ok'; }
+  function measured() { return MSTEPS.filter(function (s) { return mstat(s.id) === 'ok'; }).length; }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+
+  function done(s) {
+    if (s.kind === 'measure') return mstat(s.id) === 'ok';
+    if (s.kind === 'customer') return !!(val('first_name') || val('last_name'));
+    if (s.kind === 'sizes') return SIZES.some(function (z) { return val(z[0]); });
+    if (s.kind === 'summary') return measured() === 16;
+    return !!val(s.id);
+  }
+
+  // ---------------------------------------------------------------- chrome (rail, header, footer)
+  function drawRail() {
+    var html = '', group = null;
+    STEPS.forEach(function (s, i) {
+      if (s.group !== group) { if (group !== null) html += '</div>'; group = s.group; html += '<div class="rail-group"><span class="label">' + esc(group) + '</span>'; }
+      var cls = done(s) ? 'done' : (s.kind === 'measure' && mstat(s.id) === 'bad' ? 'bad' : '');
+      var v = s.kind === 'measure' ? (mstat(s.id) === 'ok' ? val(s.id) : '') : (s.kind === 'choice' ? val(s.id) : '');
+      html += '<button type="button" class="' + cls + '" data-go="' + i + '"' + (i === state.step ? ' aria-current="step"' : '') + '>' +
+        '<span class="mark"></span><span class="name">' + (s.nn ? s.nn + ' ' : '') + esc(s.title) + '</span><span class="val">' + esc(v) + '</span></button>';
+    });
+    rail.innerHTML = html + '</div>';
+    var cur = rail.querySelector('[aria-current]');          // keep the current step in view inside the rail
+    if (cur && rail.scrollHeight > rail.clientHeight) {
+      var top = cur.offsetTop;
+      if (top < rail.scrollTop || top + cur.offsetHeight > rail.scrollTop + rail.clientHeight) rail.scrollTop = top - rail.clientHeight / 2;
+    }
+  }
+  function drawChrome() {
+    var s = STEPS[state.step];
+    document.getElementById('whereKicker').textContent = s.kind === 'measure' ? s.n + ' of 16' : s.group;
+    document.getElementById('whereTitle').textContent = s.title;
+    document.getElementById('progressFill').style.width = (100 * state.step / (STEPS.length - 1)) + '%';
+    document.getElementById('count').textContent = measured() + ' of 16 measured';
+    document.getElementById('backBtn').disabled = state.step === 0;
+    var next = document.getElementById('nextBtn');
+    next.hidden = s.kind === 'summary';
+    next.textContent = state.step === STEPS.length - 2 ? 'Summary' : 'Next';
+    drawRail();
+  }
+
+  // ---------------------------------------------------------------- steps
+  function head(kicker, title, lead, note) {
+    return '<div class="step-head"><span class="label">' + esc(kicker) + '</span><h1>' + esc(title) + '</h1>' +
+      (lead ? '<p class="lead">' + esc(lead) + '</p>' : '') + (note ? '<p class="note">' + esc(note) + '</p>' : '') + '</div>';
+  }
+  function fieldHtml(id, label, mode) {
+    var type = mode === 'date' ? 'date' : (mode === 'email' ? 'email' : 'text');
+    var im = (mode === 'decimal' || mode === 'numeric') ? ' inputmode="' + mode + '"' : '';
+    return '<label class="field" for="f_' + id + '"><span class="label">' + esc(label) + '</span>' +
+      '<input id="f_' + id + '" data-k="' + id + '" type="' + type + '"' + im + ' autocomplete="off" value="' + esc(val(id)) + '"></label>';
+  }
+  function exampleBanner() {
+    return state.example ? '<div class="banner"><span>Example values are loaded. Clear them before measuring a real customer.</span>' +
+      '<button type="button" data-act="clear-now">Clear all</button></div>' : '';
+  }
+
+  function drawStep() {
+    var s = STEPS[state.step], h = exampleBanner();
+    if (s.kind === 'customer') {
+      h += head('Profile', 'Customer', 'Who is being measured? Weight: round up if the customer is unsure.');
+      h += '<div class="fields">' + CUSTOMER.map(function (c) { return fieldHtml(c[0], c[1], c[2]); }).join('') + '</div>';
+      if (!state.example && measured() === 0) h += '<div class="actions"><button type="button" class="btn" data-act="example">Load example values</button><span class="said">Fills every step so you can see the whole flow.</span></div>';
+    } else if (s.kind === 'choice') {
+      h += head(s.group, s.title, s.lead, s.side ? '' : s.note);
+      h += '<div class="choice"><div class="plate" data-pick="' + s.id + '"><img src="' + s.img + '" width="' + s.w + '" height="' + s.h + '" alt="' + esc(s.title + ': ' + s.opts.map(function (o) { return o.v; }).join(', ') + ', left to right') + '"></div>';
+      h += '<div class="opts">' + s.opts.map(function (o) {
+        return '<button type="button" class="opt" data-set="' + s.id + '" data-v="' + o.v + '" aria-pressed="' + (val(s.id) === o.v) + '"><b>' + o.v + '</b>' + (o.d ? '<span>' + esc(o.d) + '</span>' : '') + '</button>';
+      }).join('') + '</div>';
+      if (s.side) {
+        h += '<div class="sub"><span class="label">Applies to</span><div class="seg">' + [['Left', 'Left only'], ['Both', 'Both shoulders'], ['Right', 'Right only']].map(function (o) {
+          return '<button type="button" data-set="shoulder_side" data-v="' + o[0] + '" aria-pressed="' + ((val('shoulder_side') || 'Both') === o[0]) + '">' + o[1] + '</button>';
+        }).join('') + '</div><p class="note">' + esc(s.note) + '</p></div>';
+      }
+      h += '</div>';
+    } else if (s.kind === 'text') {
+      h += head(s.group, s.title, s.lead, s.note) + '<div class="fields">' + fieldHtml(s.id, s.title, 'text') + '</div>';
+    } else if (s.kind === 'sizes') {
+      h += head('Profile', 'Off-the-rack size', 'The EU size the customer feels most comfortable in. Between two sizes, go bigger.', 'Optional. Fill in as many as the customer knows.');
+      h += '<div class="fields">' + SIZES.map(function (z) { return fieldHtml(z[0], z[1], 'text'); }).join('') + '</div>';
+    } else if (s.kind === 'measure') {
+      h += '<div class="measure"><div class="plate"><img src="' + s.img + '" width="760" height="1045" alt="Where to place the tape for ' + esc(s.title.toLowerCase()) + '"></div><div>';
+      h += head('Measurement ' + s.n + ' of 16', s.title, s.text);
+      h += '<div class="entry"><button type="button" class="nudge" data-nudge="-1" aria-label="One centimetre less">−</button>' +
+        '<label class="box" for="f_' + s.id + '"><input id="f_' + s.id + '" data-k="' + s.id + '" data-measure="1" type="text" inputmode="decimal" autocomplete="off" aria-label="' + esc(s.title) + ' in centimetres" value="' + esc(val(s.id)) + '"><span class="unit">cm</span></label>' +
+        '<button type="button" class="nudge" data-nudge="1" aria-label="One centimetre more">+</button></div>';
+      h += '<p class="err" id="err" role="alert"></p><p class="soft" id="soft"></p>';
+      h += '<p class="note">Custom Size Creator expects ' + s.lo + ' to ' + s.hi + ' cm here.</p></div></div>';
+    } else {
+      h += summaryHtml();
+    }
+    stage.innerHTML = h;
+    if (s.kind === 'measure') { hint(s); var nx = STEPS[state.step + 1]; if (nx && nx.img) { new Image().src = nx.img; } }
+  }
+
+  function hint(s, complain) {
+    var st = mstat(s.id), err = document.getElementById('err'), soft = document.getElementById('soft');
+    if (!err) return;
+    err.textContent = st === 'bad' ? 'Enter the measurement as a number in cm.' : (complain && st === '' ? 'Enter ' + s.title.toLowerCase() + ' before moving on.' : '');
+    var n = num(s.id);
+    soft.textContent = (st === 'ok' && (n < s.lo || n > s.hi)) ? 'Outside the range Custom Size Creator expects (' + s.lo + ' to ' + s.hi + ' cm). Check the tape before you continue.' : '';
+  }
+
+  function rowsPlain(list) {
+    return list.map(function (p) {
+      var v = p[2] != null ? p[2] : val(p[0]);
+      return '<button type="button" class="row plain" data-go="' + p[3] + '"><span>' + esc(p[1]) + '</span><span class="v' + (v ? '' : ' none') + '">' + esc(v || 'Not set') + '</span></button>';
+    }).join('');
+  }
+  function idx(id) { for (var i = 0; i < STEPS.length; i++) if (STEPS[i].id === id) return i; return 0; }
+
+  function summaryHtml() {
+    var gaps = MSTEPS.filter(function (s) { return mstat(s.id) !== 'ok'; }), ok = gaps.length === 0;
+    var name = (val('first_name') + ' ' + val('last_name')).trim();
+    var h = head('Finish', 'Summary', ok ? 'Everything is in. Copy the values into Custom Size Creator in this order.' : 'Some measurements are still missing. Tap one to fill it in.');
+    h += '<div class="status' + (ok ? '' : ' bad') + '"><b>' + (16 - gaps.length) + ' of 16 measurements entered.</b>' +
+      (ok ? '' : '<div class="gaps">' + gaps.map(function (s) { return '<button type="button" data-go="' + idx(s.id) + '">' + s.nn + ' ' + esc(s.title) + '</button>'; }).join('') + '</div>') + '</div>';
+    h += '<div class="sum"><section><h2>Measurements</h2>' + MSTEPS.map(function (s) {
+      var st = mstat(s.id);
+      return '<button type="button" class="row' + (st === 'ok' ? '' : ' gap') + '" data-go="' + idx(s.id) + '"><span class="n">' + s.nn + '</span><span>' + esc(s.title) + '</span><span class="v">' + (st === 'ok' ? esc(val(s.id)) + ' cm' : (st === 'bad' ? 'Check value' : 'Missing')) + '</span></button>';
+    }).join('') + '</section>';
+    var side = val('shoulder_type') ? val('shoulder_type') + ' (' + ({ Left: 'left only', Right: 'right only', Both: 'both shoulders' }[val('shoulder_side') || 'Both']) + ')' : '';
+    h += '<section><h2>Customer</h2>' + rowsPlain([['', 'Name', name, 0], ['email', 'Email', null, 0], ['date', 'Date', null, 0],
+      ['height_cm', 'Height', val('height_cm') ? val('height_cm') + ' cm' : '', 0], ['weight_kg', 'Weight', val('weight_kg') ? val('weight_kg') + ' kg' : '', 0],
+      ['age', 'Age', val('age') ? val('age') + ' years' : '', 0], ['measured_by', 'Measured by', null, 0], ['reference', 'Order / reference', null, 0]]) +
+      '<h2 style="margin-top:2rem">Fit and body type</h2>' + rowsPlain([['business_fit', 'Business fit', null, idx('business_fit')], ['casual_fit', 'Casual fit', null, idx('casual_fit')],
+      ['body_type', 'Body type', null, idx('body_type')], ['stomach_type', 'Stomach type', null, idx('stomach_type')], ['back_type', 'Back type', null, idx('back_type')],
+      ['shoulder_type', 'Shoulder type', side, idx('shoulder_type')], ['rear_type', 'Rear type', null, idx('rear_type')]]) +
+      '<h2 style="margin-top:2rem">Off-the-rack size (EU)</h2>' + rowsPlain(SIZES.map(function (z) { return [z[0], z[1], null, idx('sizes')]; })) + '</section></div>';
+    h += '<div class="actions"><button type="button" class="btn primary" data-act="copy"' + (ok ? '' : ' disabled') + '>Copy summary</button>';
+    h += confirmClear ? '<span class="said">Clear every value for this customer?</span><button type="button" class="btn" data-act="clear-now">Yes, clear</button><button type="button" class="btn" data-act="clear-no">Keep</button>'
+      : '<button type="button" class="btn" data-act="clear-ask">New customer</button>';
+    h += '<span class="said" id="said" role="status">' + (ok ? '' : 'Copy unlocks when all 16 measurements are in.') + '</span></div>';
+    if (copyFallback) h += '<textarea class="copybox" id="copybox" readonly aria-label="Summary text to copy">' + esc(copyFallback) + '</textarea>';
+    return h;
+  }
+
+  function summaryText() {
+    var L = ['ROSE & BORN · Body measurements', ((val('first_name') + ' ' + val('last_name')).trim() || 'Customer') + ' · ' + (val('date') || today())];
+    if (val('email')) L.push(val('email'));
+    var p = []; if (val('height_cm')) p.push('Height ' + val('height_cm') + ' cm'); if (val('weight_kg')) p.push('Weight ' + val('weight_kg') + ' kg'); if (val('age')) p.push('Age ' + val('age'));
+    if (p.length) L.push(p.join(' · '));
+    if (val('measured_by')) L.push('Measured by ' + val('measured_by')); if (val('reference')) L.push('Reference ' + val('reference'));
+    L.push('', 'FIT AND BODY TYPE');
+    [['business_fit', 'Business fit'], ['casual_fit', 'Casual fit'], ['body_type', 'Body type'], ['stomach_type', 'Stomach type'], ['back_type', 'Back type'], ['shoulder_type', 'Shoulder type'], ['rear_type', 'Rear type']].forEach(function (r) {
+      var v = val(r[0]); if (r[0] === 'shoulder_type' && v) v += ' (' + (val('shoulder_side') || 'Both').toLowerCase() + ')'; L.push(r[1] + ': ' + (v || '-'));
+    });
+    L.push('', 'MEASUREMENTS (cm)');
+    MSTEPS.forEach(function (s) { L.push(s.nn + ' ' + s.title + ': ' + val(s.id).replace(',', '.')); });
+    var z = SIZES.filter(function (x) { return val(x[0]); });
+    if (z.length) { L.push('', 'OFF-THE-RACK SIZE (EU)'); z.forEach(function (x) { L.push(x[1] + ': ' + val(x[0])); }); }
+    return L.join('\n');
+  }
+
+  // ---------------------------------------------------------------- navigation and events
+  function go(i, focus) {
+    state.step = Math.max(0, Math.min(STEPS.length - 1, i));
+    confirmClear = false; copyFallback = '';
+    rail.hidden = true; document.getElementById('stepsBtn').setAttribute('aria-expanded', 'false');
+    save(); drawStep(); drawChrome(); window.scrollTo(0, 0);
+    var s = STEPS[state.step];
+    if (focus && s.kind === 'measure') { var el = document.getElementById('f_' + s.id); if (el) { try { el.focus({ preventScroll: true }); el.select(); } catch (e) {} } }
+  }
+  function next() {
+    var s = STEPS[state.step];
+    if (s.kind === 'measure' && mstat(s.id) !== 'ok') { hint(s, true); var el = document.getElementById('f_' + s.id); if (el) el.focus(); return; }
+    go(state.step + 1, true);
+  }
+  function clearAll() { state = { step: 0, v: { date: today(), shoulder_side: 'Both' }, example: false }; go(0); }
+
+  document.getElementById('nextBtn').addEventListener('click', next);
+  document.getElementById('backBtn').addEventListener('click', function () { go(state.step - 1, true); });
+  document.getElementById('stepsBtn').addEventListener('click', function () {
+    rail.hidden = !rail.hidden; this.setAttribute('aria-expanded', String(!rail.hidden)); if (!rail.hidden) window.scrollTo(0, 0);
+  });
+
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest('[data-go],[data-set],[data-nudge],[data-act],[data-pick]'); if (!t) return;
+    if (t.hasAttribute('data-go')) { go(Number(t.getAttribute('data-go')), true); return; }
+    if (t.hasAttribute('data-set')) {
+      var k = t.getAttribute('data-set'); state.v[k] = t.getAttribute('data-v'); save(); drawStep(); drawChrome(); return;
+    }
+    if (t.hasAttribute('data-pick')) {            // tapping a figure in the illustration picks that option
+      var r = t.getBoundingClientRect(), s = STEPS[state.step], third = Math.min(2, Math.max(0, Math.floor(3 * (e.clientX - r.left) / r.width)));
+      state.v[s.id] = s.opts[third].v; save(); drawStep(); drawChrome(); return;
+    }
+    if (t.hasAttribute('data-nudge')) {
+      var st = STEPS[state.step], n = num(st.id), d = Number(t.getAttribute('data-nudge'));
+      n = isNaN(n) ? Math.round((st.lo + st.hi) / 2) : Math.round((n + d) * 10) / 10;
+      state.v[st.id] = String(Math.max(1, n)); document.getElementById('f_' + st.id).value = state.v[st.id];
+      save(); hint(st); drawChrome(); return;
+    }
+    var a = t.getAttribute('data-act');
+    if (a === 'example') { state.v = Object.assign({ date: today() }, EXAMPLE); state.example = true; go(0); }
+    else if (a === 'clear-ask') { confirmClear = true; drawStep(); }
+    else if (a === 'clear-no') { confirmClear = false; drawStep(); }
+    else if (a === 'clear-now') { clearAll(); }
+    else if (a === 'copy') {
+      var text = summaryText(), said = function (m) { var el = document.getElementById('said'); if (el) el.textContent = m; };
+      var fallback = function () { copyFallback = text; drawStep(); var b = document.getElementById('copybox'); if (b) { b.focus(); b.select(); } said('Copying is blocked here. The text is selected below, copy it from there.'); };
+      try { navigator.clipboard.writeText(text).then(function () { said('Copied. Paste it wherever you keep the customer record.'); }, fallback); } catch (err) { fallback(); }
+    }
+  });
+  document.addEventListener('input', function (e) {
+    var k = e.target.getAttribute && e.target.getAttribute('data-k'); if (!k) return;
+    state.v[k] = e.target.value; save();
+    if (e.target.hasAttribute('data-measure')) hint(STEPS[state.step]);
+    drawChrome();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && e.target.hasAttribute && e.target.hasAttribute('data-measure')) { e.preventDefault(); next(); }
+  });
+
+  // ---------------------------------------------------------------- boot (keeps an in-progress customer across updates and reloads)
+  function start(data) {
+    var s = (data && data.state && data.state.v) ? data.state : load();
+    if (s) state = { step: Math.min(Number(s.step) || 0, STEPS.length - 1), v: s.v || {}, example: !!s.example };
+    if (!state.v.date) state.v.date = today();
+    if (!state.v.shoulder_side) state.v.shoulder_side = 'Both';
+    drawStep(); drawChrome();
+  }
+  var hot = window.claude && window.claude.hot;
+  if (hot && hot.snapshot) { try { hot.snapshot(function () { return { state: state }; }); } catch (e) {} }
+  if (hot && hot.ready) hot.ready(start); else start((hot && hot.data) || {});
+})();
+</script>
+
+</body></html>
