@@ -181,6 +181,25 @@ h1, h2 { font-family: var(--display); font-weight: 400; margin: 0; text-wrap: ba
 .banner { background: var(--panel); padding: .75rem 1rem; margin-bottom: 1.25rem; max-width: 46rem; font-size: .875rem; font-weight: 400; display: flex; gap: 1rem; align-items: center; justify-content: space-between; flex-wrap: wrap; }
 .banner button { text-decoration: underline; min-height: 2.75rem; font-weight: 400; }
 
+/* ---------- print: clean one-page sheet with the summary only */
+.print-head { display: none; }
+@media print {
+  @page { margin: 14mm; }
+  html, body { background: #fff; color: #000; }
+  .bar, .nav, .rail, .progress, .actions, .banner, .status, .copybox, .step-head, .said { display: none !important; }
+  .shell { display: block; padding: 0; max-width: none; }
+  .print-head { display: block; border-bottom: 1px solid #000; padding-bottom: .5rem; margin-bottom: 1rem; }
+  .ph-brand { font-family: var(--display); font-size: 16pt; letter-spacing: .14em; }
+  .ph-title { font-family: var(--display); font-size: 22pt; margin-top: .25rem; }
+  .ph-meta { font-size: 10pt; margin-top: .25rem; }
+  .sum { display: grid; grid-template-columns: 1fr 1fr; gap: 0 2.5rem; margin-top: 0; max-width: none; }
+  .sum h2 { font-size: 12pt; padding-bottom: .25rem; border-bottom: 1px solid #000; margin-top: 0; }
+  .sum h2[style] { margin-top: 1rem !important; }
+  .row { min-height: 0; padding: .22rem 0; border-bottom: 1px solid #ccc; font-size: 10.5pt; }
+  .row.gap .v { color: #000; }
+  .row .n { color: #444; }
+}
+
 /* ---------- bottom bar */
 .nav {
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 5;
@@ -475,7 +494,9 @@ body[data-view="login"] .rail, body[data-view="customers"] .rail { display: none
   function summaryHtml() {
     var gaps = MSTEPS.filter(function (s) { return mstat(s.id) !== 'ok'; }), ok = gaps.length === 0;
     var name = (val('first_name') + ' ' + val('last_name')).trim();
-    var h = head('Finish', 'Summary', ok ? 'Everything is in. Copy the values into Custom Size Creator in this order.' : 'Some measurements are still missing. Tap one to fill it in.');
+    var h = '<div class="print-head"><div class="ph-brand">ROSE &amp; BORN</div><div class="ph-title">Body measurements</div>' +
+      '<div class="ph-meta">' + esc(name || 'Customer') + ' \u00b7 ' + esc(val('date') || today()) + (val('store') ? ' \u00b7 ' + esc(val('store')) : '') + (val('measured_by') ? ' \u00b7 Measured by ' + esc(val('measured_by')) : '') + '</div></div>';
+    h += head('Finish', 'Summary', ok ? 'Everything is in. Copy the values into Custom Size Creator in this order.' : 'Some measurements are still missing. Tap one to fill it in.');
     h += '<div class="status' + (ok ? '' : ' bad') + '"><b>' + (16 - gaps.length) + ' of 16 measurements entered.</b>' +
       (ok ? '' : '<div class="gaps">' + gaps.map(function (s) { return '<button type="button" data-go="' + idx(s.id) + '">' + s.nn + ' ' + esc(s.title) + '</button>'; }).join('') + '</div>') + '</div>';
     h += '<div class="sum"><section><h2>Measurements</h2>' + MSTEPS.map(function (s) {
@@ -492,7 +513,8 @@ body[data-view="login"] .rail, body[data-view="customers"] .rail { display: none
       '<h2 style="margin-top:2rem">Off-the-rack size (EU)</h2>' + rowsPlain(SIZES.map(function (z) { return [z[0], z[1], null, idx('sizes')]; })) + '</section></div>';
     h += '<div class="actions">';
     if (sb && user) h += '<button type="button" class="btn primary" data-act="save">' + (state.dirty || !state.savedAt ? 'Save to customer register' : 'Saved') + '</button>';
-    if (CONFIG.MAIL_TO && CONFIG.MAIL_TO.indexOf('__') !== 0) h += '<button type="button" class="btn" data-act="email"' + (ok ? '' : ' disabled') + '>Email summary</button>';
+    h += '<button type="button" class="btn" data-act="print"' + (ok ? '' : ' disabled') + '>Print</button>';
+    h += '<button type="button" class="btn" data-act="email"' + (ok ? '' : ' disabled') + '>Email summary</button>';
     h += '<button type="button" class="btn' + (sb && user ? '' : ' primary') + '" data-act="copy"' + (ok ? '' : ' disabled') + '>Copy summary</button>';
     h += confirmClear ? '<span class="said">Clear every value for this customer?</span><button type="button" class="btn" data-act="clear-now">Yes, clear</button><button type="button" class="btn" data-act="clear-no">Keep</button>'
       : '<button type="button" class="btn" data-act="clear-ask">New customer</button>';
@@ -564,6 +586,7 @@ body[data-view="login"] .rail, body[data-view="customers"] .rail { display: none
     var a = t.getAttribute('data-act');
     if (a === 'save') { saveCloud(); return; }
     if (a === 'email') { emailSummary(); return; }
+    if (a === 'print') { window.print(); return; }
     if (a === 'customers') { openCustomers(); return; }
     if (a === 'signout') { sb.auth.signOut(); return; }
     if (a === 'rename') { renameMe(); return; }
@@ -714,7 +737,8 @@ body[data-view="login"] .rail, body[data-view="customers"] .rail { display: none
 
   function emailSummary() {
     var name = (val('first_name') + ' ' + val('last_name')).trim() || 'Customer';
-    location.href = 'mailto:' + encodeURIComponent(CONFIG.MAIL_TO) + '?subject=' + encodeURIComponent('MTM measurements · ' + name + ' · ' + (val('date') || today())) +
+    var to = (CONFIG.MAIL_TO && CONFIG.MAIL_TO.indexOf('__') !== 0) ? encodeURIComponent(CONFIG.MAIL_TO) : '';
+    location.href = 'mailto:' + to + '?subject=' + encodeURIComponent('MTM measurements · ' + name + ' · ' + (val('date') || today())) +
       '&body=' + encodeURIComponent(summaryText());
   }
 
