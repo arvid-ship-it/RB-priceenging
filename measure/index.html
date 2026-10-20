@@ -1,6 +1,7 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>MTM Body Measurements</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <style>
 /* Layout: step rail at the left on wide screens, one step per screen, illustration beside a single input,
    fixed Back / Next bar at the bottom. Square corners and hairlines, as on roseborn.com. */
@@ -191,12 +192,45 @@ h1, h2 { font-family: var(--display); font-weight: 400; margin: 0; text-wrap: ba
 .nav .count { font-size: .8125rem; color: var(--muted); font-variant-numeric: tabular-nums; text-align: center; min-width: 0; }
 .nav .btn { min-width: 6.5rem; }
 @media (prefers-reduced-motion: reduce) { .progress i { transition: none; } }
+
+/* ---------- cloud: views, login, customer list, save state */
+body[data-view="login"] .nav, body[data-view="customers"] .nav,
+body[data-view="login"] .progress, body[data-view="customers"] .progress,
+body[data-view="login"] .steps-btn, body[data-view="customers"] .steps-btn,
+body[data-view="login"] .cust-btn { display: none !important; }
+body[data-view="login"] .shell, body[data-view="customers"] .shell { grid-template-columns: minmax(0, 1fr); padding-bottom: 3rem; }
+body[data-view="login"] .rail, body[data-view="customers"] .rail { display: none !important; }
+.cust-btn { flex: none; border: 1px solid var(--ink); padding: .5rem .75rem; min-height: 2.75rem;
+  font-size: .6875rem; letter-spacing: .12em; text-transform: uppercase; font-weight: 400; }
+.login { max-width: 24rem; margin: 10vh auto 0; }
+.login .fields { grid-template-columns: 1fr; }
+.login .btn { width: 100%; margin-top: 1rem; }
+.cust-top { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; margin: 1.25rem 0; max-width: 46rem; }
+.cust-top input { flex: 1 1 14rem; border: 1px solid var(--line); background: var(--panel); padding: .75rem; min-height: 3rem; font-size: 1rem; font-weight: 400; }
+.cust-list { max-width: 46rem; border-top: 1px solid var(--ink); }
+.cust-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .5rem 1rem; align-items: center;
+  padding: .75rem 0; border-bottom: 1px solid var(--line); }
+.cust-row .open { text-align: left; display: grid; gap: .125rem; min-height: 2.75rem; min-width: 0; }
+.cust-row .nm { font-weight: 500; font-size: 1rem; }
+.cust-row .meta { color: var(--muted); font-size: .8125rem; }
+.cust-row .again { border: 1px solid var(--ink); padding: .5rem .75rem; min-height: 2.75rem; font-size: .6875rem; letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; }
+.cust-empty { color: var(--muted); padding: 1.5rem 0; }
+.nav .mid { display: grid; justify-items: center; gap: .25rem; min-width: 0; }
+.nav .save { border: 1px solid var(--ink); padding: .5rem .875rem; min-height: 2.5rem; font-size: .6875rem; letter-spacing: .12em; text-transform: uppercase; font-weight: 400; white-space: nowrap; }
+.nav .save.dirty { background: var(--ink); color: var(--on-ink); }
+.nav .save[hidden] { display: none; }
+.nav .count { font-size: .75rem; }
+.who { font-size: .8125rem; color: var(--muted); }
+.field select { width: 100%; border: 1px solid var(--line); background: var(--panel); padding: .75rem 2.25rem .75rem .75rem; min-height: 3rem; font-size: 1rem; font-weight: 400; -webkit-appearance: none; appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%236a6562' stroke-width='1.5'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right .875rem center; }
+.field select:focus { border-color: var(--ink); outline: none; }
 </style>
 
 <header class="bar">
   <div class="bar-in">
     <svg class="logo" viewBox="0 0 428.23 119.74" role="img" aria-label="Rose &amp; Born"><path fill="currentColor" d="M258.39 65.03C256.51 68.26 254.27 71.38 250.43 71.38L243.9 71.38C242.63 71.28 241.64 70.22 241.61 68.94L241.61 59.22C246.92 59.22 249.36 59.22 250.84 64.79L250.89 64.79L250.89 52.72L250.84 52.72C250.1 57.68 247.03 58.1 243.02 58.13L241.61 58.13L241.61 45.97L248.92 45.98C252.08 45.98 254.14 47.97 257.17 51.39L257.17 51.39L257.22 51.38L254.94 44.88L234.01 44.88L234.01 44.95C235.81 45.11 237.23 46.61 237.26 48.45L237.27 48.45L237.27 68.85L237.27 68.85C237.26 70.71 235.83 72.24 234.01 72.4L234.01 72.47L256.9 72.47L258.45 65.05L258.39 65.03L258.39 65.03ZM320.52 71.38C320.31 71.38 316.73 71.38 316.73 71.38C315.45 71.27 314.46 70.19 314.46 68.89L314.46 59.22L318.26 59.22C319.58 59.25 320.92 59.4 321.78 59.66C323.76 60.25 325.34 61.27 326.06 63.26C327.47 67.47 324.81 71.32 320.52 71.38ZM314.46 45.97C314.67 45.97 316.33 45.97 317.11 45.97C320.16 46.04 322.32 45.86 323.95 48.29C325.5 50.6 325.21 54.16 323.15 56.07C321.64 57.64 319.33 58.05 316.91 58.13L314.46 58.13L314.46 45.97ZM323.48 58.02L323.48 58.02C323.48 58.02 323.3 58 323.01 57.97L323.47 57.87L323.47 57.87C326.74 57.18 329.38 55.22 329.34 51.7C329.39 48.7 327.48 46.69 324.85 45.68C323.14 45.04 321.39 44.89 319.53 44.88L306.85 44.88L306.85 44.95C308.66 45.11 310.08 46.61 310.11 48.45L310.11 68.85C310.11 70.71 308.68 72.24 306.85 72.4L306.85 72.47L317.71 72.47L317.71 72.47L319.69 72.47L319.69 72.47C321.01 72.45 322.17 72.42 322.9 72.35C326.2 72.22 329.29 70.61 330.49 67.41C332.27 62.32 328.37 58.54 323.48 58.02ZM110.38 93.15C101.73 110.25 83.14 119.08 65.16 116.19C74.96 112.13 83.41 104.7 88.57 94.52C90.06 91.58 91.21 88.53 92.03 85.42C95.58 81.97 98.64 77.91 100.99 73.26L100.99 73.26C105.17 65 106.74 55.88 105.62 46.89C108.78 50.85 111.25 55.38 112.87 60.34C116.45 71.25 115.56 82.9 110.38 93.15ZM59.73 114.94C57.32 114.22 54.93 113.29 52.6 112.11C42.89 107.2 35.55 98.98 31.76 88.85C34.06 90.62 36.54 92.2 39.18 93.53C45.82 96.89 52.89 98.48 59.87 98.48C69.88 98.48 79.68 95.18 87.68 89.15C87.16 90.51 86.56 91.85 85.89 93.17C80.34 104.14 70.69 111.69 59.73 114.94ZM28.11 112.1C17.86 106.92 10.25 98.05 6.67 87.14C3.1 76.22 3.99 64.57 9.18 54.32C10.63 51.45 12.37 48.82 14.34 46.43C13.43 53.2 14.05 60.15 16.24 66.83C18.53 73.81 22.38 80 27.44 85.05C27.7 86.06 27.98 87.07 28.31 88.08C32.13 99.75 40.28 109.24 51.24 114.78C52.25 115.29 53.27 115.75 54.3 116.18C45.65 117.57 36.5 116.36 28.11 112.1ZM18.16 42.36C26.17 34.88 36.76 30.75 47.61 30.75C49.86 30.75 52.12 30.94 54.37 31.3C44.57 35.37 36.12 42.8 30.97 52.98C26.79 61.24 25.23 70.36 26.35 79.34C23.19 75.38 20.72 70.85 19.09 65.9C16.56 58.17 16.27 50.07 18.16 42.36ZM21.59 33.08C29.15 18.13 44.32 9.5 60.03 9.5C66.55 9.5 73.16 10.99 79.37 14.13C89.07 19.04 96.41 27.25 100.2 37.38C97.91 35.61 95.43 34.04 92.78 32.7C82.18 27.34 70.46 26.48 59.82 29.42C45.88 25.55 31.07 28.58 19.82 37.06C20.34 35.71 20.93 34.39 21.59 33.08ZM51.11 86.28C53.33 87.43 55.86 88.06 58.58 88.06C63.44 88.06 67.74 86.12 70.69 82.59C71.63 81.47 72.38 80.2 72.98 78.85C79.2 76.07 83.07 69.97 83.6 62.07C83.97 56.63 82.54 50.1 78.96 44.37C83.19 48.89 86.42 54.3 88.4 60.36C90.93 68.09 91.21 76.18 89.32 83.89C86.41 86.61 83.16 88.87 79.68 90.66C69.83 95.06 58.71 93.28 51.11 86.28ZM53.63 48.04C54.21 48.03 54.76 48.03 55.27 48.05C49.79 50.41 44.64 58.25 42.97 67.55C42.58 69.71 42.53 71.84 42.79 73.86L42.77 73.86C43.02 76.33 43.97 79.25 45.26 81.47C45.38 81.68 45.5 81.9 45.65 82.13C50.94 90.23 59.58 94.57 68.58 94.57C68.61 94.57 68.65 94.56 68.68 94.56C59.47 96.49 49.57 95.43 40.53 90.86C36.67 88.9 33.18 86.43 30.15 83.51C29.18 79.39 28.83 75.2 29.09 71.05C30.56 58.38 40.52 48.77 53.63 48.04ZM69.54 81.63C66.88 84.81 62.99 86.56 58.58 86.56C54.17 86.56 50.28 84.81 47.62 81.63C44.66 78.09 43.5 73.05 44.45 67.81C46.33 57.33 52.67 48.8 58.58 48.8C59.65 48.8 60.73 49.09 61.8 49.61C61.87 49.65 61.95 49.69 62.02 49.73L62.03 49.72C66.77 52.19 71.19 59.37 72.71 67.81C73.65 73.06 72.5 78.1 69.54 81.63ZM74.18 67.55C72.6 58.74 67.9 51.24 62.75 48.47L62.77 48.43C61.14 47.49 58.6 46.43 53.57 46.54C43.91 47.08 35.72 52.43 31.2 60.21C31.87 58.21 32.68 56.25 33.65 54.33C39.21 43.35 48.88 35.79 59.85 32.54C62.26 33.27 64.64 34.21 66.97 35.39C67.98 35.9 68.96 36.46 69.93 37.05C79.05 43.29 82.65 53.89 82.1 61.97C81.65 68.69 78.63 73.98 73.74 76.78C74.58 73.94 74.77 70.78 74.18 67.55ZM98.32 71.9C96.86 74.78 95.12 77.41 93.15 79.8C94.06 73.03 93.44 66.1 91.25 59.42C87.42 47.75 79.28 38.26 68.32 32.71C67.32 32.2 66.3 31.75 65.27 31.32C67.52 30.96 69.8 30.75 72.09 30.75C78.61 30.75 85.23 32.24 91.43 35.38C95.29 37.33 98.78 39.81 101.82 42.72C104.13 52.55 102.93 62.78 98.32 71.9ZM104.53 41.19C104.27 40.17 103.99 39.16 103.66 38.15C99.83 26.48 91.68 17 80.72 11.45C58.09 0 30.36 9.1 18.91 31.73C17.43 34.66 16.28 37.7 15.46 40.8C11.91 44.24 8.86 48.31 6.5 52.97C0.95 63.93 0 76.39 3.82 88.07C7.65 99.74 15.79 109.23 26.75 114.78C33.39 118.14 40.47 119.74 47.46 119.74C51.63 119.74 55.77 119.16 59.75 118.06C63.78 119.18 67.87 119.73 71.93 119.73C88.74 119.73 104.96 110.5 113.05 94.51C118.6 83.54 119.55 71.08 115.72 59.4C113.43 52.42 109.59 46.23 104.53 41.19ZM154.8 58.69L152.91 58.69L152.91 45.97L154.49 45.97C157.46 46.02 160.47 46.47 161.98 48.88C163.69 51.55 163.09 55.49 160.4 57.37C158.78 58.51 156.8 58.68 154.8 58.69ZM173.62 72.41C170.97 72.14 169.47 70.38 167.72 67.99L163.47 61.85C162.78 60.91 162 59.92 161.02 59.4L160.87 59.32C160.94 59.31 161.01 59.29 161.02 59.29C161.04 59.28 161.06 59.27 161.09 59.27C164.29 58.26 167.42 55.9 167.34 52.24C167.48 47.97 163.87 45.28 159.95 45C159.19 44.94 158.5 44.89 157.78 44.88L145.31 44.88L145.31 44.95C147.11 45.11 148.53 46.61 148.56 48.45L148.56 68.85C148.56 70.71 147.13 72.24 145.31 72.4L145.31 72.47L156.17 72.47L156.17 72.4C154.34 72.24 152.91 70.71 152.91 68.85L152.91 59.78L153.24 59.78C155.59 59.82 156.63 60.4 158.3 62.28C160.47 64.79 161.79 66.98 163.55 69.56C163.63 69.68 163.71 69.79 163.79 69.9L163.79 69.9C164.6 71.19 166.06 72.47 167.77 72.47L173.62 72.47L173.62 72.41L173.62 72.41L173.62 72.41ZM280.94 70.3C277.85 70.3 274.95 67.42 275.04 64.42C275.02 61.87 276.59 59.66 278.41 58L278.49 57.93L286.79 67.3C284.86 69.17 283.4 70.3 280.94 70.3ZM283.81 48.31C284.41 50.69 284.01 52.51 281.55 54.45L281.34 54.6L278.9 51.83C278.48 51.33 277.76 50.15 277.79 48.3C278.03 44.75 282.3 43.75 283.81 48.31ZM302.28 67.33L302.28 67.33L302.28 67.33C300.84 69.77 297.96 71.38 295.33 69.75C294.43 69.18 293.59 68.39 292.81 67.52L290.43 64.86L292.51 62.54C293.47 61.51 294.73 60.11 295.94 59.4C297.03 58.75 298.25 58.33 299.58 58.18L299.58 58.13L286.2 58.13L286.2 58.18C286.21 58.19 286.22 58.19 286.23 58.19C288.03 58.34 290.98 58.51 291.12 60.68C291.2 62.11 290.56 63.09 290.01 63.7L289.7 64.04L282.06 55.42L282.65 55.05C284.9 53.63 286.92 51.84 286.85 49.29C286.77 46.25 283.86 44.36 281.09 44.42C276.92 44.44 272.83 48.25 274.34 52.46C274.73 53.61 275.4 54.49 276.18 55.31L277.77 57.11L275.68 58.58L275.68 58.58C274.02 59.69 272.6 61.07 271.69 62.99C270.43 65.48 271.03 68.8 273.01 70.8C275.54 73.35 279.52 73.79 282.19 72.68C284.46 71.73 287.07 68.7 287.54 68.15C287.54 68.15 289.46 70.32 289.49 70.36C290.82 71.86 292.31 72.97 295.12 72.97C298.36 72.97 301.17 70.2 302.33 67.36L302.33 67.36L302.33 67.36L302.28 67.33ZM188.91 71.67C183.38 71.67 179.43 65.84 179.43 58.67C179.43 51.51 183.38 45.68 188.91 45.68C194.45 45.68 198.39 51.51 198.39 58.67C198.39 65.84 194.45 71.67 188.91 71.67ZM188.91 44.59C180.98 44.59 174.54 50.9 174.54 58.67C174.54 66.45 180.98 72.76 188.91 72.76C196.85 72.76 203.28 66.45 203.28 58.67C203.28 50.9 196.85 44.59 188.91 44.59ZM378.4 58.69L376.51 58.69L376.51 45.97L378.09 45.97C381.06 46.02 384.07 46.47 385.58 48.88C387.29 51.55 386.69 55.49 384 57.37C382.38 58.51 380.4 58.68 378.4 58.69ZM397.22 72.41C394.57 72.14 393.07 70.38 391.32 67.99L387.07 61.85C386.38 60.91 385.6 59.92 384.62 59.4L384.47 59.32C384.54 59.31 384.61 59.29 384.62 59.29C384.64 59.28 384.66 59.27 384.69 59.27C387.89 58.26 391.02 55.9 390.94 52.24C391.08 47.97 387.47 45.28 383.54 45C382.79 44.94 382.1 44.89 381.38 44.88L368.91 44.88L368.91 44.95C370.71 45.11 372.13 46.61 372.16 48.45L372.16 68.85C372.16 70.71 370.73 72.24 368.91 72.4L368.91 72.47L379.77 72.47L379.77 72.4C377.94 72.24 376.51 70.71 376.51 68.85L376.51 59.78L376.84 59.78C379.19 59.82 380.23 60.4 381.9 62.28C384.07 64.79 385.39 66.98 387.15 69.56C387.23 69.68 387.31 69.79 387.39 69.9L387.39 69.9C388.2 71.19 389.66 72.47 391.37 72.47L397.22 72.47L397.22 72.41L397.22 72.41L397.22 72.41ZM418.45 44.88L418.45 44.93C420.84 44.93 422.77 46.85 422.8 49.23L422.8 64L406.39 44.88L398.12 44.88L398.12 44.93C398.12 44.93 398.12 44.93 398.12 44.93L398.13 44.93L398.13 44.93C400.5 44.94 402.43 46.85 402.46 49.23L402.46 68.12C402.43 70.5 400.5 72.41 398.12 72.41L398.12 72.47L407.89 72.47L407.89 72.41C405.51 72.41 403.58 70.5 403.55 68.12L403.55 49.5L423.89 73.21L423.89 49.23C423.91 46.85 425.85 44.93 428.23 44.93L428.23 44.88L418.45 44.88ZM217.92 55.66C215.46 54.69 213.22 53.44 213.25 50.61C213.24 49.01 213.78 48.14 214.92 47.13C216.01 46.16 217.78 45.68 219.27 45.68C223.2 45.65 226.19 48.8 227.41 52.14L227.47 52.14L227.47 45.81L222.34 44.83C221.47 44.67 220.25 44.59 219.31 44.59C215.92 44.57 212.1 45.87 210.56 49.04C209.75 50.61 209.51 52.97 210.22 54.76C211.01 56.88 212.78 58.58 214.86 59.38C217.37 60.38 220.07 60.92 222.49 62.13C224.14 62.98 225.21 64.22 225.17 66.15C225.21 69.8 222.37 71.67 218.81 71.67C217.65 71.67 216.12 71.36 215.18 70.87C212.97 69.62 210.94 67.17 210.1 64.78L210.04 64.78L210.04 71.59L213.85 72.24L215.94 72.55C218.28 72.92 220.84 72.78 222.87 72.25C225.18 71.65 227.04 70.25 228.1 68.19C229.32 65.89 229.02 62.28 227.41 60.35C225.3 57.54 221.08 56.99 217.92 55.66ZM350.63 71.67C345.09 71.67 341.15 65.84 341.15 58.67C341.15 51.51 345.09 45.68 350.63 45.68C356.17 45.68 360.11 51.51 360.11 58.67C360.11 65.84 356.17 71.67 350.63 71.67ZM350.63 44.59C342.69 44.59 336.26 50.9 336.26 58.67C336.26 66.45 342.69 72.76 350.63 72.76C358.57 72.76 365 66.45 365 58.67C365 50.9 358.57 44.59 350.63 44.59Z"/></svg>
     <div class="where"><span class="label" id="whereKicker">Step</span><b id="whereTitle">Customer</b></div>
+    <button class="cust-btn" id="custBtn" type="button" hidden>Customers</button>
     <button class="steps-btn" id="stepsBtn" type="button" aria-expanded="false" aria-controls="rail">Steps</button>
   </div>
   <div class="progress" aria-hidden="true"><i id="progressFill"></i></div>
@@ -210,7 +244,7 @@ h1, h2 { font-family: var(--display); font-weight: 400; margin: 0; text-wrap: ba
 <footer class="nav">
   <div class="nav-in">
     <button class="btn" id="backBtn" type="button">Back</button>
-    <span class="count" id="count">0 of 16 measured</span>
+    <span class="mid"><button class="save" id="saveBtn" type="button" data-act="save" hidden>Save</button><span class="count" id="count">0 of 16 measured</span></span>
     <button class="btn primary" id="nextBtn" type="button">Next</button>
   </div>
 </footer>
@@ -218,6 +252,14 @@ h1, h2 { font-family: var(--display); font-weight: 400; margin: 0; text-wrap: ba
 <script>
 (function () {
   'use strict';
+
+  // ---------------------------------------------------------------- cloud config (Supabase project; anon key is public by design, access is via sign-in + RLS)
+  var CONFIG = {
+    SUPABASE_URL: '__SUPABASE_URL__',
+    SUPABASE_ANON_KEY: '__SUPABASE_ANON_KEY__',
+    MAIL_TO: '__MAIL_TO__'
+  };
+  var STORES = ['Stockholm', 'Z\u00fcrich', 'New York'];
 
   // ---------------------------------------------------------------- content (order follows Custom Size Creator)
   var FIT = function (slimText) {
@@ -277,8 +319,10 @@ h1, h2 { font-family: var(--display); font-weight: 400; margin: 0; text-wrap: ba
 
   var MSTEPS = STEPS.filter(function (s) { return s.kind === 'measure'; });
   var CUSTOMER = [['first_name', 'First name', 'text'], ['last_name', 'Last name', 'text'], ['email', 'Email', 'email'],
-    ['date', 'Date', 'date'], ['height_cm', 'Height (cm)', 'decimal'], ['weight_kg', 'Weight (kg)', 'decimal'],
+    ['phone', 'Phone', 'tel'], ['store', 'Store', 'store'], ['date', 'Date', 'date'],
+    ['height_cm', 'Height (cm)', 'decimal'], ['weight_kg', 'Weight (kg)', 'decimal'],
     ['age', 'Age', 'numeric'], ['measured_by', 'Measured by', 'text'], ['reference', 'Order / reference', 'text']];
+  var PROFILE_KEYS = ['business_fit', 'casual_fit', 'body_type', 'stomach_type', 'back_type', 'shoulder_type', 'shoulder_side', 'rear_type'];
   var SIZES = [['size_jacket', 'Jacket'], ['size_trousers', 'Trousers'], ['size_dress_shirt', 'Dress shirt'],
     ['size_shoe', 'Shoe'], ['size_jeans', 'Jeans'], ['size_tshirt', 'T-shirt']];
   var EXAMPLE = { first_name: 'Demo', last_name: 'Customer', email: 'demo@example.com', height_cm: '176', weight_kg: '84', age: '47',
@@ -288,8 +332,9 @@ h1, h2 { font-family: var(--display); font-weight: 400; margin: 0; text-wrap: ba
   [104, 40, 46, 65, 65, 34, 31, 19, 75, 59, 90, 104, 90, 56, 42, 85].forEach(function (v, i) { EXAMPLE[MSTEPS[i].id] = String(v); });
 
   // ---------------------------------------------------------------- state
-  var KEY = 'rb-mtm-measure-draft-v1';
-  var state = { step: 0, v: {}, example: false };
+  var KEY = 'rb-mtm-measure-draft-v2';
+  var state = { step: 0, v: {}, example: false, view: 'wizard', customerId: null, setId: null, savedAt: null, dirty: false };
+  var sb = null, user = null, custRows = [], custQuery = '', custBusy = false, cloudMsg = '';
   var stage = document.getElementById('stage'), rail = document.getElementById('rail');
   var confirmClear = false, copyFallback = '';
 
@@ -329,6 +374,14 @@ h1, h2 { font-family: var(--display); font-weight: 400; margin: 0; text-wrap: ba
     }
   }
   function drawChrome() {
+    document.body.setAttribute('data-view', state.view);
+    var cb = document.getElementById('custBtn'); cb.hidden = !(sb && user) || state.view !== 'wizard';
+    var sv = document.getElementById('saveBtn');
+    sv.hidden = !(sb && user) || state.view !== 'wizard';
+    sv.className = 'save' + (state.dirty ? ' dirty' : '');
+    sv.textContent = state.dirty ? 'Save' : (state.savedAt ? 'Saved ' + state.savedAt : 'Save');
+    if (state.view === 'login') { document.getElementById('whereKicker').textContent = 'Rose & Born'; document.getElementById('whereTitle').textContent = 'Sign in'; return; }
+    if (state.view === 'customers') { document.getElementById('whereKicker').textContent = who(); document.getElementById('whereTitle').textContent = 'Customers'; return; }
     var s = STEPS[state.step];
     document.getElementById('whereKicker').textContent = s.kind === 'measure' ? s.n + ' of 16' : s.group;
     document.getElementById('whereTitle').textContent = s.title;
@@ -347,7 +400,12 @@ h1, h2 { font-family: var(--display); font-weight: 400; margin: 0; text-wrap: ba
       (lead ? '<p class="lead">' + esc(lead) + '</p>' : '') + (note ? '<p class="note">' + esc(note) + '</p>' : '') + '</div>';
   }
   function fieldHtml(id, label, mode) {
-    var type = mode === 'date' ? 'date' : (mode === 'email' ? 'email' : 'text');
+    if (mode === 'store') {
+      return '<label class="field" for="f_' + id + '"><span class="label">' + esc(label) + '</span><select id="f_' + id + '" data-k="' + id + '">' +
+        '<option value=""' + (val(id) ? '' : ' selected') + '>Select store</option>' +
+        STORES.map(function (s) { return '<option value="' + esc(s) + '"' + (val(id) === s ? ' selected' : '') + '>' + esc(s) + '</option>'; }).join('') + '</select></label>';
+    }
+    var type = mode === 'date' ? 'date' : (mode === 'email' ? 'email' : (mode === 'tel' ? 'tel' : 'text'));
     var im = (mode === 'decimal' || mode === 'numeric') ? ' inputmode="' + mode + '"' : '';
     return '<label class="field" for="f_' + id + '"><span class="label">' + esc(label) + '</span>' +
       '<input id="f_' + id + '" data-k="' + id + '" type="' + type + '"' + im + ' autocomplete="off" value="' + esc(val(id)) + '"></label>';
@@ -358,8 +416,11 @@ h1, h2 { font-family: var(--display); font-weight: 400; margin: 0; text-wrap: ba
   }
 
   function drawStep() {
+    if (state.view === 'login') { stage.innerHTML = loginHtml(); return; }
+    if (state.view === 'customers') { stage.innerHTML = customersHtml(); return; }
     var s = STEPS[state.step], h = exampleBanner();
     if (s.kind === 'customer') {
+      h += cloudBanner();
       h += head('Profile', 'Customer', 'Who is being measured? Weight: round up if the customer is unsure.');
       h += '<div class="fields">' + CUSTOMER.map(function (c) { return fieldHtml(c[0], c[1], c[2]); }).join('') + '</div>';
       if (!state.example && measured() === 0) h += '<div class="actions"><button type="button" class="btn" data-act="example">Load example values</button><span class="said">Fills every step so you can see the whole flow.</span></div>';
@@ -429,7 +490,10 @@ h1, h2 { font-family: var(--display); font-weight: 400; margin: 0; text-wrap: ba
       ['body_type', 'Body type', null, idx('body_type')], ['stomach_type', 'Stomach type', null, idx('stomach_type')], ['back_type', 'Back type', null, idx('back_type')],
       ['shoulder_type', 'Shoulder type', side, idx('shoulder_type')], ['rear_type', 'Rear type', null, idx('rear_type')]]) +
       '<h2 style="margin-top:2rem">Off-the-rack size (EU)</h2>' + rowsPlain(SIZES.map(function (z) { return [z[0], z[1], null, idx('sizes')]; })) + '</section></div>';
-    h += '<div class="actions"><button type="button" class="btn primary" data-act="copy"' + (ok ? '' : ' disabled') + '>Copy summary</button>';
+    h += '<div class="actions">';
+    if (sb && user) h += '<button type="button" class="btn primary" data-act="save">' + (state.dirty || !state.savedAt ? 'Save to customer register' : 'Saved') + '</button>';
+    if (CONFIG.MAIL_TO && CONFIG.MAIL_TO.indexOf('__') !== 0) h += '<button type="button" class="btn" data-act="email"' + (ok ? '' : ' disabled') + '>Email summary</button>';
+    h += '<button type="button" class="btn' + (sb && user ? '' : ' primary') + '" data-act="copy"' + (ok ? '' : ' disabled') + '>Copy summary</button>';
     h += confirmClear ? '<span class="said">Clear every value for this customer?</span><button type="button" class="btn" data-act="clear-now">Yes, clear</button><button type="button" class="btn" data-act="clear-no">Keep</button>'
       : '<button type="button" class="btn" data-act="clear-ask">New customer</button>';
     h += '<span class="said" id="said" role="status">' + (ok ? '' : 'Copy unlocks when all 16 measurements are in.') + '</span></div>';
@@ -456,6 +520,7 @@ h1, h2 { font-family: var(--display); font-weight: 400; margin: 0; text-wrap: ba
 
   // ---------------------------------------------------------------- navigation and events
   function go(i, focus) {
+    state.view = 'wizard';
     state.step = Math.max(0, Math.min(STEPS.length - 1, i));
     confirmClear = false; copyFallback = '';
     rail.hidden = true; document.getElementById('stepsBtn').setAttribute('aria-expanded', 'false');
@@ -468,7 +533,11 @@ h1, h2 { font-family: var(--display); font-weight: 400; margin: 0; text-wrap: ba
     if (s.kind === 'measure' && mstat(s.id) !== 'ok') { hint(s, true); var el = document.getElementById('f_' + s.id); if (el) el.focus(); return; }
     go(state.step + 1, true);
   }
-  function clearAll() { state = { step: 0, v: { date: today(), shoulder_side: 'Both' }, example: false }; go(0); }
+  function clearAll() {
+    state = { step: 0, v: { date: today(), shoulder_side: 'Both', measured_by: who(), store: lastStore() }, example: false,
+      view: 'wizard', customerId: null, setId: null, savedAt: null, dirty: false };
+    go(0);
+  }
 
   document.getElementById('nextBtn').addEventListener('click', next);
   document.getElementById('backBtn').addEventListener('click', function () { go(state.step - 1, true); });
@@ -480,19 +549,26 @@ h1, h2 { font-family: var(--display); font-weight: 400; margin: 0; text-wrap: ba
     var t = e.target.closest('[data-go],[data-set],[data-nudge],[data-act],[data-pick]'); if (!t) return;
     if (t.hasAttribute('data-go')) { go(Number(t.getAttribute('data-go')), true); return; }
     if (t.hasAttribute('data-set')) {
-      var k = t.getAttribute('data-set'); state.v[k] = t.getAttribute('data-v'); save(); drawStep(); drawChrome(); return;
+      var k = t.getAttribute('data-set'); state.v[k] = t.getAttribute('data-v'); state.dirty = true; save(); drawStep(); drawChrome(); return;
     }
     if (t.hasAttribute('data-pick')) {            // tapping a figure in the illustration picks that option
       var r = t.getBoundingClientRect(), s = STEPS[state.step], third = Math.min(2, Math.max(0, Math.floor(3 * (e.clientX - r.left) / r.width)));
-      state.v[s.id] = s.opts[third].v; save(); drawStep(); drawChrome(); return;
+      state.v[s.id] = s.opts[third].v; state.dirty = true; save(); drawStep(); drawChrome(); return;
     }
     if (t.hasAttribute('data-nudge')) {
       var st = STEPS[state.step], n = num(st.id), d = Number(t.getAttribute('data-nudge'));
       n = isNaN(n) ? Math.round((st.lo + st.hi) / 2) : Math.round((n + d) * 10) / 10;
       state.v[st.id] = String(Math.max(1, n)); document.getElementById('f_' + st.id).value = state.v[st.id];
-      save(); hint(st); drawChrome(); return;
+      state.dirty = true; save(); hint(st); drawChrome(); return;
     }
     var a = t.getAttribute('data-act');
+    if (a === 'save') { saveCloud(); return; }
+    if (a === 'email') { emailSummary(); return; }
+    if (a === 'customers') { openCustomers(); return; }
+    if (a === 'signout') { sb.auth.signOut(); return; }
+    if (a === 'new-customer') { clearAll(); return; }
+    if (a === 'open-customer') { openCustomer(t.getAttribute('data-id'), false); return; }
+    if (a === 'new-session') { openCustomer(t.getAttribute('data-id'), true); return; }
     if (a === 'example') { state.v = Object.assign({ date: today() }, EXAMPLE); state.example = true; go(0); }
     else if (a === 'clear-ask') { confirmClear = true; drawStep(); }
     else if (a === 'clear-no') { confirmClear = false; drawStep(); }
@@ -505,7 +581,8 @@ h1, h2 { font-family: var(--display); font-weight: 400; margin: 0; text-wrap: ba
   });
   document.addEventListener('input', function (e) {
     var k = e.target.getAttribute && e.target.getAttribute('data-k'); if (!k) return;
-    state.v[k] = e.target.value; save();
+    state.v[k] = e.target.value; state.dirty = true; save();
+    if (k === 'store') { try { localStorage.setItem('rb-mtm-store', e.target.value); } catch (err) {} }
     if (e.target.hasAttribute('data-measure')) hint(STEPS[state.step]);
     drawChrome();
   });
@@ -513,13 +590,156 @@ h1, h2 { font-family: var(--display); font-weight: 400; margin: 0; text-wrap: ba
     if (e.key === 'Enter' && e.target.hasAttribute && e.target.hasAttribute('data-measure')) { e.preventDefault(); next(); }
   });
 
+  // ---------------------------------------------------------------- cloud: Supabase customer register
+  function configured() { return CONFIG.SUPABASE_URL.indexOf('http') === 0 && CONFIG.SUPABASE_ANON_KEY.length > 20; }
+  function who() {
+    if (!user) return '';
+    var m = user.user_metadata || {};
+    if (m.full_name) return m.full_name;
+    var n = (user.email || '').split('@')[0].replace(/[._-]+/g, ' ');
+    return n.replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+  }
+  function lastStore() { try { return localStorage.getItem('rb-mtm-store') || ''; } catch (e) { return ''; } }
+  function hhmm() { var d = new Date(); return ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2); }
+  function cloudBanner() {
+    if (sb && user) return cloudMsg ? '<div class="banner"><span>' + esc(cloudMsg) + '</span></div>' : '';
+    if (!configured()) return '<div class="banner"><span>Customer register is not connected yet. Measurements stay on this device until it is.</span></div>';
+    if (!window.supabase) return '<div class="banner"><span>Offline: the customer register could not be loaded. Measurements stay on this device; save when back online.</span></div>';
+    return '';
+  }
+  function fmtDate(s) { if (!s) return ''; var d = new Date(s); return isNaN(d) ? s : d.toLocaleDateString('sv-SE'); }
+
+  function loginHtml() {
+    return '<form class="login" data-form="login">' + head('Rose & Born', 'Sign in', 'Use your personal account to open the customer register.') +
+      '<div class="fields">' +
+      '<label class="field" for="li_email"><span class="label">Email</span><input id="li_email" type="email" autocomplete="username" required></label>' +
+      '<label class="field" for="li_pw"><span class="label">Password</span><input id="li_pw" type="password" autocomplete="current-password" required></label>' +
+      '</div><p class="err" id="li_err" role="alert">' + esc(cloudMsg) + '</p>' +
+      '<button type="submit" class="btn primary">Sign in</button>' +
+      '<p class="note">Measurements already entered on this device are kept and can be saved after signing in.</p></form>';
+  }
+
+  function customersHtml() {
+    var h = head('Customer register', 'Customers', 'Open a customer to see the latest measurements, or start a new one.');
+    h += '<div class="cust-top"><input type="search" id="custSearch" placeholder="Search name or email" value="' + esc(custQuery) + '" autocomplete="off">' +
+      '<button type="button" class="btn primary" data-act="new-customer">New customer</button></div>';
+    h += '<div class="cust-list">';
+    if (custBusy) h += '<div class="cust-empty">Loading…</div>';
+    else if (cloudMsg) h += '<div class="cust-empty">' + esc(cloudMsg) + '</div>';
+    else if (!custRows.length) h += '<div class="cust-empty">' + (custQuery ? 'No customers match "' + esc(custQuery) + '".' : 'No customers saved yet.') + '</div>';
+    else custRows.forEach(function (c) {
+      var nm = ((c.first_name || '') + ' ' + (c.last_name || '')).trim() || 'Unnamed';
+      var meta = [c.store, c.last_measured_at ? 'Measured ' + fmtDate(c.last_measured_at) + (c.last_measured_by ? ' by ' + c.last_measured_by : '') : 'No measurements yet',
+        c.set_count > 1 ? c.set_count + ' sessions' : ''].filter(Boolean).join(' · ');
+      h += '<div class="cust-row"><button type="button" class="open" data-act="open-customer" data-id="' + c.id + '"><span class="nm">' + esc(nm) + '</span><span class="meta">' + esc(meta) + '</span></button>' +
+        '<button type="button" class="again" data-act="new-session" data-id="' + c.id + '" title="Start a new measuring session for this customer">New session</button></div>';
+    });
+    h += '</div><div class="actions"><span class="who">Signed in as ' + esc(who()) + '</span><button type="button" class="btn" data-act="signout">Sign out</button></div>';
+    return h;
+  }
+
+  var searchTimer = null;
+  async function loadCustomers() {
+    if (!sb || !user) return;
+    custBusy = true; cloudMsg = ''; drawStep();
+    var q = sb.from('customers_overview').select('*').order('updated_at', { ascending: false }).limit(50);
+    var t = custQuery.trim().replace(/[%,()]/g, ' ');
+    if (t) q = q.or('first_name.ilike.%' + t + '%,last_name.ilike.%' + t + '%,email.ilike.%' + t + '%');
+    var r = await q;
+    custBusy = false;
+    if (r.error) cloudMsg = 'Could not load customers: ' + r.error.message; else custRows = r.data || [];
+    if (state.view === 'customers') drawStep();
+  }
+  function openCustomers() { state.view = 'customers'; cloudMsg = ''; save(); drawStep(); drawChrome(); window.scrollTo(0, 0); loadCustomers(); }
+
+  async function openCustomer(id, fresh) {
+    var c = await sb.from('customers').select('*').eq('id', id).single();
+    if (c.error) { cloudMsg = 'Could not open customer: ' + c.error.message; drawStep(); return; }
+    var s = await sb.from('measurement_sets').select('*').eq('customer_id', id).order('measured_at', { ascending: false }).order('created_at', { ascending: false }).limit(1);
+    var set = (!s.error && s.data && s.data[0]) || null;
+    var v = { first_name: c.data.first_name || '', last_name: c.data.last_name || '', email: c.data.email || '', phone: c.data.phone || '', store: c.data.store || lastStore(),
+      date: today(), shoulder_side: 'Both', measured_by: who() };
+    if (set) {
+      v.height_cm = set.height_cm == null ? '' : String(set.height_cm); v.weight_kg = set.weight_kg == null ? '' : String(set.weight_kg); v.age = set.age == null ? '' : String(set.age);
+      Object.keys(set.profile || {}).forEach(function (k) { v[k] = set.profile[k]; });
+      Object.keys(set.sizes || {}).forEach(function (k) { v[k] = set.sizes[k]; });
+      if (!fresh) {
+        v.date = set.measured_at || today(); v.measured_by = set.measured_by || who(); v.reference = set.reference || '';
+        MSTEPS.forEach(function (st) { var key = st.id.slice(4); if (set.measures && set.measures[key] != null) v[st.id] = String(set.measures[key]); });
+      }
+    }
+    state = { step: 0, v: v, example: false, view: 'wizard', customerId: id, setId: (set && !fresh) ? set.id : null, savedAt: null, dirty: false };
+    go(0);
+  }
+
+  function numOrNull(id) { var n = num(id); return isNaN(n) ? null : n; }
+  async function saveCloud() {
+    if (!sb || !user) return;
+    if (!(val('first_name') || val('last_name'))) { cloudMsg = 'Enter the customer’s name before saving.'; go(0); return; }
+    var sv = document.getElementById('saveBtn'); if (sv) sv.textContent = 'Saving…';
+    var cust = { first_name: val('first_name'), last_name: val('last_name'), email: val('email') || null, phone: val('phone') || null, store: val('store') || null, updated_by: user.id };
+    var r;
+    if (!state.customerId) { cust.created_by = user.id; r = await sb.from('customers').insert(cust).select('id').single(); if (!r.error) state.customerId = r.data.id; }
+    else r = await sb.from('customers').update(cust).eq('id', state.customerId);
+    if (r.error) { cloudMsg = 'Save failed: ' + r.error.message; drawStep(); drawChrome(); return; }
+    var profile = {}, sizes = {}, measures = {};
+    PROFILE_KEYS.forEach(function (k) { if (val(k)) profile[k] = val(k); });
+    SIZES.forEach(function (z) { if (val(z[0])) sizes[z[0]] = val(z[0]); });
+    MSTEPS.forEach(function (st) { var n = num(st.id); if (!isNaN(n) && n > 0) measures[st.id.slice(4)] = n; });
+    var set = { customer_id: state.customerId, measured_at: val('date') || today(), measured_by: val('measured_by') || who(), reference: val('reference') || null,
+      height_cm: numOrNull('height_cm'), weight_kg: numOrNull('weight_kg'), age: numOrNull('age'), profile: profile, measures: measures, sizes: sizes, updated_by: user.id };
+    if (!state.setId) { set.created_by = user.id; r = await sb.from('measurement_sets').insert(set).select('id').single(); if (!r.error) state.setId = r.data.id; }
+    else r = await sb.from('measurement_sets').update(set).eq('id', state.setId);
+    if (r.error) { cloudMsg = 'Save failed: ' + r.error.message; drawStep(); drawChrome(); return; }
+    state.dirty = false; state.savedAt = hhmm(); cloudMsg = ''; save(); drawStep(); drawChrome();
+    var said = document.getElementById('said'); if (said) said.textContent = 'Saved to the customer register at ' + state.savedAt + '.';
+  }
+
+  function emailSummary() {
+    var name = (val('first_name') + ' ' + val('last_name')).trim() || 'Customer';
+    location.href = 'mailto:' + encodeURIComponent(CONFIG.MAIL_TO) + '?subject=' + encodeURIComponent('MTM measurements · ' + name + ' · ' + (val('date') || today())) +
+      '&body=' + encodeURIComponent(summaryText());
+  }
+
+  document.addEventListener('submit', async function (e) {
+    var f = e.target.closest && e.target.closest('[data-form="login"]'); if (!f) return;
+    e.preventDefault();
+    var err = document.getElementById('li_err'); err.textContent = 'Signing in…';
+    var r = await sb.auth.signInWithPassword({ email: document.getElementById('li_email').value.trim(), password: document.getElementById('li_pw').value });
+    if (r.error) { err.textContent = r.error.message === 'Invalid login credentials' ? 'Wrong email or password.' : r.error.message; return; }
+    user = r.data.user; cloudMsg = '';
+    if (!state.v.measured_by) state.v.measured_by = who();
+    if (state.customerId || measured() > 0 || val('first_name') || val('last_name')) go(state.step); else openCustomers();
+  });
+  document.addEventListener('input', function (e) {
+    if (e.target.id !== 'custSearch') return;
+    custQuery = e.target.value; clearTimeout(searchTimer); searchTimer = setTimeout(loadCustomers, 250);
+  });
+  document.getElementById('custBtn').addEventListener('click', openCustomers);
+
   // ---------------------------------------------------------------- boot (keeps an in-progress customer across updates and reloads)
-  function start(data) {
+  async function start(data) {
     var s = (data && data.state && data.state.v) ? data.state : load();
-    if (s) state = { step: Math.min(Number(s.step) || 0, STEPS.length - 1), v: s.v || {}, example: !!s.example };
+    if (s) state = { step: Math.min(Number(s.step) || 0, STEPS.length - 1), v: s.v || {}, example: !!s.example, view: 'wizard',
+      customerId: s.customerId || null, setId: s.setId || null, savedAt: s.savedAt || null, dirty: !!s.dirty };
     if (!state.v.date) state.v.date = today();
     if (!state.v.shoulder_side) state.v.shoulder_side = 'Both';
+    if (configured() && window.supabase) {
+      try { sb = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY); } catch (e) { sb = null; }
+    }
+    if (sb) {
+      var r = await sb.auth.getSession();
+      user = (r.data && r.data.session) ? r.data.session.user : null;
+      if (!user) state.view = 'login';
+      else if (!(state.customerId || measured() > 0 || val('first_name') || val('last_name'))) state.view = 'customers';
+      sb.auth.onAuthStateChange(function (ev, session) {
+        var u = session ? session.user : null;
+        if (!u && user) { user = null; state.view = 'login'; drawStep(); drawChrome(); }
+        else user = u || user;
+      });
+    }
     drawStep(); drawChrome();
+    if (state.view === 'customers') loadCustomers();
   }
   var hot = window.claude && window.claude.hot;
   if (hot && hot.snapshot) { try { hot.snapshot(function () { return { state: state }; }); } catch (e) {} }
