@@ -184,8 +184,16 @@ h1, h2 { font-family: var(--display); font-weight: 400; margin: 0; text-wrap: ba
 /* ---------- print: clean one-page sheet with the summary only */
 .print-head { display: none; }
 @media print {
-  @page { margin: 14mm; }
-  html, body { background: #fff; color: #000; }
+  @page { size: A4 portrait; margin: 14mm; }
+  :root, :root[data-theme="dark"], :root:not([data-theme="light"]) {
+    --paper: #fff; --panel: #fff; --ink: #000; --on-ink: #fff; --muted: #444; --line: #bbb; --missing: #000; color-scheme: light;
+  }
+  html, body { background: #fff !important; color: #000 !important; font-size: 11pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { padding: 0 !important; }
+  .stage { width: 100%; }
+  .sum section { break-inside: avoid; page-break-inside: avoid; }
+  .row, .row * { color: #000 !important; }
+  .row.plain .v.none { color: #777 !important; }
   .bar, .nav, .rail, .progress, .actions, .banner, .status, .copybox, .step-head, .said { display: none !important; }
   .shell { display: block; padding: 0; max-width: none; }
   .print-head { display: block; border-bottom: 1px solid #000; padding-bottom: .5rem; margin-bottom: 1rem; }
