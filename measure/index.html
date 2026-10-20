@@ -566,6 +566,7 @@ body[data-view="login"] .rail, body[data-view="customers"] .rail { display: none
     if (a === 'email') { emailSummary(); return; }
     if (a === 'customers') { openCustomers(); return; }
     if (a === 'signout') { sb.auth.signOut(); return; }
+    if (a === 'rename') { renameMe(); return; }
     if (a === 'new-customer') { clearAll(); return; }
     if (a === 'open-customer') { openCustomer(t.getAttribute('data-id'), false); return; }
     if (a === 'new-session') { openCustomer(t.getAttribute('data-id'), true); return; }
@@ -634,7 +635,9 @@ body[data-view="login"] .rail, body[data-view="customers"] .rail { display: none
       h += '<div class="cust-row"><button type="button" class="open" data-act="open-customer" data-id="' + c.id + '"><span class="nm">' + esc(nm) + '</span><span class="meta">' + esc(meta) + '</span></button>' +
         '<button type="button" class="again" data-act="new-session" data-id="' + c.id + '" title="Start a new measuring session for this customer">New session</button></div>';
     });
-    h += '</div><div class="actions"><span class="who">Signed in as ' + esc(who()) + '</span><button type="button" class="btn" data-act="signout">Sign out</button></div>';
+    h += '</div><div class="actions"><span class="who">Signed in as ' + esc(who()) + '</span>' +
+      '<button type="button" class="btn" data-act="rename">Change my name</button>' +
+      '<button type="button" class="btn" data-act="signout">Sign out</button></div>';
     return h;
   }
 
@@ -693,6 +696,20 @@ body[data-view="login"] .rail, body[data-view="customers"] .rail { display: none
     if (r.error) { cloudMsg = 'Save failed: ' + r.error.message; drawStep(); drawChrome(); return; }
     state.dirty = false; state.savedAt = hhmm(); cloudMsg = ''; save(); drawStep(); drawChrome();
     var said = document.getElementById('said'); if (said) said.textContent = 'Saved to the customer register at ' + state.savedAt + '.';
+  }
+
+  async function renameMe() {
+    var current = who();
+    var name = window.prompt('Your name as it should appear under "Measured by":', current);
+    if (name == null) return;
+    name = name.trim();
+    if (!name) return;
+    var r = await sb.auth.updateUser({ data: { full_name: name } });
+    if (r.error) { cloudMsg = 'Could not save name: ' + r.error.message; drawStep(); return; }
+    user = r.data.user || user;
+    if (!user.user_metadata) user.user_metadata = {};
+    user.user_metadata.full_name = name;
+    drawStep(); drawChrome();
   }
 
   function emailSummary() {
