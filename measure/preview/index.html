@@ -114,6 +114,11 @@ h1,h2,h3{font-family:var(--display);font-weight:400;margin:0}
 .toggle input{width:1.1rem;height:1.1rem;accent-color:var(--ink)}
 .addrow{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin-top:1.25rem}
 .addrow select{border:1px solid var(--ink);border-radius:2px;padding:.75rem 2rem .75rem .75rem;min-height:3rem;background:var(--paper);-webkit-appearance:none;appearance:none;font-size:13px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .75rem center}
+.photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(9.5rem,1fr));gap:.75rem;margin-top:1rem}
+.photo{display:grid;gap:.35rem;text-align:left}
+.photo .img{aspect-ratio:3/4;background:linear-gradient(160deg,#F0EDE5,#E2DDD2);border:1px solid var(--cream-line);border-radius:4px;display:flex;align-items:flex-end;padding:.5rem;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.photo .meta{font-size:.75rem;color:var(--muted);line-height:1.3}
+.photo .meta b{display:block;font-weight:500;color:var(--ink)}
 .toast{position:fixed;left:50%;bottom:1.25rem;transform:translateX(-50%);background:var(--ink);color:var(--on-ink);padding:.75rem 1.25rem;border-radius:2px;font-size:13px;z-index:20;opacity:0;transition:opacity .2s}
 .toast.show{opacity:1}
 .import{border:1px dashed var(--cream-line);background:var(--cream);border-radius:4px;padding:1rem 1.25rem;margin-top:1.5rem}
@@ -161,12 +166,14 @@ var customers = [
   { id:'c1', first:'Arvid', last:'Kjelleryd', email:'arvid@roseborn.com', phone:'+46 70 942 08 89', store:'Stockholm', notes:'Prefers slim business fit. Left shoulder slightly low.',
     sessions:[ { id:'s2', date:'2026-10-20', by:'Arvid Kjelleryd', m:{chest:108,neck:42,shoulder:45,waist:90,hip:104,inseam:85}, height:176, weight:84 },
                { id:'s1', date:'2026-03-12', by:'Cecilia Nilsson', m:{chest:106,neck:42,shoulder:45,waist:88,hip:103,inseam:85}, height:176, weight:82 } ],
+    photos:[ {d:'2026-10-20',by:'Arvid Kjelleryd',tag:'Front',on:'Measuring session'},{d:'2026-10-20',by:'Arvid Kjelleryd',tag:'Side',on:'Measuring session'},{d:'2026-10-20',by:'Arvid Kjelleryd',tag:'Back',on:'Measuring session'},{d:'2026-03-12',by:'Cecilia Nilsson',tag:'Fitting',on:'Order GC-41077'} ],
     orders:[ { id:'o1', date:'2026-10-20', status:'In production', delivery:'2026-12-05', occasion:'Work', notes:'Trunk show order', ref:'GC-48812',
                items:[ { type:'suit', size:'50', supplier:'Loro Piana', fabric:'LPN776021', lining:'Bemberg navy', buttons:'Horn dark brown', includeVest:false,
                          design:{ Jacket:'2-button, notch lapel, double vent, patch pockets', Trousers:'Flat front, side adjusters, 4 cm cuff' },
                          fit:{ Jacket:'Sleeve -1 cm, waist -2 cm', Trousers:'Length +1 cm' }, remark:'' } ] } ] },
   { id:'c2', first:'Chris', last:'Hart', email:'hartc@unitedtalent.com', phone:'+1 310 497 9200', store:'New York', notes:'UTA. Trunk show customer.',
     sessions:[ { id:'s3', date:'2026-02-02', by:'Arvid Kjelleryd', m:{chest:102,neck:40,shoulder:46,waist:86,hip:100,inseam:82}, height:183, weight:79 } ],
+    photos:[ {d:'2026-02-02',by:'Arvid Kjelleryd',tag:'Front',on:'Measuring session'},{d:'2026-04-10',by:'Arvid Kjelleryd',tag:'Fitting',on:'Order GC-44120'} ],
     orders:[ { id:'o2', date:'2026-02-02', status:'Delivered', delivery:'2026-04-10', occasion:'Work', notes:'', ref:'GC-44120',
                items:[ { type:'jacket', size:'50', supplier:'Drago', fabric:'A407.006/13', lining:'Tonal', buttons:'Horn', design:{ Jacket:'Unconstructed, 3-roll-2' }, fit:{ Jacket:'' }, remark:'' },
                        { type:'trousers', size:'50', supplier:'House fabric (PL)', fabric:'PL PC10 grey flannel', lining:'', buttons:'', design:{ Trousers:'Single pleat' }, fit:{ Trousers:'Length +2 cm' }, remark:'' } ] },
@@ -214,9 +221,9 @@ function renderCustomer(){
   main.appendChild(el('div',{class:'card-head'},[
     el('div',{},[el('span',{class:'label'},c.store),el('h1',{},name(c)),el('div',{class:'meta'},[c.email,' · ',c.phone])]),
     el('div',{class:'actions',style:'margin-top:0'},[el('button',{class:'btn small',onclick:function(){go({tab:'details'});}},'Edit'),el('button',{class:'btn small primary',onclick:function(){ go({name:'order',cid:c.id,oid:null}); }},'New order')]) ]));
-  var tabs=[['overview','Overview'],['measurements','Measurements'],['orders','Orders'],['details','Details']];
+  var tabs=[['overview','Overview'],['measurements','Measurements'],['orders','Orders'],['photos','Photos ('+(c.photos||[]).length+')'],['details','Details']];
   main.appendChild(el('div',{class:'tabs',role:'tablist'},tabs.map(function(t){ return el('button',{role:'tab','aria-selected':String(view.tab===t[0]),onclick:function(){go({tab:t[0]});}},t[1]); })));
-  if(view.tab==='overview') tabOverview(c); else if(view.tab==='measurements') tabMeasurements(c); else if(view.tab==='orders') tabOrders(c); else tabDetails(c);
+  if(view.tab==='overview') tabOverview(c); else if(view.tab==='measurements') tabMeasurements(c); else if(view.tab==='orders') tabOrders(c); else if(view.tab==='photos') tabPhotos(c); else tabDetails(c);
 }
 function tabOverview(c){
   var s=c.sessions[0];
@@ -249,6 +256,14 @@ function tabOrders(c){
   if(!c.orders.length) s.appendChild(el('p',{class:'empty'},'No orders yet.'));
   c.orders.forEach(function(o){ s.appendChild(orderRow(c,o)); });
   s.appendChild(el('div',{class:'actions'},[el('button',{class:'btn primary',onclick:function(){ go({name:'order',cid:c.id,oid:null}); }},'New order'),el('button',{class:'btn',onclick:function(){toast('Preview: import a file prepared in the chat');}},'Import order file')]));
+  main.appendChild(s);
+}
+function tabPhotos(c){
+  var s=el('section',{class:'sec'},[el('div',{class:'sub'},[el('h2',{},'Photos'),el('span',{class:'note'},'Posture and fitting photos. Private to staff, newest first.')])]);
+  var g=el('div',{class:'photos'});
+  (c.photos||[]).forEach(function(ph){ g.appendChild(el('button',{class:'photo',onclick:function(){toast('Preview: opens the photo full screen');}},[el('div',{class:'img'},ph.tag),el('div',{class:'meta'},[el('b',{},ph.d),ph.on+' · '+ph.by])])); });
+  s.appendChild(g);
+  s.appendChild(el('div',{class:'actions'},[el('button',{class:'btn primary',onclick:function(){toast('Preview: opens the camera or photo library');}},'Add photo'),el('span',{class:'note',style:'margin:0'},'Photos can also be added from a measuring session or an order and show up here.')]));
   main.appendChild(s);
 }
 function tabDetails(c){
