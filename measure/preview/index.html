@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Rose &amp; Born · MTM Customer (preview)</title>
+<style>
+:root {
+  --paper:#FFFFFF; --cream:#F0EDE5; --cream-line:#D6D2C8; --ink:#000; --ink-soft:#1A1A1A; --on-ink:#FFF;
+  --muted:#666; --muted-soft:#999; --line:#E5E5E5; --line-soft:#F0F0F0; --missing:#8A2A1A; --ok:#2E6B3A;
+  --display:"Hoefler Text","Cormorant Garamond",Cormorant,"Iowan Old Style","Big Caslon",Garamond,Georgia,serif;
+  --body:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,"Helvetica Neue",Helvetica,"Segoe UI",Arial,sans-serif;
+  --gutter:1rem; color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--paper);color:var(--ink)}
+body{font-family:var(--body);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%}
+button,input,textarea,select{font:inherit;color:inherit;border-radius:0}
+button{cursor:pointer;background:none;border:0;padding:0}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+h1,h2,h3{font-family:var(--display);font-weight:400;margin:0}
+.label{font-size:10px;letter-spacing:.26em;text-transform:uppercase;font-weight:500;color:var(--muted)}
+.preview-tag{position:fixed;right:0;top:50%;transform:rotate(-90deg) translate(50%,-50%);transform-origin:right top;background:var(--ink);color:var(--on-ink);font-size:9px;letter-spacing:.3em;text-transform:uppercase;padding:4px 14px;z-index:9;opacity:.8}
+
+/* top bar */
+.bar{position:sticky;top:0;z-index:5;background:var(--paper);border-bottom:1px solid var(--line)}
+.bar-in{display:flex;align-items:center;gap:.75rem;justify-content:space-between;padding:.625rem var(--gutter);max-width:76rem;margin-inline:auto;flex-wrap:wrap}
+.wordmark{font-family:var(--display);font-size:1.05rem;letter-spacing:.16em;text-transform:uppercase;margin-right:auto;white-space:nowrap}
+.crumb{flex-basis:100%;display:flex;gap:.5rem;align-items:baseline;min-width:0}
+.crumb .label{white-space:nowrap}
+.crumb b{font-family:var(--display);font-weight:400;font-size:1.25rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-btn{flex:none;border:1px solid var(--ink);padding:.5rem .75rem;min-height:2.75rem;font-size:10px;letter-spacing:.24em;text-transform:uppercase;font-weight:500}
+@media(min-width:48rem){.crumb{flex-basis:auto;flex:1}}
+
+.shell{max-width:60rem;margin-inline:auto;padding:1.25rem var(--gutter) 6rem}
+@media(min-width:60rem){:root{--gutter:1.5rem}}
+
+/* buttons */
+.btn{border:1px solid var(--ink);border-radius:2px;padding:.875rem 1.25rem;min-height:3rem;font-size:11px;letter-spacing:.24em;text-transform:uppercase;font-weight:500;background:var(--paper)}
+.btn.primary{background:var(--ink);color:var(--on-ink)}
+.btn.small{padding:.5rem .75rem;min-height:2.5rem;font-size:10px}
+.btn.danger{border-color:var(--missing);color:var(--missing)}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.actions{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin-top:1.5rem}
+
+/* fields */
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(11rem,1fr));gap:1rem 1.5rem}
+.field{display:grid;gap:.375rem;min-width:0}
+.field input,.field textarea,.field select{width:100%;border:0;border-bottom:1px solid var(--line);background:transparent;padding:8px 0 10px;min-height:2.75rem;font-size:15px}
+.field textarea{min-height:4.5rem;resize:vertical;line-height:1.45}
+.field select{-webkit-appearance:none;appearance:none;padding-right:28px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23666666' stroke-width='1.5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 4px center}
+.field input:focus,.field textarea:focus,.field select:focus{outline:none;border-bottom-color:var(--ink)}
+.field .hint{font-size:.75rem;color:var(--muted)}
+.wide{grid-column:1/-1}
+
+/* page head */
+.head{margin-bottom:1.25rem}
+.head h1{font-size:clamp(1.75rem,1.2rem + 2.2vw,2.5rem);line-height:1.15;margin-top:.25rem}
+.lead{max-width:40rem;color:var(--ink-soft);margin:.5rem 0 0}
+.note{color:var(--muted);font-size:.875rem;max-width:40rem;margin:.5rem 0 0}
+
+/* customer list */
+.search{display:flex;flex-wrap:wrap;gap:.75rem;align-items:flex-end;margin:1.25rem 0}
+.search input{flex:1 1 14rem;border:0;border-bottom:1px solid var(--line);background:transparent;padding:8px 0 10px;min-height:2.75rem;font-size:15px}
+.search input:focus{outline:none;border-bottom-color:var(--ink)}
+.list{border-top:1px solid var(--ink)}
+.rowc{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.5rem 1rem;align-items:center;padding:.75rem 0;border-bottom:1px solid var(--line)}
+.rowc .open{text-align:left;display:grid;gap:.125rem;min-height:2.75rem;min-width:0}
+.rowc .nm{font-family:var(--display);font-size:1.25rem}
+.rowc .meta{color:var(--muted);font-size:.8125rem}
+.pill{display:inline-block;border:1px solid var(--cream-line);background:var(--cream);border-radius:4px;padding:.15rem .5rem;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-left:.25rem;vertical-align:middle}
+.pill.ok{border-color:#CFE1D3;background:#EEF6F0;color:var(--ok)}
+.pill.warn{border-color:#E8D7B8;background:#FBF4E6;color:#7a5200}
+
+/* customer card */
+.card-head{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:1rem;align-items:start;padding-bottom:1rem;border-bottom:1px solid var(--ink)}
+.card-head h1{font-size:clamp(1.75rem,1.2rem + 2.2vw,2.5rem);line-height:1.1}
+.card-head .meta{color:var(--muted);font-size:.875rem;margin-top:.35rem}
+.tabs{display:flex;gap:1.5rem;border-bottom:1px solid var(--line);margin:0 0 1.25rem}
+.tabs button{padding:.9rem 0;font-size:11px;letter-spacing:.24em;text-transform:uppercase;font-weight:500;color:var(--muted);position:relative;min-height:2.75rem}
+.tabs button[aria-selected="true"]{color:var(--ink);font-weight:600}
+.tabs button[aria-selected="true"]::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--ink)}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(9rem,1fr));gap:1rem 1.5rem;margin-top:1rem}
+.kv .label{display:block;margin-bottom:.2rem}
+.kv .v{font-size:15px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(17rem,1fr));gap:2rem 3rem}
+.sec h2{font-size:1.5rem;padding-bottom:.5rem;border-bottom:1px solid var(--ink);margin-bottom:.25rem}
+.sec .sub{display:flex;justify-content:space-between;align-items:baseline;gap:1rem}
+.mrow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.5rem 1rem;align-items:center;padding:.6rem 0;border-bottom:1px solid var(--line);text-align:left;width:100%;min-height:2.75rem}
+.mrow .v{font-variant-numeric:tabular-nums;font-weight:500}
+.mrow .meta{color:var(--muted);font-size:.8125rem}
+.mini{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.5rem 1rem;margin-top:.75rem}
+.mini div{border-bottom:1px solid var(--line);padding:.35rem 0}
+.mini .label{display:block}
+.mini b{font-family:var(--display);font-weight:400;font-size:1.35rem}
+.empty{color:var(--muted);padding:1.25rem 0}
+
+/* order editor */
+.ordhead{display:grid;grid-template-columns:repeat(auto-fit,minmax(10rem,1fr));gap:1rem 1.5rem;margin:1rem 0 1.75rem}
+.garment{border:1px solid var(--line);border-radius:4px;padding:1rem 1rem 1.25rem;margin-top:1rem;background:var(--paper)}
+.garment .gh{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;margin-bottom:.75rem}
+.garment .gh h3{font-size:1.35rem}
+.garment .gh .label{white-space:nowrap}
+.part{margin-top:1rem;padding-top:.9rem;border-top:1px solid var(--line-soft)}
+.part h4{font-family:var(--display);font-weight:400;font-size:1.1rem;margin:0 0 .5rem}
+.price{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;margin-top:1rem;padding-top:.9rem;border-top:1px solid var(--line-soft)}
+.price .amt{font-family:var(--display);font-size:1.6rem;font-variant-numeric:tabular-nums}
+.price .src{font-size:.75rem;color:var(--muted)}
+.total{margin-top:1.5rem;background:var(--ink);color:var(--on-ink);padding:1.5rem 1.25rem;text-align:center;border-radius:2px}
+.total .label{color:var(--muted-soft);letter-spacing:.36em;font-size:9.5px}
+.total .amt{font-family:var(--display);font-weight:300;font-size:2.75rem;line-height:1.05;margin-top:.5rem;font-variant-numeric:tabular-nums}
+.total .meta{font-family:var(--display);font-style:italic;font-size:.9rem;color:var(--muted-soft);margin-top:.5rem}
+.toggle{display:flex;align-items:center;gap:.6rem;font-size:14px;margin-top:.9rem}
+.toggle input{width:1.1rem;height:1.1rem;accent-color:var(--ink)}
+.addrow{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin-top:1.25rem}
+.addrow select{border:1px solid var(--ink);border-radius:2px;padding:.75rem 2rem .75rem .75rem;min-height:3rem;background:var(--paper);-webkit-appearance:none;appearance:none;font-size:13px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .75rem center}
+.toast{position:fixed;left:50%;bottom:1.25rem;transform:translateX(-50%);background:var(--ink);color:var(--on-ink);padding:.75rem 1.25rem;border-radius:2px;font-size:13px;z-index:20;opacity:0;transition:opacity .2s}
+.toast.show{opacity:1}
+.import{border:1px dashed var(--cream-line);background:var(--cream);border-radius:4px;padding:1rem 1.25rem;margin-top:1.5rem}
+.import p{margin:.25rem 0 .75rem;font-size:.875rem;color:var(--ink-soft)}
+</style>
+</head>
+<body>
+<div class="preview-tag">Preview · mock data</div>
+<header class="bar"><div class="bar-in">
+  <div class="wordmark">Rose &amp; Born</div>
+  <button class="bar-btn" id="homeBtn">Customers</button>
+  <div class="crumb"><span class="label" id="kicker">MTM</span><b id="title">Customers</b></div>
+</div></header>
+<main class="shell" id="main"></main>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+'use strict';
+// ---------------------------------------------------------------- mock data
+var STORE = 'Stockholm', CUR = { Stockholm:'kr', 'New York':'$', 'Zürich':'CHF' };
+var GARMENTS = [
+  { key:'suit', label:'Suit', parts:['Jacket','Trousers'], vest:true },
+  { key:'tuxedo', label:'Tuxedo', parts:['Jacket','Trousers'], vest:true },
+  { key:'informal_suit', label:'Informal Suit', parts:['Jacket','Trousers'] },
+  { key:'jacket', label:'Jacket', parts:['Jacket'] },
+  { key:'informal_jacket', label:'Informal Jacket', parts:['Informal Jacket'] },
+  { key:'trousers', label:'Trousers', parts:['Trousers'] },
+  { key:'vest', label:'Vest', parts:['Vest'] },
+  { key:'shirt', label:'Shirt', parts:['Shirt'] },
+  { key:'coat', label:'Coat', parts:['Coat'] },
+  { key:'jeans', label:'Jeans / Chinos', parts:['Jeans'] },
+  { key:'knitwear', label:'Knitwear', parts:['Knitwear'] },
+  { key:'shoes', label:'Shoes', parts:['Shoes'] },
+  { key:'bermuda', label:'Bermuda Shorts', parts:['Bermuda'] }
+];
+var SUPPLIERS = ['House fabric (PL)','Loro Piana','Drago','Holland & Sherry','Zegna','Caccioppoli','Dormeuil','Drapers','Ariston','Reda','Thomas Mason','Canclini','Carnet','Piacenza','Solbiati'];
+// Mock price engine: supplier + code → price category → customer price (SEK incl VAT)
+var MOCK_PRICES = { suit:{PC10:19000,CL09:21500,CL10:23500,CL11:24500,CL13:27000}, jacket:{PC10:13500,CL09:15000,CL10:16500,CL13:19000}, trousers:{PC10:6500,CL09:7000,CL10:7500,CL13:8500}, shirt:{PC10:3500,SHCL08:4000,SHCL10:4500}, coat:{PC10:19500,CL10:24500}, vest:{PC10:5500,CL10:7000}, tuxedo:{PC10:22000,CL10:26500}, informal_suit:{PC10:18000,CL10:22500}, informal_jacket:{PC10:12500,CL10:15500}, jeans:{PC10:4500}, knitwear:{PC16:7500}, shoes:{PC03:7000}, bermuda:{PC10:4000} };
+function priceCat(supplier, code){ if(!code) return ''; if(supplier==='House fabric (PL)') return 'PC10'; if(/^(LPN|776|784)/.test(code)) return 'CL10'; if(/^A4/.test(code)) return 'CL09'; if(/^DR/.test(code)) return 'CL09'; if(/^HS/.test(code)) return 'CL13'; if(/^EZ/.test(code)) return 'CL11'; return 'CL10'; }
+function suggestPrice(g){ var pc=priceCat(g.supplier,g.fabric); var t=MOCK_PRICES[g.type]||{}; var base=t[pc]||t.CL10||t.PC10||0; if(g.includeVest) base+= (MOCK_PRICES.vest[pc]||MOCK_PRICES.vest.CL10||0); return { pc:pc, price:base }; }
+function money(v){ return (Math.round(v)||0).toLocaleString('en-US').replace(/,/g,' ')+' '+CUR[STORE]; }
+
+var customers = [
+  { id:'c1', first:'Arvid', last:'Kjelleryd', email:'arvid@roseborn.com', phone:'+46 70 942 08 89', store:'Stockholm', notes:'Prefers slim business fit. Left shoulder slightly low.',
+    sessions:[ { id:'s2', date:'2026-10-20', by:'Arvid Kjelleryd', m:{chest:108,neck:42,shoulder:45,waist:90,hip:104,inseam:85}, height:176, weight:84 },
+               { id:'s1', date:'2026-03-12', by:'Cecilia Nilsson', m:{chest:106,neck:42,shoulder:45,waist:88,hip:103,inseam:85}, height:176, weight:82 } ],
+    orders:[ { id:'o1', date:'2026-10-20', status:'In production', delivery:'2026-12-05', occasion:'Work', notes:'Trunk show order', ref:'GC-48812',
+               items:[ { type:'suit', size:'50', supplier:'Loro Piana', fabric:'LPN776021', lining:'Bemberg navy', buttons:'Horn dark brown', includeVest:false,
+                         design:{ Jacket:'2-button, notch lapel, double vent, patch pockets', Trousers:'Flat front, side adjusters, 4 cm cuff' },
+                         fit:{ Jacket:'Sleeve -1 cm, waist -2 cm', Trousers:'Length +1 cm' }, remark:'' } ] } ] },
+  { id:'c2', first:'Chris', last:'Hart', email:'hartc@unitedtalent.com', phone:'+1 310 497 9200', store:'New York', notes:'UTA. Trunk show customer.',
+    sessions:[ { id:'s3', date:'2026-02-02', by:'Arvid Kjelleryd', m:{chest:102,neck:40,shoulder:46,waist:86,hip:100,inseam:82}, height:183, weight:79 } ],
+    orders:[ { id:'o2', date:'2026-02-02', status:'Delivered', delivery:'2026-04-10', occasion:'Work', notes:'', ref:'GC-44120',
+               items:[ { type:'jacket', size:'50', supplier:'Drago', fabric:'A407.006/13', lining:'Tonal', buttons:'Horn', design:{ Jacket:'Unconstructed, 3-roll-2' }, fit:{ Jacket:'' }, remark:'' },
+                       { type:'trousers', size:'50', supplier:'House fabric (PL)', fabric:'PL PC10 grey flannel', lining:'', buttons:'', design:{ Trousers:'Single pleat' }, fit:{ Trousers:'Length +2 cm' }, remark:'' } ] },
+             { id:'o3', date:'2026-05-14', status:'Draft', delivery:'', occasion:'Wedding', notes:'Needs decision on fabric', ref:'', items:[ { type:'tuxedo', size:'50', supplier:'Holland & Sherry', fabric:'HS 902211', lining:'Black', buttons:'Covered', includeVest:false, design:{ Jacket:'Shawl collar, 1-button', Trousers:'Satin stripe' }, fit:{ Jacket:'', Trousers:'' }, remark:'' } ] } ] }
+];
+
+// ---------------------------------------------------------------- helpers
+var main = document.getElementById('main');
+function el(t,a,c){ a=a||{}; c=c||[]; var e=document.createElement(t); for(var k in a){ if(k==='class') e.className=a[k]; else if(k==='html') e.innerHTML=a[k]; else if(k.indexOf('on')===0) e.addEventListener(k.slice(2),a[k]); else if(a[k]!=null) e.setAttribute(k,a[k]); } (Array.isArray(c)?c:[c]).forEach(function(x){ if(x==null) return; e.appendChild(typeof x==='string'||typeof x==='number'?document.createTextNode(String(x)):x); }); return e; }
+function field(label,input,wide,hint){ var f=el('label',{class:'field'+(wide?' wide':'')},[el('span',{class:'label'},label),input]); if(hint) f.appendChild(el('span',{class:'hint'},hint)); return f; }
+function inp(v,on,opts){ opts=opts||{}; var i=el('input',{type:opts.type||'text',value:v==null?'':v,placeholder:opts.ph||'',inputmode:opts.im||null}); i.addEventListener('input',function(){ on(i.value); }); return i; }
+function ta(v,on,ph){ var t=el('textarea',{placeholder:ph||''}); t.value=v||''; t.addEventListener('input',function(){ on(t.value); }); return t; }
+function sel(v,opts,on){ var s=el('select'); opts.forEach(function(o){ var val=typeof o==='string'?o:o.v, txt=typeof o==='string'?o:o.t; var op=el('option',{value:val},txt); if(val===v) op.selected=true; s.appendChild(op); }); s.addEventListener('change',function(){ on(s.value); }); return s; }
+function toast(m){ var t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(function(){ t.classList.remove('show'); },1800); }
+function chrome(k,t){ document.getElementById('kicker').textContent=k; document.getElementById('title').textContent=t; window.scrollTo(0,0); }
+function name(c){ return (c.first+' '+c.last).trim(); }
+function fmt(d){ return d||'—'; }
+function statusPill(s){ var cls = s==='Delivered'?'ok':(s==='Draft'?'warn':''); return el('span',{class:'pill '+cls},s); }
+var view = { name:'customers', cid:null, tab:'overview', oid:null };
+function go(v){ Object.assign(view,v); render(); }
+document.getElementById('homeBtn').addEventListener('click',function(){ go({name:'customers'}); });
+
+// ---------------------------------------------------------------- views
+function render(){ main.innerHTML=''; if(view.name==='customers') renderCustomers(); else if(view.name==='customer') renderCustomer(); else if(view.name==='order') renderOrder(); }
+
+function renderCustomers(){
+  chrome('Customer register','Customers');
+  main.appendChild(el('div',{class:'head'},[el('span',{class:'label'},'Customer register'),el('h1',{},'Customers'),el('p',{class:'lead'},'One card per customer. Measurements and orders live on the card, so a customer is only ever entered once.')]));
+  var q = el('input',{type:'search',placeholder:'Search name, email or phone'});
+  main.appendChild(el('div',{class:'search'},[q, el('button',{class:'btn primary',onclick:function(){ toast('Preview: opens the customer form'); }},'New customer')]));
+  var list = el('div',{class:'list'}); main.appendChild(list);
+  function draw(){ list.innerHTML=''; var t=q.value.toLowerCase(); customers.filter(function(c){ return !t || (name(c)+' '+c.email+' '+c.phone).toLowerCase().indexOf(t)>=0; }).forEach(function(c){
+    var last=c.sessions[0]; var open=c.orders.filter(function(o){return o.status!=='Delivered';}).length;
+    list.appendChild(el('div',{class:'rowc'},[
+      el('button',{class:'open',onclick:function(){ go({name:'customer',cid:c.id,tab:'overview'}); }},[el('span',{class:'nm'},name(c)),el('span',{class:'meta'},c.store+' · Measured '+(last?last.date+' by '+last.by:'never')+' · '+c.orders.length+' order'+(c.orders.length===1?'':'s')+(open?', '+open+' open':''))]),
+      el('button',{class:'btn small',onclick:function(){ go({name:'order',cid:c.id,oid:null}); }},'New order') ])); }); }
+  q.addEventListener('input',draw); draw();
+  main.appendChild(el('div',{class:'import'},[el('span',{class:'label'},'Import'),el('p',{},'Bring in customers and orders from a file prepared in the chat (GoCreate exports, PDFs, Excel) or from the old Order-form app on this iPad.'),
+    el('div',{class:'actions',style:'margin-top:0'},[el('button',{class:'btn small',onclick:function(){toast('Preview: choose a .json file prepared by Claude');}},'Import file'),el('button',{class:'btn small',onclick:function(){toast('Preview: reads Order-form data on this device');}},'Import from Order-form on this iPad')])]));
+}
+
+function renderCustomer(){
+  var c = customers.filter(function(x){return x.id===view.cid;})[0]; if(!c) return go({name:'customers'});
+  chrome('Customer', name(c));
+  main.appendChild(el('div',{class:'card-head'},[
+    el('div',{},[el('span',{class:'label'},c.store),el('h1',{},name(c)),el('div',{class:'meta'},[c.email,' · ',c.phone])]),
+    el('div',{class:'actions',style:'margin-top:0'},[el('button',{class:'btn small',onclick:function(){go({tab:'details'});}},'Edit'),el('button',{class:'btn small primary',onclick:function(){ go({name:'order',cid:c.id,oid:null}); }},'New order')]) ]));
+  var tabs=[['overview','Overview'],['measurements','Measurements'],['orders','Orders'],['details','Details']];
+  main.appendChild(el('div',{class:'tabs',role:'tablist'},tabs.map(function(t){ return el('button',{role:'tab','aria-selected':String(view.tab===t[0]),onclick:function(){go({tab:t[0]});}},t[1]); })));
+  if(view.tab==='overview') tabOverview(c); else if(view.tab==='measurements') tabMeasurements(c); else if(view.tab==='orders') tabOrders(c); else tabDetails(c);
+}
+function tabOverview(c){
+  var s=c.sessions[0];
+  var g=el('div',{class:'grid2'}); main.appendChild(g);
+  var left=el('section',{class:'sec'},[el('div',{class:'sub'},[el('h2',{},'Latest measurements'),el('span',{class:'note'},s?s.date+' · '+s.by:'')])]);
+  if(s){ var mini=el('div',{class:'mini'}); [['Chest','chest'],['Waist','waist'],['Hip','hip'],['Shoulder','shoulder'],['Neck','neck'],['Inseam','inseam']].forEach(function(p){ mini.appendChild(el('div',{},[el('span',{class:'label'},p[0]),el('b',{},s.m[p[1]]+' cm')])); }); mini.appendChild(el('div',{},[el('span',{class:'label'},'Height'),el('b',{},s.height+' cm')])); mini.appendChild(el('div',{},[el('span',{class:'label'},'Weight'),el('b',{},s.weight+' kg')])); left.appendChild(mini); }
+  else left.appendChild(el('p',{class:'empty'},'No measurements yet.'));
+  left.appendChild(el('div',{class:'actions'},[el('button',{class:'btn small primary',onclick:function(){toast('Preview: opens the 16-step measuring flow');}},s?'New measuring session':'Measure now'),s?el('button',{class:'btn small',onclick:function(){go({tab:'measurements'});}},'History ('+c.sessions.length+')'):null]));
+  g.appendChild(left);
+  var right=el('section',{class:'sec'},[el('div',{class:'sub'},[el('h2',{},'Orders'),el('span',{class:'note'},c.orders.length+' total')])]);
+  if(!c.orders.length) right.appendChild(el('p',{class:'empty'},'No orders yet.'));
+  c.orders.forEach(function(o){ right.appendChild(orderRow(c,o)); });
+  right.appendChild(el('div',{class:'actions'},[el('button',{class:'btn small primary',onclick:function(){ go({name:'order',cid:c.id,oid:null}); }},'New order')]));
+  g.appendChild(right);
+  if(c.notes) main.appendChild(el('section',{class:'sec',style:'margin-top:2rem'},[el('h2',{},'Notes'),el('p',{class:'lead'},c.notes)]));
+}
+function orderRow(c,o){
+  var items=o.items.map(function(i){ return GARMENTS.filter(function(g){return g.key===i.type;})[0].label; }).join(', ');
+  var total=o.items.reduce(function(a,i){ return a+(i.price!=null?i.price:suggestPrice(i).price); },0);
+  return el('button',{class:'mrow',onclick:function(){ go({name:'order',cid:c.id,oid:o.id}); }},[el('span',{},[el('span',{},[o.date,' · ',items]),statusPill(o.status),el('span',{class:'meta',style:'display:block'},(o.ref?o.ref+' · ':'')+(o.delivery?'Delivery '+o.delivery:'No delivery date'))]),el('span',{class:'v'},money(total))]);
+}
+function tabMeasurements(c){
+  var s=el('section',{class:'sec'},[el('div',{class:'sub'},[el('h2',{},'Measuring sessions'),el('span',{class:'note'},'Newest first. Open a session to see all 16 measurements or correct a value.')])]);
+  c.sessions.forEach(function(x){ s.appendChild(el('button',{class:'mrow',onclick:function(){toast('Preview: opens the session in the measuring flow');}},[el('span',{},[x.date+' · '+x.by,el('span',{class:'meta',style:'display:block'},'Chest '+x.m.chest+' · Waist '+x.m.waist+' · Hip '+x.m.hip+' · '+x.height+' cm · '+x.weight+' kg')]),el('span',{class:'v'},'Open')])); });
+  s.appendChild(el('div',{class:'actions'},[el('button',{class:'btn primary',onclick:function(){toast('Preview: starts a new 16-step session, profile carried over');}},'New measuring session')]));
+  main.appendChild(s);
+}
+function tabOrders(c){
+  var s=el('section',{class:'sec'},[el('div',{class:'sub'},[el('h2',{},'Orders'),el('span',{class:'note'},c.orders.length+' total')])]);
+  if(!c.orders.length) s.appendChild(el('p',{class:'empty'},'No orders yet.'));
+  c.orders.forEach(function(o){ s.appendChild(orderRow(c,o)); });
+  s.appendChild(el('div',{class:'actions'},[el('button',{class:'btn primary',onclick:function(){ go({name:'order',cid:c.id,oid:null}); }},'New order'),el('button',{class:'btn',onclick:function(){toast('Preview: import a file prepared in the chat');}},'Import order file')]));
+  main.appendChild(s);
+}
+function tabDetails(c){
+  var f=el('div',{class:'fields'});
+  f.appendChild(field('First name',inp(c.first,function(v){c.first=v;})));
+  f.appendChild(field('Last name',inp(c.last,function(v){c.last=v;})));
+  f.appendChild(field('Email',inp(c.email,function(v){c.email=v;},{type:'email'})));
+  f.appendChild(field('Phone',inp(c.phone,function(v){c.phone=v;},{type:'tel'})));
+  f.appendChild(field('Store',sel(c.store,['Stockholm','Zürich','New York'],function(v){c.store=v;})));
+  f.appendChild(field('Notes',ta(c.notes,function(v){c.notes=v;},'Fit preferences, posture notes, anything the next fitter should know'),true));
+  main.appendChild(f);
+  main.appendChild(el('div',{class:'actions'},[el('button',{class:'btn primary',onclick:function(){toast('Saved (preview)'); go({tab:'overview'});}},'Save'),el('button',{class:'btn',onclick:function(){go({tab:'overview'});}},'Cancel')]));
+}
+
+// ---------------------------------------------------------------- order editor
+function renderOrder(){
+  var c=customers.filter(function(x){return x.id===view.cid;})[0]; if(!c) return go({name:'customers'});
+  STORE=c.store;
+  var o=view.oid?c.orders.filter(function(x){return x.id===view.oid;})[0]:null; var isNew=!o;
+  if(!o){ o={id:'o'+Date.now(),date:new Date().toISOString().slice(0,10),status:'Draft',delivery:'',occasion:'Work',notes:'',ref:'',items:[]}; }
+  chrome(name(c), isNew?'New order':'Order '+o.date);
+  main.appendChild(el('div',{class:'head'},[el('span',{class:'label'},name(c)+' · '+c.store),el('h1',{},isNew?'New order':'Order · '+o.date),el('p',{class:'note'},'Measurements: '+(c.sessions[0]?'latest session '+c.sessions[0].date+' is attached to this order automatically.':'none yet. Measure the customer before placing the order.'))]));
+  var hd=el('div',{class:'ordhead'});
+  hd.appendChild(field('Status',sel(o.status,['Draft','Ordered','In production','Ready for fitting','Delivered'],function(v){o.status=v;})));
+  hd.appendChild(field('Order date',inp(o.date,function(v){o.date=v;},{type:'date'})));
+  hd.appendChild(field('Delivery date',inp(o.delivery,function(v){o.delivery=v;},{type:'date'})));
+  hd.appendChild(field('Occasion',sel(o.occasion,['Work','Wedding','Black tie','Casual','Other'],function(v){o.occasion=v;})));
+  hd.appendChild(field('GoCreate reference',inp(o.ref,function(v){o.ref=v;},{ph:'GC-…'})));
+  main.appendChild(hd);
+  var items=el('div'); main.appendChild(items);
+  var totalBox=el('div',{class:'total'});
+  function drawItems(){ items.innerHTML=''; o.items.forEach(function(g,i){ items.appendChild(garment(o,g,i,drawItems)); }); var t=o.items.reduce(function(a,i){return a+(i.price!=null?i.price:suggestPrice(i).price);},0); totalBox.innerHTML=''; totalBox.appendChild(el('div',{class:'label'},'Order total')); totalBox.appendChild(el('div',{class:'amt'},money(t))); totalBox.appendChild(el('div',{class:'meta'},o.items.length+' garment'+(o.items.length===1?'':'s')+' · customer price incl. VAT · '+c.store)); }
+  var add=el('select'); add.appendChild(el('option',{value:''},'Add garment…')); GARMENTS.forEach(function(g){ add.appendChild(el('option',{value:g.key},g.label)); });
+  add.addEventListener('change',function(){ var def=GARMENTS.filter(function(g){return g.key===add.value;})[0]; if(!def) return; var g={type:def.key,size:c.sessions[0]?'50':'',supplier:'House fabric (PL)',fabric:'',lining:'',buttons:'',design:{},fit:{},remark:''}; def.parts.forEach(function(p){g.design[p]='';g.fit[p]='';}); o.items.push(g); add.value=''; drawItems(); });
+  main.appendChild(el('div',{class:'addrow'},[add,el('span',{class:'note',style:'margin:0'},'Base size is suggested from the latest measurements.')]));
+  main.appendChild(totalBox);
+  main.appendChild(el('div',{class:'actions'},[
+    el('button',{class:'btn primary',onclick:function(){ if(isNew){ c.orders.unshift(o); view.oid=o.id; } toast('Saved (preview)'); go({name:'customer',cid:c.id,tab:'orders'}); }},'Save order'),
+    el('button',{class:'btn',onclick:function(){toast('Preview: clean A4 order sheet');}},'Print'),
+    el('button',{class:'btn',onclick:function(){toast('Preview: copies the order as text for GoCreate');}},'Copy for GoCreate'),
+    el('button',{class:'btn',onclick:function(){ go({name:'customer',cid:c.id,tab:'orders'}); }},'Back') ]));
+  drawItems();
+}
+function garment(o,g,i,redraw){
+  var def=GARMENTS.filter(function(x){return x.key===g.type;})[0];
+  var w=el('div',{class:'garment'});
+  w.appendChild(el('div',{class:'gh'},[el('div',{},[el('span',{class:'label'},'Garment '+(i+1)),el('h3',{},def.label)]),el('button',{class:'btn small danger',onclick:function(){ o.items.splice(i,1); redraw(); }},'Remove')]));
+  var f=el('div',{class:'fields'});
+  f.appendChild(field('Base size',inp(g.size,function(v){g.size=v;})));
+  f.appendChild(field('Fabric supplier',sel(g.supplier,SUPPLIERS,function(v){g.supplier=v; g.price=null; redraw();})));
+  var pcHint=el('span',{class:'hint'});
+  var fabField=field('Fabric code',inp(g.fabric,function(v){g.fabric=v; g.price=null; upd();},{ph:g.supplier==='Loro Piana'?'776021':'Code from the bunch'}));
+  fabField.appendChild(pcHint); f.appendChild(fabField);
+  f.appendChild(field('Lining',inp(g.lining,function(v){g.lining=v;})));
+  f.appendChild(field('Buttons',inp(g.buttons,function(v){g.buttons=v;})));
+  w.appendChild(f);
+  def.parts.forEach(function(p){ var part=el('div',{class:'part'},[el('h4',{},p)]); var pf=el('div',{class:'fields'}); pf.appendChild(field('Design · '+p,ta(g.design[p],function(v){g.design[p]=v;},'Lapel, buttons, vents, pockets…'))); pf.appendChild(field('Fit tools · '+p,ta(g.fit[p],function(v){g.fit[p]=v;},'Adjustments vs. base size'))); part.appendChild(pf); w.appendChild(part); });
+  if(def.vest){ var cb=el('input',{type:'checkbox'}); cb.checked=!!g.includeVest; cb.addEventListener('change',function(){ g.includeVest=cb.checked; g.price=null; redraw(); }); w.appendChild(el('label',{class:'toggle'},[cb,el('span',{},'Include vest in this '+def.label.toLowerCase())])); }
+  w.appendChild(el('div',{class:'part'},[el('div',{class:'fields'},[field('Remark for this garment',ta(g.remark,function(v){g.remark=v;},'Optional'),true)])]));
+  var pr=el('div',{class:'price'}); w.appendChild(pr);
+  function upd(){ var s=suggestPrice(g); pcHint.textContent=g.fabric?('Price category '+s.pc+' · from the price engine'):'Enter the code to look up the price category'; pr.innerHTML=''; var amt=g.price!=null?g.price:s.price; pr.appendChild(el('div',{},[el('span',{class:'label'},'Customer price'),el('div',{class:'src'},g.price!=null?'Manually set':(g.fabric?('Price engine · '+def.label+' · '+s.pc+(g.includeVest?' + vest':'')):'Suggested once a fabric code is entered'))])); var edit=el('input',{type:'text',inputmode:'numeric',value:amt?Math.round(amt):'' ,style:'width:9ch;text-align:right;border:0;border-bottom:1px solid var(--line);font-family:var(--display);font-size:1.6rem;background:transparent'}); edit.addEventListener('change',function(){ var n=parseFloat(edit.value.replace(/\s/g,'')); g.price=isNaN(n)?null:n; redraw(); }); pr.appendChild(el('div',{class:'amt'},[edit,' ',el('span',{style:'font-size:1rem;color:var(--muted)'},CUR[STORE])])); }
+  upd();
+  return w;
+}
+render();
+})();
+</script>
+</body>
+</html>
